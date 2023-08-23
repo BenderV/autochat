@@ -4,7 +4,7 @@ import typing
 
 import openai
 
-from autochat.utils import parse_function
+from autochat.utils import csv_dumps, parse_function
 
 # https://platform.openai.com/docs/models/gpt-4
 DEFAULT_MODEL = "gpt-4"
@@ -18,13 +18,11 @@ class ConversationMessage:
         content: str = None,
         name: typing.Optional[str] = None,
         function_call: typing.Optional[dict] = None,
-        max_interactions: int = 100,
     ) -> None:
         self.role = role
         self.content = content
         self.name = name
         self.function_call = function_call
-        self.max_interactions = max_interactions
 
     def to_openai_dict(self) -> dict:
         res = {
@@ -58,6 +56,30 @@ class ConversationMessage:
             raise ValueError("Message should have content or function_call")
 
 
+def split_message(message):
+    """Split message into content and function_call_str
+    > message = "boat > flight\n> attack()"
+    > split_message(message)
+    > ('boat > flight', 'attack()')
+    """
+    lines = message.split("\n")
+    content = []
+    function_call_str = []
+
+    switch = False
+    for line in lines:
+        if line.startswith(">"):
+            switch = True
+            function_call_str.append(line[1:].strip())  # Remove the leading ">"
+        else:
+            if switch:
+                function_call_str.append(line)
+            else:
+                content.append(line)
+
+    return "\n".join(content), "\n".join(function_call_str)
+
+
 def parse_chat_template(filename):
     with open(filename) as f:
         string = f.read()
@@ -81,8 +103,8 @@ def parse_chat_template(filename):
             role = message[0].strip().lower()
             message = message[1]
 
-            if ">>>" in message:
-                content, function_call_str = message.split(">>> ")
+            content, function_call_str = split_message(message)
+            if function_call_str:
                 examples.append(
                     {
                         "role": role,
@@ -97,6 +119,7 @@ def parse_chat_template(filename):
                         "content": message,
                     }
                 )
+    print("examples", examples)
     return instruction, examples
 
 
@@ -106,12 +129,14 @@ class ChatGPT:
         instruction=None,
         examples=[],
         context=None,
+        max_interactions: int = 100,
     ) -> None:
         self.pre_history: list[ConversationMessage] = []
         self.history: list[ConversationMessage] = []
         self.instruction: typing.Optional[str] = instruction
         self.examples = examples
         self.context = context
+        self.max_interactions = max_interactions
         self.functions_schema = []
         self.functions = {}
 
@@ -193,6 +218,9 @@ class ChatGPT:
             function_name = response.function_call["name"]
             function_arguments = response.function_call["arguments"]
             content = self.functions[function_name](**function_arguments)
+            # If data is list of dicts, dumps to CSV
+            if isinstance(content, list) and isinstance(content[0], dict):
+                content = csv_dumps(content)
             message = ConversationMessage(
                 name=function_name,
                 role="function",

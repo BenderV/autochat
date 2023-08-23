@@ -4,7 +4,7 @@ import re
 from io import StringIO
 
 
-def csv_dumps(data):
+def csv_dumps(data: list[dict]) -> str:
     # Dumps to CSV, with header row
     if not data:
         return
@@ -19,7 +19,7 @@ def csv_dumps(data):
 
 def parse_function(text):
     # Match function name and its optional arguments
-    match = re.search(r">\s*(\w+)(?:\(([^>]+)\))?\s*$", text, re.DOTALL)
+    match = re.search(r"\s*(\w+)(?:\(([^>]+)\))?\s*$", text, re.DOTALL)
     if not match:
         raise ValueError(f"Invalid function call: {text}")
 
@@ -42,5 +42,5 @@ def parse_function(text):
 
     arguments = {key: value for key, value in arg_pairs}
 
-    result = {"name": function_name, "arguments": json.dumps(arguments)}
+    result = {"name": function_name, "arguments": arguments}
     return result

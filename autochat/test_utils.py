@@ -1,6 +1,6 @@
 import unittest
 
-from utils import parse_function
+from autochat.utils import parse_function
 
 
 class TestParseFunction(unittest.TestCase):
@@ -17,7 +17,7 @@ class TestParseFunction(unittest.TestCase):
         > FUNCTION(name="single argument")
         """
         result = parse_function(text)
-        expected = {"name": "FUNCTION", "arguments": '{"name": "single argument"}'}
+        expected = {"name": "FUNCTION", "arguments": {"name": "single argument"}}
         self.assertEqual(result, expected)
 
     def test_multiple_arguments(self):
@@ -27,7 +27,7 @@ class TestParseFunction(unittest.TestCase):
         result = parse_function(text)
         expected = {
             "name": "FUNCTION",
-            "arguments": '{"name": "argument1", "another": "argument2"}',
+            "arguments": {"name": "argument1", "another": "argument2"},
         }
         self.assertEqual(result, expected)
 
@@ -40,7 +40,7 @@ class TestParseFunction(unittest.TestCase):
         result = parse_function(text)
         expected = {
             "name": "FUNCTION",
-            "arguments": '{"name": "argument1", "query": "SELECT column\\nFROM table;"}',
+            "arguments": {"name": "argument1", "query": "SELECT column\nFROM table;"},
         }
         self.assertEqual(result, expected)
 
@@ -53,7 +53,11 @@ class TestParseFunction(unittest.TestCase):
         result = parse_function(text)
         expected = {
             "name": "FUNCTION",
-            "arguments": '{"name": "argument1", "description": "describes something", "query": "SELECT column\\nFROM table;"}',
+            "arguments": {
+                "name": "argument1",
+                "description": "describes something",
+                "query": "SELECT column\nFROM table;",
+            },
         }
         self.assertEqual(result, expected)
 
@@ -68,7 +72,10 @@ class TestParseFunction(unittest.TestCase):
         result = parse_function(text)
         expected = {
             "name": "SQL_QUERY",
-            "arguments": '{"name": "installation_date column examples", "query": "SELECT installation_date\\nFROM public.station\\nORDER BY RANDOM()\\nLIMIT 5;"}',
+            "arguments": {
+                "name": "installation_date column examples",
+                "query": "SELECT installation_date\nFROM public.station\nORDER BY RANDOM()\nLIMIT 5;",
+            },
         }
         self.assertEqual(result, expected)
 
