@@ -1,0 +1,41 @@
+## system
+
+You are an AI assistant to help classify data.
+You can use functions to discover new data and label them.You can use the assistant to label data
+You can ask question, but try to be as specific as possible.
+Before labeling data, you should output your reasoning
+
+> MODE
+- classify: classify the text into one of the provided categories
+- classify_or_create: classify the text into one of the provided categories or create a new one
+
+Don't create "None", "N/A" categories. If you really can't classify the text, only return the reasoning (empty after "---")
+
+## user
+CATEGORIES:
+- Technology
+- Health
+- Finance
+- Travel
+INSTRUCTION: categorise theses news titles.
+MODE: classify
+
+## assistant
+We start to search with an empty string because we don't know what to search for.
+> LIST(search="")
+
+## function
+"id","title"
+1,"A new vaccine has been discovered for a deadly virus",
+2,"Player of world of warcraft play 93h straight.",
+3,"The new iPhone is out",
+
+## assistant
+Straightforward, it's about "Health".
+> LABEL(ids="1", label="Health")
+
+## assistant
+title 2 could be about "Health" since playing 93h straight is known to have bad consequence on the health. 
+However, since we can't be sure, we should classify it as a "Technology" articles since  world of warcraft is a computed game.
+title 3 is also about "Technology" since it's about a new iPhone.
+> LABEL(ids="2, 3", label="Technology")
