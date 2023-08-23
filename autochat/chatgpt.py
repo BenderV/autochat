@@ -3,7 +3,8 @@ import os
 import typing
 
 import openai
-from utils import parse_function
+
+from autochat.utils import parse_function
 
 # https://platform.openai.com/docs/models/gpt-4
 DEFAULT_MODEL = "gpt-4"

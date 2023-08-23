@@ -18,26 +18,29 @@ def csv_dumps(data):
 
 
 def parse_function(text):
-    """
-    > parse_function("func1(key1=`value1`)")
-    {'name': 'func1', 'arguments': '{"key1": "value1"}'}
+    # Match function name and its optional arguments
+    match = re.search(r">\s*(\w+)(?:\(([^>]+)\))?\s*$", text, re.DOTALL)
+    if not match:
+        raise ValueError(f"Invalid function call: {text}")
 
-    > parse_function("func()")
-    {'name': 'func', 'arguments': '{}'}
+    function_name = match.group(1)
+    arguments_text = match.group(2) if match.group(2) else ""
 
-    """
-    function_pattern = r"(\w+)\((\w+)=([`\"].*?[`\"])\)"
-    matches = re.finditer(function_pattern, text, re.DOTALL)
+    # Split the arguments into key-value pairs
+    arg_pairs = re.findall(r'(\w+)="([^"]+)"', arguments_text)
+    additional_arg = re.search(r"(\w+)=```(.*?)```", arguments_text, re.DOTALL)
+    if additional_arg:
+        # Remove extra indentation from multi-line arguments
+        content = "\n".join(
+            [
+                line.strip()
+                for line in additional_arg.group(2).splitlines()
+                if line.strip()
+            ]
+        )
+        arg_pairs.append((additional_arg.group(1), content))
 
-    parsed_functions = []
+    arguments = {key: value for key, value in arg_pairs}
 
-    for match in matches:
-        function_name = match.group(1).strip()
-        param_key = match.group(2).strip()
-        param_value = match.group(3).strip('`"')
-
-        arguments = {param_key: param_value}
-        parsed_function = {"name": function_name, "arguments": arguments}
-        parsed_functions.append(parsed_function)
-
-    return parsed_functions[0]
+    result = {"name": function_name, "arguments": json.dumps(arguments)}
+    return result
