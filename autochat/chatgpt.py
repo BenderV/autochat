@@ -119,7 +119,6 @@ def parse_chat_template(filename):
                         "content": message,
                     }
                 )
-    print("examples", examples)
     return instruction, examples
 
 
