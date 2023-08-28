@@ -3,12 +3,25 @@ import os
 import typing
 
 import openai
+from tenacity import retry, stop_after_attempt, wait_random_exponential
 
 from autochat.utils import csv_dumps, parse_function
 
 # https://platform.openai.com/docs/models/gpt-4
 DEFAULT_MODEL = "gpt-4"
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", DEFAULT_MODEL)
+
+
+class FunctionCallParsingError(Exception):
+    def __init__(self, obj):
+        self.obj = obj
+
+    def __str__(self):
+        return f"Invalid function_call: {self.obj.function_call}"
+
+
+class ContextLengthExceededError(Exception):
+    pass
 
 
 class ConversationMessage:
@@ -43,17 +56,32 @@ class ConversationMessage:
         obj = cls(**kwargs)
         if obj.function_call:
             # Parse function_call with json.loads
-            obj.function_call["arguments"] = json.loads(obj.function_call["arguments"])
+            try:
+                obj.function_call["arguments"] = json.loads(
+                    obj.function_call["arguments"]
+                )
+            except json.decoder.JSONDecodeError:
+                raise FunctionCallParsingError(obj)
         return obj
 
     def __repr__(self) -> str:
+        text = f"ConversationMessage(role={self.role}, "
         if self.content:
-            return f"{self.role}: {self.content}"
-        elif self.function_call:
+            text += f'content="{self.content}", '
+        if self.function_call:
+            text += f'function_call="{self.function_call}", '
+        return text[:-2] + ")"
+
+    def to_markdown(self) -> str:
+        text = f"## {self.role}\n"
+        if self.content is not None:
+            text += self.content + "\n"
+        if self.function_call is not None:
             # Display function_call so it look like func(arg1="value1", arg2="value2")
-            return f"{self.role}: {self.function_call['name']}({', '.join([f'{k}={v}' for k, v in self.function_call['arguments'].items()])})"
-        else:
+            text += f"> {self.function_call['name']}({', '.join([f'{k}={v}' for k, v in self.function_call['arguments'].items()])})\n"
+        if self.content is None and self.function_call is None:
             raise ValueError("Message should have content or function_call")
+        return text
 
 
 def split_message(message):
@@ -155,11 +183,12 @@ class ChatGPT:
             )
 
     @classmethod
-    def from_template(cls, chat_template: str):
+    def from_template(cls, chat_template: str, **kwargs):
         instruction, examples = parse_chat_template(chat_template)
         return cls(
             instruction=instruction,
             examples=examples,
+            **kwargs,
         )
 
     @property
@@ -168,7 +197,7 @@ class ChatGPT:
             return None
         return self.history[-1].content
 
-    def reset(self):
+    def reset_history(self):
         self.history: list[ConversationMessage] = []
 
     def load_history(self, messages: list[ConversationMessage]):
@@ -180,6 +209,10 @@ class ChatGPT:
     def add_function(self, function, function_schema):
         self.functions_schema.append(function_schema)
         self.functions[function_schema["name"]] = function
+
+    def compress_history(self):
+        """Try to make a summary of the history"""
+        # TODO: Implement
 
     def ask(
         self,
@@ -206,7 +239,6 @@ class ChatGPT:
 
         for _ in range(self.max_interactions):
             # TODO: Check if the user has stopped the query
-
             response = self.ask(message)
             yield response
 
@@ -216,10 +248,25 @@ class ChatGPT:
             # Handle function calls
             function_name = response.function_call["name"]
             function_arguments = response.function_call["arguments"]
-            content = self.functions[function_name](**function_arguments)
+            try:
+                content = self.functions[function_name](**function_arguments)
+            except Exception as e:
+                # If function call failed, return the error message
+                content = str(e)
+
             # If data is list of dicts, dumps to CSV
-            if isinstance(content, list) and isinstance(content[0], dict):
-                content = csv_dumps(content)
+            if content is None:
+                content = "Empty"
+            if isinstance(content, list):
+                if not content:
+                    content = "[]"
+                elif isinstance(content[0], dict):
+                    try:
+                        content = csv_dumps(content)
+                    except Exception as e:
+                        print(e)
+                else:
+                    content = "\n".join(content)
             message = ConversationMessage(
                 name=function_name,
                 role="function",
@@ -227,6 +274,9 @@ class ChatGPT:
             )
             yield message
 
+    @retry(
+        stop=stop_after_attempt(5), wait=wait_random_exponential(multiplier=2, max=10)
+    )
     def fetch_openai(self):
         first_message = self.history[0].to_openai_dict()
         if self.context:
@@ -236,11 +286,25 @@ class ChatGPT:
             + [first_message]
             + [x.to_openai_dict() for x in self.history[1:]]
         )
-        res = openai.ChatCompletion.create(
-            model=OPENAI_MODEL,
-            messages=messages,
-            functions=self.functions_schema,
-        )
+
+        try:
+            if self.functions_schema:
+                res = openai.ChatCompletion.create(
+                    model=OPENAI_MODEL,
+                    messages=messages,
+                    functions=self.functions_schema,
+                )
+            else:
+                res = openai.ChatCompletion.create(
+                    model=OPENAI_MODEL,
+                    messages=messages,
+                )
+        except openai.error.InvalidRequestError as e:
+            if e.code == "context_length_exceeded":
+                raise ContextLengthExceededError(e)
+        except openai.error.APIError as e:
+            raise e
+
         message = res.choices[0].message
         function_call = message.get("function_call")
         return ConversationMessage.from_openai_dict(

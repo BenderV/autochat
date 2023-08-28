@@ -1,6 +1,45 @@
 import unittest
 
-from autochat.utils import parse_function
+from autochat.utils import limit_data_size, parse_function
+
+
+class TestLimitDataSizeUpdated(unittest.TestCase):
+    def setUp(self):
+        self.test_data_1 = [
+            {"name": "Alice", "age": "25", "city": "New York"},
+            {"name": "Bob", "age": "30", "city": "San Francisco"},
+            {"name": "Charlie", "age": "35", "city": "Los Angeles"},
+            {"name": "Daisy", "age": "40", "city": "Houston"},
+        ]
+
+        self.test_data_2 = [
+            {"name": "Alice", "age": "25", "city": "New York"},
+            {"name": "Bob", "age": "30", "city": "San Francisco"},
+        ]
+
+        self.test_data_3 = [
+            {"name": "Alice", "age": "25", "city": "New York"},
+            {"name": "B" * 50, "age": "30", "city": "San Francisco"},
+        ]
+
+    def test_small_character_limit(self):
+        result = limit_data_size(self.test_data_2, character_limit=5)
+        self.assertEqual(result, [{"name": "A", "age": "2", "city": "N"}])
+
+    def test_larger_character_limit(self):
+        result = limit_data_size(self.test_data_1, character_limit=150)
+        expected = [
+            {"name": "Alice", "age": "25", "city": "New York"},
+            {"name": "Bob", "age": "30", "city": "San Francisco"},
+            {"name": "Charlie", "age": "35", "city": "Los Angeles"},
+            {"name": "Daisy", "age": "40", "city": "Houston"},
+        ]
+        self.assertEqual(result, expected)
+
+    def test_very_long_single_field(self):
+        result = limit_data_size(self.test_data_3, character_limit=80)
+        expected = [{"name": "Alice", "age": "25", "city": "New York"}]
+        self.assertEqual(result, expected)
 
 
 class TestParseFunction(unittest.TestCase):
