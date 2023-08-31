@@ -24,18 +24,20 @@ class ContextLengthExceededError(Exception):
     pass
 
 
-class ConversationMessage:
+class Message:
     def __init__(
         self,
         role: str,
         content: str = None,
         name: typing.Optional[str] = None,
         function_call: typing.Optional[dict] = None,
+        id: typing.Optional[int] = None,
     ) -> None:
         self.role = role
         self.content = content
         self.name = name
         self.function_call = function_call
+        self.id = id
 
     def to_openai_dict(self) -> dict:
         res = {
@@ -65,7 +67,7 @@ class ConversationMessage:
         return obj
 
     def __repr__(self) -> str:
-        text = f"ConversationMessage(role={self.role}, "
+        text = f"Message(role={self.role}, "
         if self.content:
             text += f'content="{self.content}", '
         if self.function_call:
@@ -158,8 +160,8 @@ class ChatGPT:
         context=None,
         max_interactions: int = 100,
     ) -> None:
-        self.pre_history: list[ConversationMessage] = []
-        self.history: list[ConversationMessage] = []
+        self.pre_history: list[Message] = []
+        self.history: list[Message] = []
         self.instruction: typing.Optional[str] = instruction
         self.examples = examples
         self.context = context
@@ -168,15 +170,13 @@ class ChatGPT:
         self.functions = {}
 
         if self.instruction:
-            self.pre_history.append(
-                ConversationMessage(role="system", content=self.instruction)
-            )
+            self.pre_history.append(Message(role="system", content=self.instruction))
 
         # Simple loop
         for example in self.examples:
             # Herit name from message role
             self.pre_history.append(
-                ConversationMessage(
+                Message(
                     **example,
                     name="example_" + example["role"],
                 )
@@ -198,13 +198,13 @@ class ChatGPT:
         return self.history[-1].content
 
     def reset_history(self):
-        self.history: list[ConversationMessage] = []
+        self.history: list[Message] = []
 
-    def load_history(self, messages: list[ConversationMessage]):
+    def load_history(self, messages: list[Message]):
         # Check order of messages (based on createdAt)
         # Oldest first (createdAt ASC)
-        messages = sorted(messages, key=lambda x: x.createdAt)
-        self.history = [message for message in messages]
+        # messages = sorted(messages, key=lambda x: x.createdAt)
+        self.history = messages  # [message for message in messages]
 
     def add_function(self, function, function_schema):
         self.functions_schema.append(function_schema)
@@ -216,12 +216,12 @@ class ChatGPT:
 
     def ask(
         self,
-        message: typing.Union[ConversationMessage, str, None] = None,
-    ) -> ConversationMessage:
+        message: typing.Union[Message, str, None] = None,
+    ) -> Message:
         if message:
             if isinstance(message, str):
-                # If message is instance of string, then convert to ConversationMessage
-                message = ConversationMessage(
+                # If message is instance of string, then convert to Message
+                message = Message(
                     role="user",
                     content=message,
                 )
@@ -231,28 +231,38 @@ class ChatGPT:
         self.history.append(response)
         return response
 
-    def run_conversation(self, question: str):
-        message = ConversationMessage(
-            role="user",
-            content=question,
-        )
+    def run_conversation(
+        self, question: str = None
+    ) -> typing.Generator[Message, None, None]:
+        if question:
+            message = Message(
+                role="user",
+                content=question,
+            )
+        else:
+            message = None
 
         for _ in range(self.max_interactions):
             # TODO: Check if the user has stopped the query
             response = self.ask(message)
-            yield response
 
             if not response.function_call:
+                # We stop the conversation if the response is not a function call
+                yield response
                 return
 
-            # Handle function calls
             function_name = response.function_call["name"]
             function_arguments = response.function_call["arguments"]
             try:
-                content = self.functions[function_name](**function_arguments)
+                content = self.functions[function_name](
+                    **function_arguments,
+                    from_response=response,
+                )
             except Exception as e:
                 # If function call failed, return the error message
                 content = str(e)
+
+            yield response
 
             # If data is list of dicts, dumps to CSV
             if content is None:
@@ -267,7 +277,7 @@ class ChatGPT:
                         print(e)
                 else:
                     content = "\n".join(content)
-            message = ConversationMessage(
+            message = Message(
                 name=function_name,
                 role="function",
                 content=content,
@@ -307,8 +317,9 @@ class ChatGPT:
 
         message = res.choices[0].message
         function_call = message.get("function_call")
-        return ConversationMessage.from_openai_dict(
+        return Message.from_openai_dict(
             role=message.role,
             content=message.content,
             function_call=function_call,
+            id=res.id,  # We use the response id as the message id
         )
