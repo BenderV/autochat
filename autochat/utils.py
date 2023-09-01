@@ -1,5 +1,5 @@
+import ast
 import csv
-import re
 from io import StringIO
 
 
@@ -65,30 +65,38 @@ def csv_dumps(data: list[dict]) -> str:
     return output
 
 
-def parse_function(text):
-    # Match function name and its optional arguments
-    match = re.search(r"\s*(\w+)(?:\(([^>]+)\))?\s*$", text, re.DOTALL)
-    if not match:
-        raise ValueError(f"Invalid function call: {text}")
+def parse_function(text: str) -> dict:
+    # Cleaning the text
+    lines = text.strip().split("\n")
+    text = "".join(
+        line[2:] if line.startswith(">") else line for line in lines
+    )  # remove the leading ">"
 
-    function_name = match.group(1)
-    arguments_text = match.group(2) if match.group(2) else ""
+    # Replacing the multiline string delimiters
+    parts = text.split("```")
+    for i in range(1, len(parts), 2):
+        parts[i] = f"'''{parts[i]}'''"
+    text = "".join(parts)
 
-    # Split the arguments into key-value pairs
-    arg_pairs = re.findall(r'(\w+)="([^"]+)"', arguments_text)
-    additional_arg = re.search(r"(\w+)=```(.*?)```", arguments_text, re.DOTALL)
-    if additional_arg:
-        # Remove extra indentation from multi-line arguments
-        content = "\n".join(
-            [
-                line.strip()
-                for line in additional_arg.group(2).splitlines()
-                if line.strip()
-            ]
-        )
-        arg_pairs.append((additional_arg.group(1), content))
+    # Parsing the text using ast
+    parsed = ast.parse(text).body[0].value
 
-    arguments = {key: value for key, value in arg_pairs}
+    # Check if it's a valid function call
+    if not isinstance(parsed, ast.Call):
+        raise ValueError("The text does not contain a valid function call.")
 
-    result = {"name": function_name, "arguments": arguments}
-    return result
+    # Extracting the function name
+    function_name = parsed.func.id
+
+    # Extracting the arguments
+    arguments = {}
+    for keyword in parsed.keywords:
+        if isinstance(keyword.value, ast.Str):
+            value = keyword.value.s
+            arguments[keyword.arg] = value
+        elif isinstance(keyword.value, ast.List):
+            arguments[keyword.arg] = [el.s for el in keyword.value.elts]
+
+    if not arguments:
+        raise ValueError("The function call does not contain any arguments.")
+    return {"name": function_name, "arguments": arguments}
