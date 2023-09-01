@@ -24,6 +24,10 @@ class ContextLengthExceededError(Exception):
     pass
 
 
+class InvalidRequestError(Exception):
+    pass
+
+
 class Message:
     def __init__(
         self,
@@ -285,7 +289,13 @@ class ChatGPT:
             yield message
 
     @retry(
-        stop=stop_after_attempt(5), wait=wait_random_exponential(multiplier=2, max=10)
+        stop=stop_after_attempt(5),
+        wait=wait_random_exponential(multiplier=2, max=10),
+        # If we get a context_length_exceeded error, we stop the conversation
+        retry_error_callback=lambda x: isinstance(x, ContextLengthExceededError)
+        or isinstance(x, InvalidRequestError),
+        # After 5 attempts, we throw the error
+        reraise=True,
     )
     def fetch_openai(self):
         first_message = self.history[0].to_openai_dict()
@@ -312,6 +322,8 @@ class ChatGPT:
         except openai.error.InvalidRequestError as e:
             if e.code == "context_length_exceeded":
                 raise ContextLengthExceededError(e)
+            if e.code == "invalid_request_error":
+                raise InvalidRequestError(e)
         except openai.error.APIError as e:
             raise e
 
