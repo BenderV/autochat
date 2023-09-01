@@ -42,6 +42,16 @@ class TestLimitDataSizeUpdated(unittest.TestCase):
         self.assertEqual(result, expected)
 
 
+plot_widget = """
+> PLOT_WIDGET(
+    name="Distribution of stations per city",
+    outputType="Doughnut2d",
+    sql="SELECT city, COUNT(*) FROM public.station GROUP BY city",
+    params={"xAxisName": "City", "yAxisName":"Number of stations", "xKey":"city", "yKey":"count"}
+)
+"""
+
+
 class TestParseFunction(unittest.TestCase):
     def test_no_arguments(self):
         text = """
@@ -148,6 +158,24 @@ class TestParseFunction(unittest.TestCase):
             },
         }
         self.assertEqual(result, expected)
+
+    def test_plot_widget(self):
+        result = parse_function(plot_widget)
+        expected = {
+            "name": "PLOT_WIDGET",
+            "arguments": {
+                "name": "Distribution of stations per city",
+                "outputType": "Doughnut2d",
+                "sql": "SELECT city, COUNT(*) FROM public.station GROUP BY city",
+                "params": {
+                    "xAxisName": "City",
+                    "yAxisName": "Number of stations",
+                    "xKey": "city",
+                    "yKey": "count",
+                },
+            },
+        }
+        self.assertDictEqual(result, expected)
 
 
 if __name__ == "__main__":

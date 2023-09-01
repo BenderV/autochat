@@ -96,7 +96,14 @@ def parse_function(text: str) -> dict:
             arguments[keyword.arg] = value
         elif isinstance(keyword.value, ast.List):
             arguments[keyword.arg] = [el.s for el in keyword.value.elts]
+        elif isinstance(keyword.value, ast.Dict):
+            dict_values = {}
+            for k, v in zip(keyword.value.keys, keyword.value.values):
+                if isinstance(v, ast.Str):
+                    dict_values[k.s] = v.s
+            arguments[keyword.arg] = dict_values
 
     if not arguments:
         raise ValueError("The function call does not contain any arguments.")
+
     return {"name": function_name, "arguments": arguments}
