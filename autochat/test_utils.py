@@ -97,7 +97,7 @@ class TestParseFunction(unittest.TestCase):
     def test_multiline_argument(self):
         text = """
         > FUNCTION(name="argument1", query=```SELECT column
-        FROM table;
+        FROM "table";
         ```)
         """
         result = parse_function(text)
@@ -105,7 +105,7 @@ class TestParseFunction(unittest.TestCase):
             "name": "FUNCTION",
             "arguments": {
                 "name": "argument1",
-                "query": "SELECT column        FROM table;        ",
+                "query": "SELECT column        FROM \"table\";        ",
             },
         }
         self.assertEqual(result, expected)

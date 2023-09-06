@@ -68,7 +68,7 @@ def csv_dumps(data: list[dict]) -> str:
 def parse_function(text: str) -> dict:
     # Cleaning the text
     lines = text.strip().split("\n")
-    text = "".join(
+    text = " ".join(
         line[2:] if line.startswith(">") else line for line in lines
     )  # remove the leading ">"
 

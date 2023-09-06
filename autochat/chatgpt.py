@@ -28,6 +28,10 @@ class InvalidRequestError(Exception):
     pass
 
 
+class StopLoopException(Exception):
+    pass
+
+
 class Message:
     def __init__(
         self,
@@ -142,7 +146,7 @@ def parse_chat_template(filename):
                 examples.append(
                     {
                         "role": role,
-                        "content": content,
+                        "content": content if content else None,
                         "function_call": {**parse_function(function_call_str)},
                     }
                 )
@@ -243,6 +247,7 @@ class ChatGPT:
                 role="user",
                 content=question,
             )
+            yield message
         else:
             message = None
 
@@ -263,14 +268,18 @@ class ChatGPT:
                     from_response=response,
                 )
             except Exception as e:
+                if isinstance(e, StopLoopException):
+                    return
                 # If function call failed, return the error message
                 content = str(e)
 
             yield response
 
-            # If data is list of dicts, dumps to CSV
             if content is None:
-                content = "Empty"
+                # If function call returns None, we continue the conversation without adding a message
+                message = None
+                continue
+            # If data is list of dicts, dumps to CSV
             if isinstance(content, list):
                 if not content:
                     content = "[]"
@@ -289,10 +298,10 @@ class ChatGPT:
             yield message
 
     @retry(
-        stop=stop_after_attempt(5),
+        stop=stop_after_attempt(3),
         wait=wait_random_exponential(multiplier=2, max=10),
         # If we get a context_length_exceeded error, we stop the conversation
-        retry_error_callback=lambda x: isinstance(x, ContextLengthExceededError)
+        retry=lambda x: isinstance(x, ContextLengthExceededError)
         or isinstance(x, InvalidRequestError),
         # After 5 attempts, we throw the error
         reraise=True,
