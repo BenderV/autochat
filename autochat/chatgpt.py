@@ -262,6 +262,7 @@ class ChatGPT:
 
             function_name = response.function_call["name"]
             function_arguments = response.function_call["arguments"]
+
             try:
                 content = self.functions[function_name](
                     **function_arguments,
@@ -269,6 +270,7 @@ class ChatGPT:
                 )
             except Exception as e:
                 if isinstance(e, StopLoopException):
+                    yield response
                     return
                 # If function call failed, return the error message
                 content = str(e)
