@@ -2,7 +2,8 @@
 
 AutoChat is a lightweight interface to the ChatGPT API, to simplify the process of creating conversational agents.
 
-- **Message Class**: A simple class, `Message`, for sending and receiving messages within the conversation
+- **ChatGPT Class**: A wrapper to store instruction, context and messages histories.
+- **Message Class**: `Message` wrapper to handle format/parsing automatically.
 - **Function Calls**: Capability to handle function calls within the conversation, allowing complex interactions and responses.
 - **Template System**: A straightforward text-based template system for defining the behavior of the chatbot, making it easy to customize its responses and actions.
 
