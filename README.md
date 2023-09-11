@@ -1,4 +1,4 @@
-# AutoChat: Build Conversation AI with ease.
+# AutoChat: Build Conversational AI with ease.
 
 ## Description
 
