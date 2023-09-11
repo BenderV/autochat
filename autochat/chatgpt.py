@@ -273,7 +273,8 @@ class ChatGPT:
                     yield response
                     return
                 # If function call failed, return the error message
-                content = str(e)
+                # Flatten the error message
+                content = e.__repr__()
 
             yield response
 
@@ -300,11 +301,11 @@ class ChatGPT:
             yield message
 
     @retry(
-        stop=stop_after_attempt(3),
+        stop=stop_after_attempt(4),
         wait=wait_random_exponential(multiplier=2, max=10),
         # If we get a context_length_exceeded error, we stop the conversation
-        retry=lambda x: isinstance(x, ContextLengthExceededError)
-        or isinstance(x, InvalidRequestError),
+        retry=lambda x: isinstance(x, ContextLengthExceededError) is False
+        and isinstance(x, InvalidRequestError) is False,
         # After 5 attempts, we throw the error
         reraise=True,
     )
