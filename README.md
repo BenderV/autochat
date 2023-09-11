@@ -1,8 +1,6 @@
-# AutoChat: Build Conversational AI with ease.
+# AutoChat
 
-## Description
-
-AutoChat simplifies the process of creating conversational agents by providing a lightweight interface to the OpenAI ChatGPT API:
+AutoChat is a lightweight interface to the ChatGPT API, to simplify the process of creating conversational agents.
 
 - **Message Class**: A simple class, `Message`, for sending and receiving messages within the conversation
 - **Function Calls**: Capability to handle function calls within the conversation, allowing complex interactions and responses.
