@@ -3,7 +3,12 @@ import os
 import typing
 
 import openai
-from tenacity import retry, stop_after_attempt, wait_random_exponential
+from tenacity import (
+    retry,
+    retry_if_not_exception_type,
+    stop_after_attempt,
+    wait_random_exponential,
+)
 
 from autochat.utils import csv_dumps, parse_function
 
@@ -304,8 +309,10 @@ class ChatGPT:
         stop=stop_after_attempt(4),
         wait=wait_random_exponential(multiplier=2, max=10),
         # If we get a context_length_exceeded error, we stop the conversation
-        retry=lambda x: isinstance(x, ContextLengthExceededError) is False
-        and isinstance(x, InvalidRequestError) is False,
+        retry=(
+            retry_if_not_exception_type(ContextLengthExceededError)
+            & retry_if_not_exception_type(InvalidRequestError)
+        ),
         # After 5 attempts, we throw the error
         reraise=True,
     )
