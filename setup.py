@@ -2,9 +2,9 @@ from setuptools import find_packages, setup
 
 setup(
     name="autochat",
-    version="0.1.8",
+    version="0.1.9",
     packages=find_packages(),
-    install_requires=["openai==0.27.2"],
+    install_requires=["openai==1.3.0"],
     author="Benjamin Derville",
     author_email="benderville@gmail.com",
     description="Small ChatGPT library to support chat templates, and function calls",

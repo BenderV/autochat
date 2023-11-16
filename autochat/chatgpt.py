@@ -3,6 +3,7 @@ import os
 import typing
 
 import openai
+from openai import OpenAI
 from tenacity import (
     retry,
     retry_if_not_exception_type,
@@ -15,6 +16,9 @@ from autochat.utils import csv_dumps, parse_function
 # https://platform.openai.com/docs/models/gpt-4
 DEFAULT_MODEL = "gpt-4"
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", DEFAULT_MODEL)
+
+
+client = OpenAI()
 
 
 class FunctionCallParsingError(Exception):
@@ -328,29 +332,27 @@ class ChatGPT:
 
         try:
             if self.functions_schema:
-                res = openai.ChatCompletion.create(
+                res = client.chat.completions.create(
                     model=OPENAI_MODEL,
                     messages=messages,
                     functions=self.functions_schema,
                 )
             else:
-                res = openai.ChatCompletion.create(
-                    model=OPENAI_MODEL,
-                    messages=messages,
+                res = client.chat.completions.create(
+                    model=OPENAI_MODEL, messages=messages
                 )
-        except openai.error.InvalidRequestError as e:
+        except openai.BadRequestError as e:
             if e.code == "context_length_exceeded":
                 raise ContextLengthExceededError(e)
             if e.code == "invalid_request_error":
                 raise InvalidRequestError(e)
-        except openai.error.APIError as e:
+        except openai.APIError as e:
             raise e
 
         message = res.choices[0].message
-        function_call = message.get("function_call")
         return Message.from_openai_dict(
             role=message.role,
             content=message.content,
-            function_call=function_call,
+            function_call=message.function_call,
             id=res.id,  # We use the response id as the message id
         )
