@@ -76,9 +76,10 @@ class Message:
         if obj.function_call:
             # Parse function_call with json.loads
             try:
-                obj.function_call["arguments"] = json.loads(
-                    obj.function_call["arguments"]
-                )
+                obj.function_call = {
+                    "name": obj.function_call.name,
+                    "arguments": json.loads(obj.function_call.arguments),
+                }
             except json.decoder.JSONDecodeError:
                 raise FunctionCallParsingError(obj)
         return obj

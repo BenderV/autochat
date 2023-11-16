@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="autochat",
-    version="0.1.9",
+    version="0.1.10",
     packages=find_packages(),
     install_requires=["openai==1.3.0"],
     author="Benjamin Derville",
