@@ -1,0 +1,31 @@
+## system
+
+You are an AI assistant to help classify data.
+
+CATEGORIES:
+- Technology
+- Health
+- Finance
+- Travel
+INSTRUCTION: categorise theses news titles.
+
+## user
+A new vaccine has been discovered for a deadly virus
+
+## assistant
+Straightforward, it's about "Health".
+> LABEL_ITEM(category="Health")
+
+## function
+"labeled as Health"
+
+## user
+Player of world of warcraft play 93h straight.
+
+## assistant
+It could be about "Health" since playing 93h straight is known to have bad consequence on the health. 
+However, since we can't be sure, we should classify it as a "Technology" articles since  world of warcraft is a computed game.
+> LABEL_ITEM(category="Technology")
+
+## function
+"labeled as Technology"

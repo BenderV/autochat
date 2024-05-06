@@ -1,0 +1,13 @@
+{
+    "name": "LABEL_ITEM",
+    "description": "Update the category of data",
+    "parameters": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "description": "The label to be assigned to the data point."
+          }
+        }
+      }
+}

@@ -2,8 +2,6 @@ import json
 import os
 import typing
 
-import openai
-from openai import OpenAI
 from tenacity import (
     retry,
     retry_if_not_exception_type,
@@ -13,12 +11,7 @@ from tenacity import (
 
 from autochat.utils import csv_dumps, parse_function
 
-# https://platform.openai.com/docs/models/gpt-4
-DEFAULT_MODEL = "gpt-4"
-OPENAI_MODEL = os.getenv("OPENAI_MODEL", DEFAULT_MODEL)
-
-
-client = OpenAI()
+AUTOCHAT_MODEL = os.getenv("AUTOCHAT_MODEL")
 
 
 class FunctionCallParsingError(Exception):
@@ -38,6 +31,10 @@ class InvalidRequestError(Exception):
 
 
 class StopLoopException(Exception):
+    pass
+
+
+class InsufficientQuotaError(Exception):
     pass
 
 
@@ -64,10 +61,19 @@ class Message:
         if self.name:
             res["name"] = self.name
         if self.function_call:
-            res["function_call"] = {
-                "name": self.function_call["name"],
-                "arguments": json.dumps(self.function_call["arguments"]),
-            }
+            if self.role == "assistant":
+                res["function_call"] = {
+                    "name": self.function_call["name"],
+                    "arguments": json.dumps(self.function_call["arguments"]),
+                }
+            else:
+                # If user is triggering a function, we add the function call to the content
+                # since openai doesn't support functions for user messages
+                res["content"] = (
+                    self.function_call["name"]
+                    + ":"
+                    + json.dumps(self.function_call["arguments"])
+                )
         return res
 
     @classmethod
@@ -177,7 +183,10 @@ class ChatGPT:
         examples=[],
         context=None,
         max_interactions: int = 100,
+        model=AUTOCHAT_MODEL,
     ) -> None:
+        self.api = "OPENAI"  # default to openai
+        self.model = model
         self.pre_history: list[Message] = []
         self.history: list[Message] = []
         self.instruction: typing.Optional[str] = instruction
@@ -317,11 +326,19 @@ class ChatGPT:
         retry=(
             retry_if_not_exception_type(ContextLengthExceededError)
             & retry_if_not_exception_type(InvalidRequestError)
+            & retry_if_not_exception_type(InsufficientQuotaError)
         ),
         # After 5 attempts, we throw the error
         reraise=True,
     )
     def fetch_openai(self):
+        import openai
+
+        openai_client = openai.OpenAI(
+            # We override because we have our own retry logic
+            max_retries=0  # default is 2
+        )
+
         first_message = self.history[0].to_openai_dict()
         if self.context:
             first_message["content"] = self.context + "\n" + first_message["content"]
@@ -333,20 +350,25 @@ class ChatGPT:
 
         try:
             if self.functions_schema:
-                res = client.chat.completions.create(
-                    model=OPENAI_MODEL,
+                res = openai_client.chat.completions.create(
+                    model=self.model,
                     messages=messages,
                     functions=self.functions_schema,
                 )
             else:
-                res = client.chat.completions.create(
-                    model=OPENAI_MODEL, messages=messages
+                res = openai_client.chat.completions.create(
+                    model=self.model, messages=messages
                 )
         except openai.BadRequestError as e:
             if e.code == "context_length_exceeded":
                 raise ContextLengthExceededError(e)
             if e.code == "invalid_request_error":
                 raise InvalidRequestError(e)
+            raise
+        except openai.RateLimitError as e:
+            if e.code == "insufficient_quota":
+                raise InsufficientQuotaError(e)
+            raise
         except openai.APIError as e:
             raise e
 

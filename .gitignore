@@ -3,3 +3,4 @@ autochat.egg-info/
 autochat/__pycache__/
 build/
 dist/
+.DS_Store

@@ -1,5 +1,7 @@
 import ast
 import csv
+import json
+import re
 from io import StringIO
 
 
@@ -107,3 +109,52 @@ def parse_function(text: str) -> dict:
         raise ValueError("The function call does not contain any arguments.")
 
     return {"name": function_name, "arguments": arguments}
+
+
+class StructuredParser:
+    """
+    Parse the output from LLM into a structured format.
+    """
+
+    def parse(self, input_str):
+        """
+        Parses an input string and returns a corresponding structured dictionary.
+
+        Parameters:
+            input_str (str): The input string to parse.
+
+        Returns:
+            dict: A dictionary representing the parsed structure.
+        """
+        # Handle simple content patterns
+        if input_str.strip().startswith('> "'):
+            content_match = re.match(r'^\s*"([^"]+)"', input_str)
+            if content_match:
+                return {"content": content_match.group(1), "function_call": None}
+
+        # Handle explicit function patterns
+        function_start = "<function>"
+        if input_str.startswith(function_start):
+            # Trim leading pattern and trailing quote
+            function_data = input_str[len(function_start) :].rstrip('"')
+
+            # Extract <arguments> section
+            if "<arguments>" in function_data:
+                func_name, arguments_str = function_data.split("<arguments>", 1)
+                func_name = func_name.strip()
+
+                # Replace escaped quotes for proper JSON parsing
+                arguments_str = arguments_str.replace('\\"', '"')
+
+                try:
+                    # Load the JSON arguments
+                    arguments = json.loads(arguments_str)
+                except json.JSONDecodeError:
+                    raise ValueError("Failed to decode the JSON arguments.")
+
+                return {
+                    "content": None,
+                    "function_call": {"name": func_name, "arguments": arguments},
+                }
+
+        raise ValueError("Input string does not match any expected pattern.")
