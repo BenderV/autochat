@@ -1,6 +1,7 @@
 import json
 import os
 import typing
+from enum import Enum
 
 from tenacity import (
     retry,
@@ -11,9 +12,12 @@ from tenacity import (
 
 from autochat.utils import csv_dumps, parse_function
 
+AUTOCHAT_HOST = os.getenv("AUTOCHAT_HOST")
 AUTOCHAT_MODEL = os.getenv("AUTOCHAT_MODEL")
 
 
+class APIProvider(Enum):
+    OPENAI = "openai"
 class FunctionCallParsingError(Exception):
     def __init__(self, obj):
         self.obj = obj
@@ -110,72 +114,6 @@ class Message:
         return text
 
 
-def split_message(message):
-    """Split message into content and function_call_str
-    > message = "boat > flight\n> attack()"
-    > split_message(message)
-    > ('boat > flight', 'attack()')
-    """
-    lines = message.split("\n")
-    content = []
-    function_call_str = []
-
-    switch = False
-    for line in lines:
-        if line.startswith(">"):
-            switch = True
-            function_call_str.append(line[1:].strip())  # Remove the leading ">"
-        else:
-            if switch:
-                function_call_str.append(line)
-            else:
-                content.append(line)
-
-    return "\n".join(content), "\n".join(function_call_str)
-
-
-def parse_chat_template(filename):
-    with open(filename) as f:
-        string = f.read()
-
-    # split the string by "\n## " to get a list of speaker and message pairs
-    pairs = string.split("## ")[1:]
-
-    # split each element of the resulting list by "\n" to separate the speaker and message
-    pairs = [pair.split("\n", 1) for pair in pairs]
-
-    # create a list of tuples
-    messages = [(pair[0], pair[1].strip()) for pair in pairs]
-
-    examples = []
-    instruction = None
-    for ind, message in enumerate(messages):
-        # If first message role is a system message, extract the example
-        if ind == 0 and message[0] == "system":
-            instruction = message[1]
-        else:
-            role = message[0].strip().lower()
-            message = message[1]
-
-            content, function_call_str = split_message(message)
-            if function_call_str:
-                examples.append(
-                    {
-                        "role": role,
-                        "content": content if content else None,
-                        "function_call": {**parse_function(function_call_str)},
-                    }
-                )
-            else:
-                examples.append(
-                    {
-                        "role": role,
-                        "content": message,
-                    }
-                )
-    return instruction, examples
-
-
 class ChatGPT:
     def __init__(
         self,
@@ -184,9 +122,20 @@ class ChatGPT:
         context=None,
         max_interactions: int = 100,
         model=AUTOCHAT_MODEL,
+        provider=APIProvider.OPENAI,
     ) -> None:
-        self.api = "OPENAI"  # default to openai
+        if isinstance(provider, APIProvider):
+            self.provider = provider
+        elif isinstance(provider, str):
+            try:
+                self.provider = APIProvider(provider)
+            except ValueError:
+                raise ValueError(f"Provider {provider} is not a valid provider")
+        else:
+            raise ValueError(f"Invalid provider: {provider}")
+
         self.model = model
+        self.client = None
         self.pre_history: list[Message] = []
         self.history: list[Message] = []
         self.instruction: typing.Optional[str] = instruction
@@ -208,6 +157,25 @@ class ChatGPT:
                     name="example_" + example["role"],
                 )
             )
+
+        if self.provider == APIProvider.OPENAI:
+            from openai import OpenAI
+
+            if self.model is None:
+                # Default to gpt-4-turbo
+                self.model = "gpt-4-turbo"
+            self.client = OpenAI(
+                base_url=(
+                    f"{AUTOCHAT_HOST}/v1"
+                    if AUTOCHAT_HOST
+                    else "https://api.openai.com/v1"
+                ),
+                # We override because we have our own retry logic
+                max_retries=0,  # default is 2
+            )
+            self.fetch = self.fetch_openai
+        else:
+            raise ValueError(f"Invalid provider: {self.provider}")
 
     @classmethod
     def from_template(cls, chat_template: str, **kwargs):
@@ -241,6 +209,14 @@ class ChatGPT:
         """Try to make a summary of the history"""
         # TODO: Implement
 
+    def prepare_messages(self, transform_function) -> list[dict]:
+        """Prepare messages for API requests using a transformation function."""
+        first_message = self.history[0]
+        if self.context:
+            first_message.content = self.context + "\n" + first_message.content
+        messages = self.pre_history + [first_message] + self.history[1:]
+        return [transform_function(m) for m in messages]
+
     def ask(
         self,
         message: typing.Union[Message, str, None] = None,
@@ -254,7 +230,7 @@ class ChatGPT:
                 )
             self.history.append(message)  # Add the question to the history
 
-        response = self.fetch_openai()
+        response = self.fetch()
         self.history.append(response)
         return response
 
@@ -334,29 +310,17 @@ class ChatGPT:
     def fetch_openai(self):
         import openai
 
-        openai_client = openai.OpenAI(
-            # We override because we have our own retry logic
-            max_retries=0  # default is 2
-        )
-
-        first_message = self.history[0].to_openai_dict()
-        if self.context:
-            first_message["content"] = self.context + "\n" + first_message["content"]
-        messages: list[dict] = (
-            [x.to_openai_dict() for x in self.pre_history]
-            + [first_message]
-            + [x.to_openai_dict() for x in self.history[1:]]
-        )
+        messages = self.prepare_messages(transform_function=Message.to_openai_dict)
 
         try:
             if self.functions_schema:
-                res = openai_client.chat.completions.create(
+                res = self.client.chat.completions.create(
                     model=self.model,
                     messages=messages,
                     functions=self.functions_schema,
                 )
             else:
-                res = openai_client.chat.completions.create(
+                res = self.client.chat.completions.create(
                     model=self.model, messages=messages
                 )
         except openai.BadRequestError as e:

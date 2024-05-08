@@ -4,7 +4,7 @@ setup(
     name="autochat",
     version="0.1.11",
     packages=find_packages(),
-    install_requires=["openai==1.23.6"],
+    install_requires=["openai==1.26.0", "tenacity==8.3.0"],
     author="Benjamin Derville",
     author_email="benderville@gmail.com",
     description="Small ChatGPT library to support chat templates, and function calls",

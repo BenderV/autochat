@@ -111,50 +111,67 @@ def parse_function(text: str) -> dict:
     return {"name": function_name, "arguments": arguments}
 
 
-class StructuredParser:
+def split_message(message):
+    """Split message into content and function_call_str
+    > message = "boat > flight\n> attack()"
+    > split_message(message)
+    > ('boat > flight', 'attack()')
     """
-    Parse the output from LLM into a structured format.
-    """
+    lines = message.split("\n")
+    content = []
+    function_call_str = []
 
-    def parse(self, input_str):
-        """
-        Parses an input string and returns a corresponding structured dictionary.
+    switch = False
+    for line in lines:
+        if line.startswith(">"):
+            switch = True
+            function_call_str.append(line[1:].strip())  # Remove the leading ">"
+        else:
+            if switch:
+                function_call_str.append(line)
+            else:
+                content.append(line)
 
-        Parameters:
-            input_str (str): The input string to parse.
+    return "\n".join(content), "\n".join(function_call_str)
 
-        Returns:
-            dict: A dictionary representing the parsed structure.
-        """
-        # Handle simple content patterns
-        if input_str.strip().startswith('> "'):
-            content_match = re.match(r'^\s*"([^"]+)"', input_str)
-            if content_match:
-                return {"content": content_match.group(1), "function_call": None}
 
-        # Handle explicit function patterns
-        function_start = "<function>"
-        if input_str.startswith(function_start):
-            # Trim leading pattern and trailing quote
-            function_data = input_str[len(function_start) :].rstrip('"')
+def parse_chat_template(filename):
+    with open(filename) as f:
+        string = f.read()
 
-            # Extract <arguments> section
-            if "<arguments>" in function_data:
-                func_name, arguments_str = function_data.split("<arguments>", 1)
-                func_name = func_name.strip()
+    # split the string by "\n## " to get a list of speaker and message pairs
+    pairs = string.split("## ")[1:]
 
-                # Replace escaped quotes for proper JSON parsing
-                arguments_str = arguments_str.replace('\\"', '"')
+    # split each element of the resulting list by "\n" to separate the speaker and message
+    pairs = [pair.split("\n", 1) for pair in pairs]
 
-                try:
-                    # Load the JSON arguments
-                    arguments = json.loads(arguments_str)
-                except json.JSONDecodeError:
-                    raise ValueError("Failed to decode the JSON arguments.")
+    # create a list of tuples
+    messages = [(pair[0], pair[1].strip()) for pair in pairs]
 
-                return {
-                    "content": None,
-                    "function_call": {"name": func_name, "arguments": arguments},
-                }
+    examples = []
+    instruction = None
+    for ind, message in enumerate(messages):
+        # If first message role is a system message, extract the example
+        if ind == 0 and message[0] == "system":
+            instruction = message[1]
+        else:
+            role = message[0].strip().lower()
+            message = message[1]
 
-        raise ValueError("Input string does not match any expected pattern.")
+            content, function_call_str = split_message(message)
+            if function_call_str:
+                examples.append(
+                    {
+                        "role": role,
+                        "content": content if content else None,
+                        "function_call": {**parse_function(function_call_str)},
+                    }
+                )
+            else:
+                examples.append(
+                    {
+                        "role": role,
+                        "content": message,
+                    }
+                )
+    return instruction, examples

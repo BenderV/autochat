@@ -1,6 +1,6 @@
 import unittest
 
-from autochat.utils import limit_data_size, parse_function
+from utils import limit_data_size, parse_function
 
 
 class TestLimitDataSizeUpdated(unittest.TestCase):
@@ -105,7 +105,7 @@ class TestParseFunction(unittest.TestCase):
             "name": "FUNCTION",
             "arguments": {
                 "name": "argument1",
-                "query": "SELECT column        FROM \"table\";        ",
+                "query": 'SELECT column         FROM "table";         ',
             },
         }
         self.assertEqual(result, expected)
@@ -122,7 +122,7 @@ class TestParseFunction(unittest.TestCase):
             "arguments": {
                 "name": "argument1",
                 "description": "describes something",
-                "query": "SELECT column        FROM table;        ",
+                "query": "SELECT column         FROM table;         ",
             },
         }
         self.assertEqual(result, expected)
@@ -140,7 +140,7 @@ class TestParseFunction(unittest.TestCase):
             "name": "SQL_QUERY",
             "arguments": {
                 "name": "installation_date column examples",
-                "query": "SELECT installation_date        FROM public.station        ORDER BY RANDOM()        LIMIT 5;        ",
+                "query": "SELECT installation_date         FROM public.station         ORDER BY RANDOM()         LIMIT 5;         ",
             },
         }
         self.assertEqual(result, expected)

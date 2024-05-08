@@ -1,6 +1,6 @@
 # AutoChat
 
-AutoChat is a lightweight interface to the ChatGPT API, to simplify the process of creating conversational agents.
+AutoChat is an assistant interface to OpenAI and alternative providers, to simplify the process of creating interactive agents.
 
 - **ChatGPT Class**: Conversation wrapper to store instruction, context and messages histories.
 - **Message Class**: Message wrapper to handle format/parsing automatically.
@@ -90,12 +90,14 @@ for message in classifierGPT.run_conversation(text):
 
 ## Environment Variables
 
-The `OPENAI_MODEL` environment variable specifies the OpenAI model to use. If not set, it defaults to "gpt-4".
+The `AUTOCHAT_DEFAULT_MODEL` environment variable specifies the model to use. If not set, it defaults to "gpt-4-turbo".
 
 ```bash
-export OPENAI_MODEL="gpt-4"
+export AUTOCHAT_DEFAULT_MODEL="gpt-4-turbo"
 export OPENAI_API_KEY=<your-key>
 ```
+
+Use `AUTOCHAT_HOST` to use alternative provider that are openai compatible (openpipe, llama_cpp, ...)
 
 ## Support
 
