@@ -10,7 +10,7 @@ from tenacity import (
     wait_random_exponential,
 )
 
-from autochat.utils import csv_dumps, parse_function
+from .utils import csv_dumps, parse_chat_template
 
 AUTOCHAT_HOST = os.getenv("AUTOCHAT_HOST")
 AUTOCHAT_MODEL = os.getenv("AUTOCHAT_MODEL")
@@ -18,6 +18,8 @@ AUTOCHAT_MODEL = os.getenv("AUTOCHAT_MODEL")
 
 class APIProvider(Enum):
     OPENAI = "openai"
+
+
 class FunctionCallParsingError(Exception):
     def __init__(self, obj):
         self.obj = obj
