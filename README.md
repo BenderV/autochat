@@ -93,7 +93,7 @@ for message in classifierGPT.run_conversation(text):
 The `AUTOCHAT_DEFAULT_MODEL` environment variable specifies the model to use. If not set, it defaults to "gpt-4-turbo".
 
 ```bash
-export AUTOCHAT_DEFAULT_MODEL="gpt-4-turbo"
+export AUTOCHAT_MODEL="gpt-4-turbo"
 export OPENAI_API_KEY=<your-key>
 ```
 
