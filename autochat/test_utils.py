@@ -1,6 +1,6 @@
 import unittest
 
-from utils import limit_data_size, parse_function
+from utils import inspect_schema, limit_data_size, parse_function
 
 
 class TestLimitDataSizeUpdated(unittest.TestCase):
@@ -176,6 +176,30 @@ class TestParseFunction(unittest.TestCase):
             },
         }
         self.assertDictEqual(result, expected)
+
+
+def sums(a: int, b: int = 1):
+    """Adds a + b"""
+    return a + b
+
+
+class TestInspectSchema(unittest.TestCase):
+    def test_inspect_schema(self):
+        result = inspect_schema(sums)
+        expected = {
+            "name": "sums",
+            "description": "Adds a + b",
+            "parameters": {
+                "properties": {
+                    "a": {"title": "A", "type": "integer"},
+                    "b": {"default": 1, "title": "B", "type": "integer"},
+                },
+                "required": ["a"],
+                "title": "Input for `sums`",
+                "type": "object",
+            },
+        }
+        self.assertEqual(result, expected)
 
 
 if __name__ == "__main__":

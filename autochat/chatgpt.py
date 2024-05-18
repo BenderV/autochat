@@ -10,10 +10,11 @@ from tenacity import (
     wait_random_exponential,
 )
 
-from .utils import csv_dumps, parse_chat_template
+from .utils import csv_dumps, inspect_schema, parse_chat_template
 
 AUTOCHAT_HOST = os.getenv("AUTOCHAT_HOST")
 AUTOCHAT_MODEL = os.getenv("AUTOCHAT_MODEL")
+OUTPUT_SIZE_LIMIT = int(os.getenv("AUTOCHAT_OUTPUT_SIZE_LIMIT", 4000))
 
 
 class APIProvider(Enum):
@@ -203,7 +204,15 @@ class ChatGPT:
         # messages = sorted(messages, key=lambda x: x.createdAt)
         self.history = messages  # [message for message in messages]
 
-    def add_function(self, function, function_schema):
+    def add_function(
+        self,
+        function: typing.Callable,
+        function_schema: typing.Optional[dict] = None,
+    ):
+        if function_schema is None:
+            # We try to infer the function schema from the function
+            function_schema = inspect_schema(function)
+
         self.functions_schema.append(function_schema)
         self.functions[function_schema["name"]] = function
 
@@ -261,10 +270,14 @@ class ChatGPT:
             function_arguments = response.function_call["arguments"]
 
             try:
-                content = self.functions[function_name](
-                    **function_arguments,
-                    from_response=response,
-                )
+                try:
+                    content = self.functions[function_name](
+                        **function_arguments,
+                        from_response=response,
+                    )
+                except TypeError:
+                    # If the function does not accept 'from_response', call it without that argument
+                    content = self.functions[function_name](**function_arguments)
             except Exception as e:
                 if isinstance(e, StopLoopException):
                     yield response
@@ -279,17 +292,34 @@ class ChatGPT:
                 # If function call returns None, we continue the conversation without adding a message
                 message = None
                 continue
+
             # If data is list of dicts, dumps to CSV
             if isinstance(content, list):
                 if not content:
                     content = "[]"
                 elif isinstance(content[0], dict):
                     try:
-                        content = csv_dumps(content)
+                        content = csv_dumps(content, OUTPUT_SIZE_LIMIT)
                     except Exception as e:
                         print(e)
                 else:
                     content = "\n".join(content)
+            if isinstance(content, dict):
+                content = json.dumps(content)
+                if len(content) > OUTPUT_SIZE_LIMIT:
+                    content = (
+                        content[:OUTPUT_SIZE_LIMIT]
+                        + f"\n... ({len(content)} characters)"
+                    )
+            elif isinstance(content, str):
+                if len(content) > OUTPUT_SIZE_LIMIT:
+                    content = (
+                        content[:OUTPUT_SIZE_LIMIT]
+                        + f"\n... ({len(content)} characters)"
+                    )
+            else:
+                raise ValueError(f"Invalid content type: {type(content)}")
+
             message = Message(
                 name=function_name,
                 role="function",

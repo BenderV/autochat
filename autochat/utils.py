@@ -1,8 +1,13 @@
 import ast
 import csv
+import inspect
 import json
 import re
+import typing
+from inspect import Parameter
 from io import StringIO
+
+from pydantic import create_model
 
 
 def limit_data_size(
@@ -48,12 +53,16 @@ def limit_data_size(
     return result_data
 
 
-def csv_dumps(data: list[dict]) -> str:
+def csv_dumps(data: list[dict], character_limit: typing.Optional[int] = None) -> str:
     # Dumps to CSV, with header row
     if not data:
         return "[]"
 
-    limited_data = limit_data_size(data, character_limit=500)
+    if character_limit:
+        limited_data = limit_data_size(data, character_limit=character_limit)
+    else:
+        limited_data = data
+
     header = list(data[0].keys())
     with StringIO() as output:
         writer = csv.DictWriter(output, fieldnames=header)
@@ -175,3 +184,12 @@ def parse_chat_template(filename):
                     }
                 )
     return instruction, examples
+
+
+def inspect_schema(f):
+    kw = {
+        n: (o.annotation, ... if o.default == Parameter.empty else o.default)
+        for n, o in inspect.signature(f).parameters.items()
+    }
+    s = create_model(f"Input for `{f.__name__}`", **kw).schema()
+    return dict(name=f.__name__, description=f.__doc__, parameters=s)
