@@ -304,7 +304,7 @@ class ChatGPT:
                         print(e)
                 else:
                     content = "\n".join(content)
-            if isinstance(content, dict):
+            elif isinstance(content, dict):
                 content = json.dumps(content)
                 if len(content) > OUTPUT_SIZE_LIMIT:
                     content = (
