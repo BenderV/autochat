@@ -71,9 +71,11 @@ def csv_dumps(data: list[dict], character_limit: typing.Optional[int] = None) ->
         output = output.getvalue().strip()
         output.replace("\r\n", "\n").replace("\r", "\n")
 
+    csv_content = f"```csv\n{output}\n```"
+
     if len(limited_data) < len(data):
-        output += f"\n\n... {len((limited_data))} of {len(data)} rows displayed."
-    return output
+        csv_content += f"\n\n... {len(limited_data)} of {len(data)} rows displayed."
+    return csv_content
 
 
 def parse_function(text: str) -> dict:
