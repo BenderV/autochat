@@ -9,6 +9,8 @@ from io import StringIO
 
 from pydantic import create_model
 
+from autochat.model import Message
+
 
 def limit_data_size(
     data: list[dict[str, str]], character_limit: int = 10000
@@ -146,7 +148,7 @@ def split_message(message):
     return "\n".join(content), "\n".join(function_call_str)
 
 
-def parse_chat_template(filename):
+def parse_chat_template(filename) -> list[Message]:
     with open(filename) as f:
         string = f.read()
 
@@ -185,7 +187,26 @@ def parse_chat_template(filename):
                         "content": message,
                     }
                 )
-    return instruction, examples
+
+    messages = []
+    if instruction:
+        messages.append(Message(role="system", content=instruction))
+
+    # Simple loop
+    for ind, example in enumerate(examples):
+        # Herit name from message role
+        message = Message(
+            **example,
+            name="example_" + example["role"],
+            id="example_" + str(ind),
+        )
+        if message.function_call:
+            message.function_call_id = "example_" + str(ind)
+        if message.role == "function":
+            message.function_call_id = "example_" + str(ind - 1)
+        messages.append(message)
+
+    return messages
 
 
 def inspect_schema(f):
