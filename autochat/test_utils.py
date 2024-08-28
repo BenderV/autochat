@@ -1,6 +1,6 @@
 import unittest
 
-from utils import inspect_schema, limit_data_size, parse_function
+from autochat.utils import inspect_schema, limit_data_size, parse_function
 
 
 class TestLimitDataSizeUpdated(unittest.TestCase):
