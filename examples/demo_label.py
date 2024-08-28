@@ -3,7 +3,7 @@ import sys
 
 sys.path.append("..")
 
-from autochat import ChatGPT, Message
+from autochat import Autochat, Message
 
 
 def label_item(category: str, from_response: Message):
@@ -14,7 +14,7 @@ def label_item(category: str, from_response: Message):
 with open("./function_label.json") as f:
     FUNCTION_LABEL_ITEM = json.load(f)
 
-classifierGPT = ChatGPT.from_template("./classify_template.txt")
+classifierGPT = Autochat.from_template("./classify_template.txt")
 
 classifierGPT.add_function(label_item, FUNCTION_LABEL_ITEM)
 

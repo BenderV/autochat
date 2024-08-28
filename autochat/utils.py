@@ -159,21 +159,21 @@ def parse_chat_template(filename) -> list[Message]:
     pairs = [pair.split("\n", 1) for pair in pairs]
 
     # create a list of tuples
-    messages = [(pair[0], pair[1].strip()) for pair in pairs]
+    examples_pairs_str = [(pair[0], pair[1].strip()) for pair in pairs]
 
-    examples = []
+    parsed_examples = []
     instruction = None
-    for ind, message in enumerate(messages):
+    for ind, example in enumerate(examples_pairs_str):
         # If first message role is a system message, extract the example
-        if ind == 0 and message[0] == "system":
-            instruction = message[1]
+        if ind == 0 and example[0] == "system":
+            instruction = example[1]
         else:
-            role = message[0].strip().lower()
-            message = message[1]
+            role = example[0].strip().lower()
+            message = example[1]
 
             content, function_call_str = split_message(message)
             if function_call_str:
-                examples.append(
+                parsed_examples.append(
                     {
                         "role": role,
                         "content": content if content else None,
@@ -181,19 +181,15 @@ def parse_chat_template(filename) -> list[Message]:
                     }
                 )
             else:
-                examples.append(
+                parsed_examples.append(
                     {
                         "role": role,
                         "content": message,
                     }
                 )
 
-    messages = []
-    if instruction:
-        messages.append(Message(role="system", content=instruction))
-
-    # Simple loop
-    for ind, example in enumerate(examples):
+    examples: list[Message] = []
+    for ind, example in enumerate(parsed_examples):
         # Herit name from message role
         message = Message(
             **example,
@@ -204,9 +200,9 @@ def parse_chat_template(filename) -> list[Message]:
             message.function_call_id = "example_" + str(ind)
         if message.role == "function":
             message.function_call_id = "example_" + str(ind - 1)
-        messages.append(message)
+        examples.append(message)
 
-    return messages
+    return instruction, examples
 
 
 def inspect_schema(f):
