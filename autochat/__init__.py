@@ -260,6 +260,13 @@ class Autochat:
         import openai
 
         messages = self.prepare_messages(transform_function=Message.to_openai_dict)
+        # Add instruction as the first message
+        if self.instruction:
+            instruction_message = Message(
+                role="system",
+                content=self.instruction,
+            )
+            messages = [instruction_message] + messages
 
         try:
             if self.functions_schema:
@@ -332,18 +339,8 @@ class Autochat:
             transform_list_function=add_empty_function_result,
         )
 
-        # Add cache control to the last message
-        if (
-            messages
-            and isinstance(messages[-1]["content"], list)
-            and len(messages[-1]["content"]) > 1
-        ):
-            messages[-1]["content"][-1]["cache_control"] = {"type": "ephemeral"}
-
-        # Hacky way to handle system message
-        if self.examples and self.examples[0].role == "system":
-            system = messages[0]["content"]
-            messages = messages[1:]
+        if self.instruction:
+            system = self.instruction
         else:
             system = None
 
@@ -393,6 +390,41 @@ class Autochat:
         for tool in tools:
             if not tool["description"]:
                 tool["description"] = "No description provided"
+
+        # === Add cache_controls ===
+        # Messages: Find the last message with an index multiple of 10
+        last_message_index = next(
+            (i for i in reversed(range(len(messages))) if i % 10 == 0),
+            None,
+        )
+
+        if last_message_index is not None:
+            if isinstance(messages[last_message_index]["content"], list):
+                messages[last_message_index]["content"][-1]["cache_control"] = {
+                    "type": "ephemeral"
+                }
+            elif isinstance(messages[last_message_index]["content"], str):
+                messages[last_message_index]["content"] = [
+                    {
+                        "type": "text",
+                        "text": messages[last_message_index]["content"],
+                        "cache_control": {"type": "ephemeral"},
+                    }
+                ]
+        # Tools: Add cache_control to the last tool function
+        tools[-1]["cache_control"] = {"type": "ephemeral"}
+
+        # System: add cache_control to the system message
+        if system is not None:
+            system = [
+                {
+                    "type": "text",
+                    "text": system,
+                    "cache_control": {"type": "ephemeral"},
+                }
+            ]
+
+        # === End of cache_control ===
 
         kwargs = {}
         if system is not None:
