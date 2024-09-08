@@ -1,6 +1,10 @@
 import json
 import typing
+import base64
+from io import BytesIO
 from typing import Literal
+
+from PIL import Image as PILImage
 
 
 class FunctionCallParsingError(Exception):
@@ -9,6 +13,24 @@ class FunctionCallParsingError(Exception):
 
     def __str__(self):
         return f"Invalid function_call: {self.obj.function_call}"
+
+
+class Image:
+    def __init__(self, image: PILImage.Image):
+        self.image = image
+
+    def resize(self, size: tuple[int, int]):
+        self.image = self.image.resize(size)
+
+    def to_base64(self):
+        buffered = BytesIO()
+        self.image.save(buffered, format="PNG")
+        img_str = base64.b64encode(buffered.getvalue()).decode()
+        return img_str
+
+    @property
+    def format(self):
+        return "image/" + self.image.format.lower()
 
 
 class Message:
@@ -20,6 +42,7 @@ class Message:
         function_call: typing.Optional[dict] = None,
         id: typing.Optional[int] = None,
         function_call_id: typing.Optional[str] = None,
+        image: typing.Optional[Image] = None,
     ) -> None:
         self.role = role
         self.content = content
@@ -27,12 +50,29 @@ class Message:
         self.function_call = function_call
         self.id = id
         self.function_call_id = function_call_id
+        self.image = image
 
     def to_openai_dict(self) -> dict:
         res = {
             "role": self.role,
-            "content": self.content,
+            "content": [],
         }
+        if self.content:
+            res["content"].append(
+                {
+                    "type": "text",
+                    "text": self.content,
+                }
+            )
+        if self.image:
+            res["content"].append(
+                {
+                    "type": "image_url",
+                    "image_url": {
+                        "url": f"data:{self.image.format};base64,{self.image.to_base64()}"
+                    },
+                }
+            )
         if self.name:
             res["name"] = self.name
         if self.function_call:
@@ -43,7 +83,7 @@ class Message:
                 }
             else:
                 # If user is triggering a function, we add the function call to the content
-                # since openai doesn't support functions for user messages
+                # since openai doesn't support functions from user messages
                 res["content"] = (
                     self.function_call["name"]
                     + ":"
@@ -52,16 +92,29 @@ class Message:
         return res
 
     def to_anthropic_dict(self) -> dict:
-        res = {"role": self.role if self.role in ["user", "assistant"] else "user"}
+        res = {
+            "role": self.role if self.role in ["user", "assistant"] else "user",
+            "content": [],
+        }
+
+        if self.role == "function":  # result of a function call
+            res["content"] = [
+                {
+                    "type": "tool_result",
+                    "tool_use_id": self.function_call_id,
+                    "content": self.content,
+                }
+            ]
+            return res
+
+        if self.content:
+            res["content"].append(
+                {
+                    "type": "text",
+                    "text": self.content,
+                }
+            )
         if self.function_call:
-            res["content"] = []
-            if self.content:
-                res["content"].append(
-                    {
-                        "type": "text",
-                        "text": self.content,
-                    }
-                )
             res["content"].append(
                 {
                     "type": "tool_use",
@@ -70,17 +123,17 @@ class Message:
                     "input": self.function_call["arguments"],
                 }
             )
-        elif self.role == "function":  # result of a function call
-            res["role"] = "user"
-            res["content"] = [
+        if self.image:
+            res["content"].append(
                 {
-                    "type": "tool_result",
-                    "tool_use_id": self.function_call_id,
-                    "content": self.content,
+                    "type": "image",
+                    "source": {
+                        "type": "base64",
+                        "media_type": self.image.format,
+                        "data": self.image.to_base64(),
+                    },
                 }
-            ]
-        else:
-            res["content"] = self.content
+            )
 
         return res
 
