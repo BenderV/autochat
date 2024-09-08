@@ -2,13 +2,13 @@ from setuptools import find_packages, setup
 
 setup(
     name="autochat",
-    version="0.3.0",
+    version="0.3.1",
     packages=find_packages(),
     install_requires=["tenacity==8.3.0"],
     extras_require={
-        "anthropic": ["anthropic==0.3.1"],
+        "anthropic": ["anthropic==0.34.2"],
         "openai": ["openai==1.26.0"],
-        "all": ["anthropic==0.3.1", "openai==1.26.0"],
+        "all": ["anthropic==0.34.2", "openai==1.26.0"],
     },
     author="Benjamin Derville",
     author_email="benderville@gmail.com",

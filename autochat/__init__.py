@@ -1,5 +1,6 @@
 import json
 import os
+import traceback
 import typing
 from enum import Enum
 
@@ -134,7 +135,7 @@ class Autochat:
     def prepare_messages(
         self,
         transform_function: typing.Callable,
-        transform_list_function: typing.Callable,
+        transform_list_function: typing.Callable = lambda x: x,
     ) -> list[dict]:
         """Prepare messages for API requests using a transformation function."""
         first_message = self.messages[0]
@@ -201,7 +202,7 @@ class Autochat:
                     return
                 # If function call failed, return the error message
                 # Flatten the error message
-                content = e.__repr__()
+                content = traceback.format_exc()
 
             yield response
 
@@ -412,7 +413,8 @@ class Autochat:
                     }
                 ]
         # Tools: Add cache_control to the last tool function
-        tools[-1]["cache_control"] = {"type": "ephemeral"}
+        if tools:
+            tools[-1]["cache_control"] = {"type": "ephemeral"}
 
         # System: add cache_control to the system message
         if system is not None:

@@ -107,6 +107,13 @@ export AUTOCHAT_MODEL="gpt-4-turbo"
 export OPENAI_API_KEY=<your-key>
 ```
 
+or with anthropic
+
+```bash
+export AUTOCHAT_MODEL="claude-3-opus"
+export ANTHROPIC_API_KEY=<your-key>
+```
+
 Use `AUTOCHAT_HOST` to use alternative provider (openai, anthropic, openpipe, llama_cpp, ...)
 
 ## Support
