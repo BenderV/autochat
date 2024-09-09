@@ -178,6 +178,10 @@ class TestParseFunction(unittest.TestCase):
         self.assertDictEqual(result, expected)
 
 
+def empty_function(test):  # No type hinting, no docstring
+    return "empty"
+
+
 def sums(a: int, b: int = 1):
     """Adds a + b"""
     return a + b
@@ -196,6 +200,22 @@ class TestInspectSchema(unittest.TestCase):
                 },
                 "required": ["a"],
                 "title": "Input for `sums`",
+                "type": "object",
+            },
+        }
+        self.assertEqual(result, expected)
+
+    def test_inspect_schema_empty(self):
+        result = inspect_schema(empty_function)
+        expected = {
+            "name": "empty_function",
+            "description": None,
+            "parameters": {
+                "properties": {
+                    "test": {"title": "Test"},
+                },
+                "required": ["test"],
+                "title": "Input for `empty_function`",
                 "type": "object",
             },
         }

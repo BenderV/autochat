@@ -4,7 +4,7 @@ setup(
     name="autochat",
     version="0.3.2",
     packages=find_packages(),
-    install_requires=["tenacity==8.3.0"],
+    install_requires=["tenacity==8.3.0", "pillow==10.4.0"],
     extras_require={
         "anthropic": ["anthropic==0.34.2"],
         "openai": ["openai==1.26.0"],

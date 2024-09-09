@@ -1,13 +1,12 @@
 import ast
 import csv
 import inspect
-import json
-import re
+from typing import Any
 import typing
 from inspect import Parameter
 from io import StringIO
 
-from pydantic import create_model
+from pydantic import BaseConfig, create_model
 
 from autochat.model import Message
 
@@ -205,10 +204,18 @@ def parse_chat_template(filename) -> list[Message]:
     return instruction, examples
 
 
+class AllowNonTypedParamsConfig(BaseConfig):
+    arbitrary_types_allowed = True
+
+
 def inspect_schema(f):
-    kw = {
-        n: (o.annotation, ... if o.default == Parameter.empty else o.default)
-        for n, o in inspect.signature(f).parameters.items()
-    }
-    s = create_model(f"Input for `{f.__name__}`", **kw).schema()
+    kw = {}
+    for n, o in inspect.signature(f).parameters.items():
+        annotation = o.annotation if o.annotation != Parameter.empty else Any
+        default = ... if o.default == Parameter.empty else o.default
+        kw[n] = (annotation, default)
+
+    s = create_model(
+        f"Input for `{f.__name__}`", __config__=AllowNonTypedParamsConfig, **kw
+    ).schema()
     return dict(name=f.__name__, description=f.__doc__, parameters=s)
