@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="autochat",
-    version="0.3.2",
+    version="0.3.3",
     packages=find_packages(),
     install_requires=["tenacity==8.3.0", "pillow==10.4.0"],
     extras_require={

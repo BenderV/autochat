@@ -366,12 +366,19 @@ class Autochat:
             merged_messages = []
             for message in messages:
                 if merged_messages and merged_messages[-1]["role"] == message["role"]:
-                    merged_messages[-1]["content"].append(
-                        {
-                            "type": "text",
-                            "text": message["content"],
-                        }
-                    )
+                    if isinstance(merged_messages[-1]["content"], str):
+                        merged_messages[-1]["content"].append(
+                            {
+                                "type": "text",
+                                "text": merged_messages[-1]["content"],
+                            }
+                        )
+                    elif isinstance(merged_messages[-1]["content"], list):
+                        merged_messages[-1]["content"].extend(message["content"])
+                    else:
+                        raise ValueError(
+                            f"Invalid content type: {type(merged_messages[-1]['content'])}"
+                        )
                 else:
                     merged_messages.append(message)
             return merged_messages
@@ -400,7 +407,9 @@ class Autochat:
         )
 
         if last_message_index is not None:
-            if isinstance(messages[last_message_index]["content"], list):
+            if isinstance(messages[last_message_index]["content"], list) and isinstance(
+                messages[last_message_index]["content"][-1], dict
+            ):
                 messages[last_message_index]["content"][-1]["cache_control"] = {
                     "type": "ephemeral"
                 }
