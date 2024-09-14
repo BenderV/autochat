@@ -24,6 +24,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e .[all]
       - name: Run tests
+        env:
+          OPENAI_API_KEY: test-key
         run: python -m unittest discover
 
   publish:
