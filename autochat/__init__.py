@@ -210,6 +210,12 @@ class Autochat:
 
             yield response
 
+            if isinstance(content, Message):
+                # We support if the function returns a Message class
+                message = content
+                yield message
+                continue
+
             if content is None:
                 # If function call returns None, we continue the conversation without adding a message
                 # message = None
@@ -243,10 +249,11 @@ class Autochat:
             elif isinstance(content, bytes):
                 # Detect if it's an image
                 try:
-                    image = Image(PILImage.open(io.BytesIO(content)))
+                    image = PILImage.open(io.BytesIO(content))
+                    content = None
                 except IOError:
                     # If it's not an image, return the original content
-                    pass
+                    raise ValueError("Not an image")
             else:
                 raise ValueError(f"Invalid content type: {type(content)}")
 
