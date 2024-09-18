@@ -17,16 +17,24 @@ class FunctionCallParsingError(Exception):
 
 class Image:
     def __init__(self, image: PILImage.Image):
+        if not isinstance(image, PILImage.Image):
+            raise TypeError("image must be an instance of PIL.Image.Image")
         self.image = image
 
     def resize(self, size: tuple[int, int]):
-        self.image = self.image.resize(size)
+        try:
+            self.image = self.image.resize(size)
+        except Exception as e:
+            raise ValueError(f"Failed to resize image: {e}")
 
     def to_base64(self):
-        buffered = BytesIO()
-        self.image.save(buffered, format="PNG")
-        img_str = base64.b64encode(buffered.getvalue()).decode()
-        return img_str
+        try:
+            buffered = BytesIO()
+            self.image.save(buffered, format=self.image.format)
+            img_str = base64.b64encode(buffered.getvalue()).decode()
+            return img_str
+        except Exception as e:
+            raise ValueError(f"Failed to convert image to base64: {e}")
 
     @property
     def format(self):
@@ -42,7 +50,7 @@ class Message:
         function_call: typing.Optional[dict] = None,
         id: typing.Optional[int] = None,
         function_call_id: typing.Optional[str] = None,
-        image: typing.Optional[Image] = None,
+        image: typing.Optional[PILImage.Image] = None,
     ) -> None:
         self.role = role
         self.content = content
@@ -50,7 +58,7 @@ class Message:
         self.function_call = function_call
         self.id = id
         self.function_call_id = function_call_id
-        self.image = image
+        self.image = Image(image) if image else None
 
     def to_openai_dict(self) -> dict:
         res = {
@@ -96,15 +104,28 @@ class Message:
             "role": self.role if self.role in ["user", "assistant"] else "user",
             "content": [],
         }
+        if self.role == "function":
+            if self.image:
+                content = [
+                    {
+                        "type": "image",
+                        "source": {
+                            "type": "base64",
+                            "media_type": self.image.format,
+                            "data": self.image.to_base64(),
+                        },
+                    }
+                ]
+            else:
+                content = self.content
 
-        if self.role == "function":  # result of a function call
-            res["content"] = [
+            res["content"].append(
                 {
                     "type": "tool_result",
                     "tool_use_id": self.function_call_id,
-                    "content": self.content,
+                    "content": content,
                 }
-            ]
+            )
             return res
 
         if self.content:

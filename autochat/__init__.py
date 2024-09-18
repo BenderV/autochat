@@ -11,8 +11,10 @@ from tenacity import (
     wait_random_exponential,
 )
 
-from autochat.model import Message
+from autochat.model import Message, Image
 from autochat.utils import csv_dumps, inspect_schema, parse_chat_template
+from PIL import Image as PILImage
+import io
 
 AUTOCHAT_HOST = os.getenv("AUTOCHAT_HOST")
 AUTOCHAT_MODEL = os.getenv("AUTOCHAT_MODEL")
@@ -187,6 +189,8 @@ class Autochat:
             function_name = response.function_call["name"]
             function_arguments = response.function_call["arguments"]
 
+            image = None
+            content = None
             try:
                 try:
                     content = self.functions[function_name](
@@ -205,6 +209,12 @@ class Autochat:
                 content = traceback.format_exc()
 
             yield response
+
+            if isinstance(content, Message):
+                # We support if the function returns a Message class
+                message = content
+                yield message
+                continue
 
             if content is None:
                 # If function call returns None, we continue the conversation without adding a message
@@ -234,6 +244,16 @@ class Autochat:
                         content[:OUTPUT_SIZE_LIMIT]
                         + f"\n... ({len(content)} characters)"
                     )
+            # Support bytes
+            # If it's an image; resize it
+            elif isinstance(content, bytes):
+                # Detect if it's an image
+                try:
+                    image = PILImage.open(io.BytesIO(content))
+                    content = None
+                except IOError:
+                    # If it's not an image, return the original content
+                    raise ValueError("Not an image")
             else:
                 raise ValueError(f"Invalid content type: {type(content)}")
 
@@ -242,6 +262,7 @@ class Autochat:
                 role="function",
                 content=content,
                 function_call_id=response.function_call_id,
+                image=image,
             )
             yield message
 
