@@ -288,7 +288,7 @@ class Autochat:
                 role="system",
                 content=self.instruction,
             )
-            messages = [instruction_message] + messages
+            messages = [instruction_message.to_openai_dict()] + messages
 
         try:
             if self.functions_schema:
