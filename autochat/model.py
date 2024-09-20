@@ -36,6 +36,18 @@ class Image:
         except Exception as e:
             raise ValueError(f"Failed to convert image to base64: {e}")
 
+    @classmethod
+    def from_bytes(cls, img_bytes: bytes):
+        return cls(PILImage.open(BytesIO(img_bytes)))
+
+    def to_bytes(self):
+        try:
+            buffered = BytesIO()
+            self.image.save(buffered, format=self.image.format)
+            return buffered.getvalue()
+        except Exception as e:
+            raise ValueError(f"Failed to convert image to bytes: {e}")
+
     @property
     def format(self):
         return "image/" + self.image.format.lower()
@@ -51,6 +63,7 @@ class Message:
         id: typing.Optional[int] = None,
         function_call_id: typing.Optional[str] = None,
         image: typing.Optional[PILImage.Image] = None,
+        data: typing.Optional[dict] = None,  # Used for function call output
     ) -> None:
         self.role = role
         self.content = content
@@ -59,6 +72,7 @@ class Message:
         self.id = id
         self.function_call_id = function_call_id
         self.image = Image(image) if image else None
+        self.data = data
 
     def to_openai_dict(self) -> dict:
         res = {
