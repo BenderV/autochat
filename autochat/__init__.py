@@ -72,6 +72,8 @@ class Autochat:
         self.max_interactions = max_interactions
         self.functions_schema = []
         self.functions = {}
+        # Give the hability to pause the conversation after a function call or response
+        self.should_pause_conversation = lambda function_call, function_response: False
 
         if self.provider == APIProvider.OPENAI:
             from openai import OpenAI
@@ -210,61 +212,65 @@ class Autochat:
 
             yield response
 
-            if isinstance(content, Message):
+            if not isinstance(content, Message):
+                if content is None:
+                    # If function call returns None, we continue the conversation without adding a message
+                    # message = None
+                    # continue
+                    content = None
+                elif isinstance(
+                    content, list
+                ):  # If data is list of dicts, dumps to CSV
+                    if not content:
+                        content = "[]"
+                    elif isinstance(content[0], dict):
+                        try:
+                            content = csv_dumps(content, OUTPUT_SIZE_LIMIT)
+                        except Exception as e:
+                            print(e)
+                    else:
+                        content = "\n".join(content)
+                elif isinstance(content, dict):
+                    content = json.dumps(content)
+                    if len(content) > OUTPUT_SIZE_LIMIT:
+                        content = (
+                            content[:OUTPUT_SIZE_LIMIT]
+                            + f"\n... ({len(content)} characters)"
+                        )
+                elif isinstance(content, str):
+                    if len(content) > OUTPUT_SIZE_LIMIT:
+                        content = (
+                            content[:OUTPUT_SIZE_LIMIT]
+                            + f"\n... ({len(content)} characters)"
+                        )
+                # Support bytes
+                # If it's an image; resize it
+                elif isinstance(content, bytes):
+                    # Detect if it's an image
+                    try:
+                        image = PILImage.open(io.BytesIO(content))
+                        content = None
+                    except IOError:
+                        # If it's not an image, return the original content
+                        raise ValueError("Not an image")
+                else:
+                    raise ValueError(f"Invalid content type: {type(content)}")
+
+                message = Message(
+                    name=function_name,
+                    role="function",
+                    content=content,
+                    function_call_id=response.function_call_id,
+                    image=image,
+                )
+            else:
                 # We support if the function returns a Message class
                 message = content
-                yield message
-                continue
 
-            if content is None:
-                # If function call returns None, we continue the conversation without adding a message
-                # message = None
-                # continue
-                content = None
-            elif isinstance(content, list):  # If data is list of dicts, dumps to CSV
-                if not content:
-                    content = "[]"
-                elif isinstance(content[0], dict):
-                    try:
-                        content = csv_dumps(content, OUTPUT_SIZE_LIMIT)
-                    except Exception as e:
-                        print(e)
-                else:
-                    content = "\n".join(content)
-            elif isinstance(content, dict):
-                content = json.dumps(content)
-                if len(content) > OUTPUT_SIZE_LIMIT:
-                    content = (
-                        content[:OUTPUT_SIZE_LIMIT]
-                        + f"\n... ({len(content)} characters)"
-                    )
-            elif isinstance(content, str):
-                if len(content) > OUTPUT_SIZE_LIMIT:
-                    content = (
-                        content[:OUTPUT_SIZE_LIMIT]
-                        + f"\n... ({len(content)} characters)"
-                    )
-            # Support bytes
-            # If it's an image; resize it
-            elif isinstance(content, bytes):
-                # Detect if it's an image
-                try:
-                    image = PILImage.open(io.BytesIO(content))
-                    content = None
-                except IOError:
-                    # If it's not an image, return the original content
-                    raise ValueError("Not an image")
-            else:
-                raise ValueError(f"Invalid content type: {type(content)}")
-
-            message = Message(
-                name=function_name,
-                role="function",
-                content=content,
-                function_call_id=response.function_call_id,
-                image=image,
-            )
             yield message
+
+            if self.should_pause_conversation(response, message):
+                return
 
     @retry(
         stop=stop_after_attempt(4),
