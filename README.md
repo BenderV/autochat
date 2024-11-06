@@ -1,6 +1,7 @@
 # AutoChat
 
-AutoChat is an assistant library, that supports OpenAI/Anthropic, to simplify the process of creating interactive agents.
+AutoChat is an assistant library, to make it easy to create interactive agents.
+It supports OpenAI/Anthropic and can run on top of any other LLM.
 
 - **Autochat Class**: Conversation wrapper to store instruction, context and messages histories.
 - **Message Class**: Message wrapper to handle format/parsing automatically.
@@ -17,6 +18,34 @@ pip install autochat
 
 Please note that this package requires Python 3.6 or later.
 
+## Function Calls
+
+The library supports function calls, handling the back-and-forth between the system and the assistant.
+
+```python
+from autochat import Autochat, Message
+import requests
+
+def search_top_result(query: str):
+    response = requests.get(f"https://google.com/search?q={query}")
+    return response.text
+
+classifierGPT = Autochat(instruction="You are a helpful assistant that can search the web for information")
+classifierGPT.add_function(search_top_result)
+
+text = "since when is the lastest iphone available?"
+for message in classifierGPT.run_conversation(text):
+    print(message.to_markdown())
+
+# > ## assistant
+# > search_top_result(query=next iphone release date)
+# > ## function
+# > (html content)
+# > ## assistant
+# > The latest iPhone models, iPhone 14, iPhone 14 Plus, iPhone 14 Pro, and iPhone 14 Pro Max, were released on September 16, 2022.
+
+```
+
 ## Simple Example
 
 ```python
@@ -26,37 +55,6 @@ Please note that this package requires Python 3.6 or later.
 # Message(role=assistant, content="Hi my name is Bob, hi my name is Bob!")
 > chat.ask('Can you tell me my name?')
 # Message(role=assistant, content="Your name is Bob, your name is Bob!")
-```
-
-## Function Calls Handling
-
-The library supports function calls, handling the back-and-forth between the system and the assistant.
-
-```python
-from autochat import Autochat, Message
-import json
-
-def label_item(category: str, from_response: Message):
-    # TODO: Implement function
-    raise NotImplementedError()
-
-with open("./examples/function_label.json") as f:
-    FUNCTION_LABEL_ITEM = json.load(f)
-
-classifierGPT = Autochat.from_template("./examples/classify_template.txt")
-classifierGPT.add_function(label_item, FUNCTION_LABEL_ITEM)
-
-text = "The new iPhone is out"
-for message in classifierGPT.run_conversation(text):
-    print(message.to_markdown())
-
-# > ## assistant
-# > It's about \"Technology\" since it's about a new iPhone.
-# > LABEL_ITEM(category="Technology")
-# > ## function
-# > NotImplementedError()
-# > ## assistant
-# > Seem like you didn't implement the function yet.
 ```
 
 ## Template System
