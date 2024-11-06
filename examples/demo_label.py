@@ -10,13 +10,8 @@ def label_item(category: str, from_response: Message):
     # TODO: Implement function
     raise NotImplementedError()
 
-
-with open("./function_label.json") as f:
-    FUNCTION_LABEL_ITEM = json.load(f)
-
-classifierGPT = Autochat.from_template("./classify_template.txt")
-
-classifierGPT.add_function(label_item, FUNCTION_LABEL_ITEM)
+classifierGPT = Autochat("you classify title")
+classifierGPT.add_function(label_item)
 
 text = "The new iPhone is out"
 for message in classifierGPT.run_conversation(text):
