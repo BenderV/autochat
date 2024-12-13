@@ -211,6 +211,9 @@ class AllowNonTypedParamsConfig(BaseConfig):
 def inspect_schema(f):
     kw = {}
     for n, o in inspect.signature(f).parameters.items():
+        # Skip 'self' parameter
+        if n == "self":
+            continue
         annotation = o.annotation if o.annotation != Parameter.empty else Any
         default = ... if o.default == Parameter.empty else o.default
         kw[n] = (annotation, default)

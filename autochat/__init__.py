@@ -72,6 +72,7 @@ class Autochat:
         self.max_interactions = max_interactions
         self.functions_schema = []
         self.functions = {}
+        self.tools = {}
         # Give the hability to pause the conversation after a function call or response
         self.should_pause_conversation = lambda function_call, function_response: False
 
@@ -136,6 +137,45 @@ class Autochat:
         self.functions_schema.append(function_schema)
         self.functions[function_schema["name"]] = function
 
+    def add_tool(self, tool: typing.Union[type, object], tool_id: str = None) -> str:
+        """Add a tool class or instance to the chat instance and return the tool id"""
+        if isinstance(tool, type):
+            # If a class is provided, instantiate it
+            tool_instance = tool()
+            tool_class = tool
+        else:
+            # If an instance is provided, use it directly
+            tool_instance = tool
+            tool_class = tool.__class__
+
+        if not tool_id:
+            tool_id = (
+                "tool-" + str(id(tool_instance))
+                if isinstance(tool, object)
+                else tool_class.__name__
+            )
+
+        self.tools[tool_id] = tool_instance
+        # Add all methods from the tool class to the functions schema
+        for method_name, method in tool_class.__dict__.items():
+            if not method_name.startswith("_"):  # Skip private methods
+                if isinstance(method, classmethod):
+                    method = method.__get__(None, tool_class)
+                schema = inspect_schema(method)
+                schema["name"] = f"{tool_id}__{method_name}"  # Prefix with class name
+                self.functions_schema.append(schema)
+                self.functions[schema["name"]] = getattr(tool_instance, method_name)
+        return tool_id
+
+    def remove_tool(self, tool_id: str):
+        del self.tools[tool_id]
+        self.functions_schema = [
+            schema for schema in self.functions_schema if schema["name"] != tool_id
+        ]
+        self.functions = {
+            name: func for name, func in self.functions.items() if name != tool_id
+        }
+
     def prepare_messages(
         self,
         transform_function: typing.Callable,
@@ -195,13 +235,27 @@ class Autochat:
             content = None
             try:
                 try:
-                    content = self.functions[function_name](
-                        **function_arguments,
-                        from_response=response,
-                    )
+                    if function_name.startswith("tool-"):
+                        tool_id, method_name = function_name.split("__")
+                        tool = self.tools[tool_id]
+                        content = tool.__getattribute__(method_name)(
+                            **function_arguments, from_response=response
+                        )
+                    else:
+                        content = self.functions[function_name](
+                            **function_arguments,
+                            from_response=response,
+                        )
                 except TypeError:
                     # If the function does not accept 'from_response', call it without that argument
-                    content = self.functions[function_name](**function_arguments)
+                    if function_name.startswith("tool-"):
+                        tool_id, method_name = function_name.split("__")
+                        tool = self.tools[tool_id]
+                        content = tool.__getattribute__(method_name)(
+                            **function_arguments
+                        )
+                    else:
+                        content = self.functions[function_name](**function_arguments)
             except Exception as e:
                 if isinstance(e, StopLoopException):
                     yield response
@@ -253,6 +307,16 @@ class Autochat:
                     except IOError:
                         # If it's not an image, return the original content
                         raise ValueError("Not an image")
+                elif (
+                    isinstance(content, int)
+                    or isinstance(content, float)
+                    or isinstance(content, bool)
+                ):
+                    content = str(content)
+                # if content is a class instance, we add the object as a tool
+                elif isinstance(content, object):
+                    tool_id = self.add_tool(content)
+                    content = f"Added tool: {tool_id}"
                 else:
                     raise ValueError(f"Invalid content type: {type(content)}")
 
