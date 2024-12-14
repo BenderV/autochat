@@ -6,9 +6,9 @@ setup(
     packages=find_packages(),
     install_requires=["tenacity==8.3.0", "pillow==10.4.0"],
     extras_require={
-        "anthropic": ["anthropic==0.34.2"],
-        "openai": ["openai==1.26.0"],
-        "all": ["anthropic==0.34.2", "openai==1.26.0"],
+        "anthropic": ["anthropic==0.37.1"],
+        "openai": ["openai==1.52.2"],
+        "all": ["anthropic==0.37.1", "openai==1.52.2"],
     },
     author="Benjamin Derville",
     author_email="benderville@gmail.com",
