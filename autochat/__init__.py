@@ -1,3 +1,7 @@
+"""AutoChat package."""
+
+__version__ = "0.3.8"
+
 import json
 import os
 import traceback

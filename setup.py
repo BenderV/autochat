@@ -1,8 +1,10 @@
 from setuptools import find_packages, setup
 
+version = "0.3.8"  # This will be updated by semantic-release
+
 setup(
     name="autochat",
-    version="0.3.8",
+    version=version,
     packages=find_packages(),
     install_requires=["tenacity==8.3.0", "pillow==10.4.0", "httpx==0.27.2"],
     extras_require={
