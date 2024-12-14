@@ -1,17 +1,12 @@
-[build-system]
-requires = ["build", "wheel", "python-semantic-release>=8.3.0"]
-build-backend = "build.build_meta"
-
 [tool.semantic_release]
 version_variable = [
     "autochat/__init__.py:__version__",
     "setup.py:version"
 ]
-
 branch = "master"
 upload_to_pypi = false
 upload_to_release = true
-build_command = "python -m build"
+build_command = "pip install build && python -m build"
 changelog_file = "CHANGELOG.md"
 dist_path = "dist/"
 commit_message = "chore: Bump version to {version}"
