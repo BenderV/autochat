@@ -1,6 +1,6 @@
 # AutoChat
 
-AutoChat is an assistant library, to make it easy to create interactive agents.
+AutoChat is an assistant library to make it easy to create smart and interactive agents.
 It supports OpenAI/Anthropic and can run on top of any other LLM.
 
 - **Autochat Class**: Conversation wrapper to store instruction, context and messages histories.
