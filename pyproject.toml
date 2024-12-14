@@ -2,8 +2,10 @@
 version_variable = "setup.py:version"
 branch = "main"
 changelog_file = "CHANGELOG.md"
-build_command = "python -m build"
+build_command = "pip install build && python -m build"
 dist_path = "dist/"
 upload_to_pypi = false
 upload_to_release = true
 commit_message = "chore: Bump version to {version}"
+version_source = "commit"
+
