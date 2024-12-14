@@ -1,6 +1,22 @@
 # CHANGELOG
 
 
+## v0.0.1 (2024-12-14)
+
+### Bug Fixes
+
+- **readme**: Small fix for semantic release
+  ([`374b2f2`](https://github.com/BenderV/autochat/commit/374b2f2d3eeeb03a9165c17694057b09f9f6c709))
+
+### Chores
+
+- **github-action**: Try to make semantic release work
+  ([`b1d581d`](https://github.com/BenderV/autochat/commit/b1d581da63c0c3fcba8ebb77d01e7ddbaaf52f6c))
+
+- **github-action**: Try to make semantic release work
+  ([`9fa9b4a`](https://github.com/BenderV/autochat/commit/9fa9b4aade978d5124bc8b2ef812d8761b644ac7))
+
+
 ## v0.0.0 (2024-12-14)
 
 ### Chores
