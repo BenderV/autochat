@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.3.13 (2024-12-15)
+
+### Bug Fixes
+
+- **worflow**: Try to fix workflow
+  ([`075b54c`](https://github.com/BenderV/autochat/commit/075b54cdb8c3a7b45016bbc5297e8f98206d0b5a))
+
+
 ## v0.3.12 (2024-12-15)
 
 ### Bug Fixes
