@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.3.12 (2024-12-15)
+
+### Bug Fixes
+
+- **worflow**: Use personal token instead of github_token
+  ([`82d1ebe`](https://github.com/BenderV/autochat/commit/82d1ebe692e642478e84a3215be97f55716f949c))
+
+
 ## v0.3.11 (2024-12-15)
 
 ### Bug Fixes
