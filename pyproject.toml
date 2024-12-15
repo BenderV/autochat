@@ -1,6 +1,6 @@
 [tool.semantic_release]
 version_source = "commit"
-version_variable = [
+version_variables = [
     "autochat/__init__.py:__version__",
     "setup.py:version"
 ]
