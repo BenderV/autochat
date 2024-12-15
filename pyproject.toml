@@ -1,4 +1,5 @@
 [tool.semantic_release]
+version_source = "commit"
 version_variable = [
     "autochat/__init__.py:__version__",
     "setup.py:version"
@@ -10,4 +11,3 @@ build_command = "pip install build && python -m build"
 changelog_file = "CHANGELOG.md"
 dist_path = "dist/"
 commit_message = "chore: Bump version to {version}"
-version_source = "commit"
