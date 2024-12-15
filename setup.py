@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-version = "0.3.10"  # This will be updated by semantic-release
+version = "0.3.11"  # This will be updated by semantic-release
 
 setup(
     name="autochat",

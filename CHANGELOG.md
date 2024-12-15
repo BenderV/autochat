@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.3.11 (2024-12-15)
+
+### Bug Fixes
+
+- **worflow**: Have two step instead of one
+  ([`2fba69c`](https://github.com/BenderV/autochat/commit/2fba69c7eb72c3619125ff539b50f3fc329df261))
+
+
 ## v0.3.10 (2024-12-15)
 
 ### Bug Fixes
