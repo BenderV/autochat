@@ -1,5 +1,9 @@
 # AutoChat
 
+[![image](https://img.shields.io/pypi/v/autochat.svg)](https://pypi.python.org/pypi/autochat)
+[![image](https://img.shields.io/pypi/l/autochat.svg)](https://github.com/BenderV/autochat/blob/master/LICENSE)
+[![Actions status](https://github.com/astral-sh/ruff/workflows/CI/badge.svg)](https://github.com/astral-sh/ruff/actions)
+
 AutoChat is an assistant library to make it easy to create smart and interactive agents.
 It supports OpenAI/Anthropic and can run on top of any other LLM.
 
