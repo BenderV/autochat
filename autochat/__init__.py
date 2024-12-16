@@ -15,7 +15,7 @@ from tenacity import (
     wait_random_exponential,
 )
 
-from autochat.model import Message, Image
+from autochat.model import Message
 from autochat.utils import csv_dumps, inspect_schema, parse_chat_template
 from PIL import Image as PILImage
 import io
