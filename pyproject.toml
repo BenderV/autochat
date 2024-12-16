@@ -38,7 +38,7 @@ upload_to_release = true
 build_command = "pip install build && python -m build"
 changelog_file = "CHANGELOG.md"
 dist_path = "dist/"
-commit_message = "chore: Bump version to {version}"
+commit_message = "chore(release): bump version to {version}"
 
 [dependency-groups]
 dev = [

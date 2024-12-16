@@ -4,13 +4,11 @@
 [![image](https://img.shields.io/pypi/l/autochat.svg)](https://github.com/BenderV/autochat/blob/master/LICENSE)
 [![Actions status](https://github.com/astral-sh/ruff/workflows/CI/badge.svg)](https://github.com/astral-sh/ruff/actions)
 
-AutoChat is an assistant library to make it easy to create smart and interactive agents.
-It supports OpenAI/Anthropic and can run on top of any other LLM.
+The LLM library for the Agent era, on top of OpenAI/Anthropic.
 
-- **Autochat Class**: Conversation wrapper to store instruction, context and messages histories.
-- **Message Class**: Message wrapper to handle format/parsing automatically.
-- **Function Calls**: Capability to handle function calls within the conversation, allowing complex interactions and responses.
-- **Template System**: A straightforward text-based template system for defining the behavior of the chatbot, making it easy to customize its responses and actions.
+Add function and tool as easy as ... adding a python function.
+Give instructions to the assistant, and add examples.
+Let the assistant do the work.
 
 ## Installation
 
@@ -22,9 +20,9 @@ pip install autochat
 
 Please note that this package requires Python 3.6 or later.
 
-## Function Calls
+## Function Call (as python function)
 
-The library supports function calls, handling the back-and-forth between the system and the assistant.
+The library supports function call, handling the back-and-forth between the system and the assistant.
 
 ```python
 from autochat import Autochat, Message
