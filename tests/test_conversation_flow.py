@@ -1,8 +1,6 @@
 import pytest
 from unittest.mock import patch, MagicMock
-from autochat import Autochat, Message, APIProvider, Image
-from PIL import Image as PILImage
-import io
+from autochat import Autochat, APIProvider
 
 
 @pytest.fixture

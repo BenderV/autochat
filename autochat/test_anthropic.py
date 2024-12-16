@@ -1,9 +1,6 @@
-import json
 import unittest
 from unittest.mock import MagicMock, patch
 
-from anthropic.types import ContentBlock
-from anthropic.types import Message as AnthropicMessage
 
 from autochat import APIProvider, Autochat, Message
 
@@ -55,9 +52,7 @@ class TestAnthropic(unittest.TestCase):
             content="test",
         )
 
-        with patch.object(
-            chat.client.messages, "create", return_value=return_value
-        ) as mock_call:
+        with patch.object(chat.client.messages, "create", return_value=return_value):
             chat.fetch_anthropic()
             self.mock_anthropic_client.messages.create.assert_called_once()
             call_args = self.mock_anthropic_client.messages.create.call_args
