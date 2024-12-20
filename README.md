@@ -56,6 +56,8 @@ def search_top_result(query: str):
     response = requests.get(f"https://google.com/search?q={query}")
     return response.text
 
+chatGPT = Autochat()
+chatGPT.add_function(search_top_result)
 text = "since when is the lastest iphone available?"
 for message in chatGPT.run_conversation(text):
     print(message.to_markdown())
