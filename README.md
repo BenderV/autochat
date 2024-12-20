@@ -1,24 +1,73 @@
-# AutoChat
+# Autochat
 
 [![image](https://img.shields.io/pypi/v/autochat.svg)](https://pypi.python.org/pypi/autochat)
-[![image](https://img.shields.io/pypi/l/autochat.svg)](https://github.com/BenderV/autochat/blob/master/LICENSE)
-[![Actions status](https://github.com/astral-sh/ruff/workflows/CI/badge.svg)](https://github.com/astral-sh/ruff/actions)
+[![image](https://img.shields.io/github/license/BenderV/autochat)](https://github.com/BenderV/autochat/blob/master/LICENSE)
+[![Actions status](https://github.com/BenderV/autochat/actions/workflows/test.yml/badge.svg)](https://github.com/BenderV/autochat/actions)
 
-The LLM library for the Agent era, on top of OpenAI/Anthropic.
+A lightweight Python library to build AI agents with LLMs.
 
-Add function and tool as easy as ... adding a python function.
-Give instructions to the assistant, and add examples.
-Let the assistant do the work.
+![image](https://www-cdn.anthropic.com/images/4zrzovbb/website/58d9f10c985c4eb5d53798dea315f7bb5ab6249e-2401x1000.png)
+
+## Key Features
+
+- 🤝 Support for multiple LLM providers (OpenAI and Anthropic)
+- 🐍 Transform python function or class into a tool
+- 🔁 Run conversation as a generator.
+- ✨ And more features including:
+  - Simple template system
+  - Easy function and tool integration
+  - Flexible instruction and example management
+
+## Quick Start
+
+### Initialize with OpenAI (default)
+
+```python
+chat = Autochat(instruction="You are a helpful assistant")
+```
+
+### Simple conversation
+
+```python
+response = chat.ask("What is the capital of France?")
+print(response.content)
+```
+
+### Using Anthropic's Claude
+
+```python
+chat = Autochat(provider="anthropic")
+response = chat.ask("Explain quantum computing in simple terms")
+print(response.content)
+```
+
+### Run conversation as a generator
+
+```python
+for message in chat.run_conversation("Explain quantum computing in simple terms"):
+    print(message.to_markdown())
+```
+
+### Add a function call as python function
+
+```python
+def search_top_result(query: str):
+    import requests
+    response = requests.get(f"https://google.com/search?q={query}")
+    return response.text
+
+text = "since when is the lastest iphone available?"
+for message in chatGPT.run_conversation(text):
+    print(message.to_markdown())
+```
 
 ## Installation
 
 To install the package, you can use pip:
 
 ```bash
-pip install autochat
+pip install autochat[all]
 ```
-
-Please note that this package requires Python 3.6 or later.
 
 ## Function Call (as python function)
 
@@ -46,17 +95,6 @@ for message in classifierGPT.run_conversation(text):
 # > ## assistant
 # > The latest iPhone models, iPhone 14, iPhone 14 Plus, iPhone 14 Pro, and iPhone 14 Pro Max, were released on September 16, 2022.
 
-```
-
-## Simple Example
-
-```python
-> from autochat import Autochat
-> chat = Autochat(instruction="You are a parot")
-> chat.ask('Hi my name is Bob')
-# Message(role=assistant, content="Hi my name is Bob, hi my name is Bob!")
-> chat.ask('Can you tell me my name?')
-# Message(role=assistant, content="Your name is Bob, your name is Bob!")
 ```
 
 ## Template System
@@ -87,16 +125,6 @@ parrotGPT = Autochat.from_template("./parrot_template.txt")
 ```
 
 The template system also supports function calls. Check out the [examples/demo_label.py](examples/demo_label.py) for a complete example.
-
-## Use different API providers (only anthropic and openai are supported for now)
-
-Default provider is openai.
-
-Anthropic:
-
-```python
-chat = Autochat(provider="anthropic")
-```
 
 ## Environment Variables
 
