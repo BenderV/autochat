@@ -61,6 +61,30 @@ for message in chatGPT.run_conversation(text):
     print(message.to_markdown())
 ```
 
+### Add a Class as a tool
+
+```python
+from autochat import Autochat
+
+class Calculator:
+    def add(self, a: int, b: int) -> int:
+        """Add two numbers"""
+        return a + b
+
+    def multiply(self, a: int, b: int) -> int:
+        """Multiply two numbers"""
+        return a * b
+
+calculator = Calculator()
+
+chat = Autochat()
+chat.add_tool(calculator)
+for message in chat.run_conversation(
+    "What make 343354 * 13243343214"
+):
+    print(message)
+```
+
 ## Installation
 
 To install the package, you can use pip:
