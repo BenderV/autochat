@@ -190,15 +190,18 @@ def parse_chat_template(filename) -> list[Message]:
     examples: list[Message] = []
     for ind, example in enumerate(parsed_examples):
         # Herit name from message role
+        function_call_id = None
+        if "function_call" in example:
+            function_call_id = "example_" + str(ind)
+        if example["role"] == "function":
+            function_call_id = "example_" + str(ind - 1)
+
         message = Message(
             **example,
             name="example_" + example["role"],
             id="example_" + str(ind),
+            function_call_id=function_call_id,
         )
-        if message.function_call:
-            message.function_call_id = "example_" + str(ind)
-        if message.role == "function":
-            message.function_call_id = "example_" + str(ind - 1)
         examples.append(message)
 
     return instruction, examples
