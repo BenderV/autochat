@@ -15,7 +15,7 @@ from tenacity import (
     wait_random_exponential,
 )
 
-from autochat.model import Message
+from autochat.model import Message, MessagePart
 from autochat.utils import csv_dumps, inspect_schema, parse_chat_template
 from PIL import Image as PILImage
 import io
@@ -189,7 +189,15 @@ class Autochat:
         first_message = self.messages[0]
         if self.context:
             # Add context to the first message
-            first_message.content = self.context + "\n" + first_message.content
+            if isinstance(first_message.content, str):
+                first_message.parts[0].content = (
+                    self.context + "\n" + first_message.parts[0].content
+                )
+            elif isinstance(first_message.content, list):
+                first_message.content = [
+                    MessagePart(type="text", content=self.context),
+                    *first_message.content,
+                ]
         messages = self.examples + [first_message] + self.messages[1:]
         transform_list_function(messages)
         return [transform_function(m) for m in messages]
@@ -214,6 +222,7 @@ class Autochat:
     def run_conversation(
         self, question: str = None
     ) -> typing.Generator[Message, None, None]:
+        # If there's an initial question, emit it:
         if question:
             message = Message(
                 role="user",
@@ -224,26 +233,37 @@ class Autochat:
             message = None
 
         for _ in range(self.max_interactions):
-            # TODO: Check if the user has stopped the query
+            # TODO: Check if the user has stopped the conversation
+
+            # Ask the LLM with the current message (if any)
             response = self.ask(message)
 
-            if not response.function_call:
-                # We stop the conversation if the response is not a function call
+            # TODO: Add support for multiple function calls
+            # Locate a function_call part in the assistant's response
+            function_call_part = next(
+                (p for p in response.parts if p.type == "function_call"), None
+            )
+            if not function_call_part:
+                # If there's no function call part, it's presumably the final answer
                 yield response
                 return
 
-            function_name = response.function_call["name"]
-            function_arguments = response.function_call["arguments"]
+            # Extract name and arguments from the function_call part
+            function_name = function_call_part.function_call["name"]
+            function_arguments = function_call_part.function_call["arguments"]
 
             image = None
             content = None
+
+            # Attempt to call the function/tool
             try:
                 try:
                     if function_name.startswith("tool-"):
                         tool_id, method_name = function_name.split("__")
                         tool = self.tools[tool_id]
                         content = tool.__getattribute__(method_name)(
-                            **function_arguments, from_response=response
+                            **function_arguments,
+                            from_response=response,
                         )
                     else:
                         content = self.functions[function_name](
@@ -251,7 +271,7 @@ class Autochat:
                             from_response=response,
                         )
                 except TypeError:
-                    # If the function does not accept 'from_response', call it without that argument
+                    # If the function does not accept `from_response`, call it without that argument
                     if function_name.startswith("tool-"):
                         tool_id, method_name = function_name.split("__")
                         tool = self.tools[tool_id]
@@ -262,31 +282,27 @@ class Autochat:
                         content = self.functions[function_name](**function_arguments)
             except Exception as e:
                 if isinstance(e, StopLoopException):
+                    # If the function triggered a loop stop, we stop the conversation
                     yield response
                     return
-                # If function call failed, return the error message
-                # Flatten the error message
-                content = traceback.format_exc()
+                # If the function call failed generically, we continue the conversation with the error message
+                content = traceback.format_exc()  # Flatten the error message
 
+            # Yield the assistant message that contained the function call
             yield response
 
+            # We format the function_call response to be used as a next message
             if not isinstance(content, Message):
                 if content is None:
-                    # If function call returns None, we continue the conversation without adding a message
-                    # message = None
-                    # continue
+                    # If no result, continue the loop with no additional message
                     content = None
-                elif isinstance(
-                    content, list
-                ):  # If data is list of dicts, dumps to CSV
+                elif isinstance(content, list):
+                    # If data is list of dicts, dumps to CSV
                     if not content:
                         content = "[]"
                     elif isinstance(content[0], dict):
-                        try:
-                            content = csv_dumps(content, OUTPUT_SIZE_LIMIT)
-                        except Exception as e:
-                            print(e)
-                    else:
+                        content = csv_dumps(content, OUTPUT_SIZE_LIMIT)
+                    else:  # TODO: Add support for other types of list
                         content = "\n".join(content)
                 elif isinstance(content, dict):
                     content = json.dumps(content)
@@ -301,42 +317,39 @@ class Autochat:
                             content[:OUTPUT_SIZE_LIMIT]
                             + f"\n... ({len(content)} characters)"
                         )
-                # Support bytes
-                # If it's an image; resize it
                 elif isinstance(content, bytes):
                     # Detect if it's an image
                     try:
                         image = PILImage.open(io.BytesIO(content))
                         content = None
                     except IOError:
-                        # If it's not an image, return the original content
-                        raise ValueError("Not an image")
-                elif (
-                    isinstance(content, int)
-                    or isinstance(content, float)
-                    or isinstance(content, bool)
-                ):
+                        # Not an image
+                        raise ValueError("Returned bytes is not a valid image.")
+                elif isinstance(content, (int, float, bool)):
                     content = str(content)
-                # if content is a class instance, we add the object as a tool
                 elif isinstance(content, object):
+                    # If the function return an object, we add it as a tool
+                    # NOTE: Maybe we shouldn't, and rely on a clearer signal / object type ?
                     tool_id = self.add_tool(content)
                     content = f"Added tool: {tool_id}"
                 else:
                     raise ValueError(f"Invalid content type: {type(content)}")
 
+                # Build a function response message
                 message = Message(
                     name=function_name,
                     role="function",
                     content=content,
-                    function_call_id=response.function_call_id,
                     image=image,
+                    function_call_id=function_call_part.function_call_id,
                 )
             else:
-                # We support if the function returns a Message class
+                # If the function returned a new Message, that becomes the next message
                 message = content
 
             yield message
 
+            # If user code wants to pause:
             if self.should_pause_conversation(response, message):
                 return
 
@@ -348,6 +361,9 @@ class Autochat:
             retry_if_not_exception_type(ContextLengthExceededError)
             & retry_if_not_exception_type(InvalidRequestError)
             & retry_if_not_exception_type(InsufficientQuotaError)
+            & retry_if_not_exception_type(
+                AttributeError
+            )  # TODO: should only retry if the error is from the api
         ),
         # After 5 attempts, we throw the error
         reraise=True,
@@ -404,15 +420,25 @@ class Autochat:
             retry_if_not_exception_type(ContextLengthExceededError)
             & retry_if_not_exception_type(InvalidRequestError)
             & retry_if_not_exception_type(InsufficientQuotaError)
+            & retry_if_not_exception_type(
+                TypeError
+            )  # TODO: should only retry if the error is from the api
         ),
         # After 5 attempts, we throw the error
         reraise=True,
     )
     def fetch_anthropic(self):
         def add_empty_function_result(messages):
-            # Anthropic fix for empty function call result
-            # Iterate on messages and check if the last message is a function call, and the following is a user text
-            # If so, we have to add an empty result of the function call before the user text
+            """
+            Ajustement Anthropic pour fusionner ou insérer la « function_result » :
+
+            - Premier cas : message `role="function"` suivi d’un `role="user"`.
+            On transforme ce message 'function' en un part de type 'tool_result'
+            inséré au début du message utilisateur suivant.
+
+            - Second cas (inchangé) : message `role="assistant"` avec un `function_call`,
+            suivi d’un message non-`function`. On insère un message vide `role="function"`.
+            """
             for i in range(len(messages) - 1, 0, -1):
                 if (
                     messages[i - 1].role == "assistant"

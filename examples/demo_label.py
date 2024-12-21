@@ -1,7 +1,7 @@
-from autochat import Autochat, Message
+from autochat import Autochat
 
 
-def label_item(category: str, from_response: Message):
+def label_item(category: str):
     # TODO: Implement function
     raise NotImplementedError()
 

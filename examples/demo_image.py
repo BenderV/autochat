@@ -1,9 +1,11 @@
+from autochat import Autochat, Message
+
 from PIL import Image
 import sys
+import os
 import argparse
 
 sys.path.append("..")
-from autochat import Autochat, Message
 
 parser = argparse.ArgumentParser(description="Describe an image using AI")
 parser.add_argument(
@@ -16,7 +18,8 @@ args = parser.parse_args()
 
 ai = Autochat(provider=args.provider)
 
-image = Image.open("./image.jpg")
+current_dir = os.path.dirname(os.path.abspath(__file__))
+image = Image.open(os.path.join(current_dir, "image.jpg"))
 message = Message(role="user", content="describe the image", image=image)
 response = ai.ask(message)
 print(response)
