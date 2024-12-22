@@ -238,6 +238,23 @@ class Message:
 
         return res
 
+    def to_openai_hack(self) -> dict:
+        """o1 only supports text-based instructions for function usage"""
+        res = {
+            "role": "user" if self.role == "function" else self.role,
+            "content": "",
+        }
+
+        for part in self.parts:
+            if part.type == "function_call":
+                res["content"] += f"CALLING FUNCTION: {part.function_call['name']}\n"
+                res["content"] += f"{json.dumps(part.function_call['arguments'])}\n"
+            else:
+                res["content"] += part.to_openai_dict()["content"]
+            res["content"] += "\n"
+
+        return res
+
     def to_anthropic_dict(self) -> dict:
         res = {
             "role": self.role if self.role in ["user", "assistant"] else "user",
@@ -270,6 +287,27 @@ class Message:
 
         obj = cls(role=role, content=content, function_call=function_call_dict, id=id)
         return obj
+
+    @classmethod
+    def from_openai_hack(cls, **kwargs):
+        from autochat.utils import parse_function_call_from_text
+
+        role = kwargs.get("role")
+        content = kwargs.get("content")
+        function_name, function_args = parse_function_call_from_text(content)
+        function_call = None
+        if function_name:
+            function_call = {
+                "name": function_name,
+                "arguments": function_args,
+            }
+            # Shortcut
+            content = None
+        print("role", role)
+        print("content", content)
+        print("function_call", function_call)
+        print("id", id)
+        return cls(role=role, content=content, function_call=function_call, id=id)
 
     @classmethod
     def from_anthropic_dict(cls, **kwargs):

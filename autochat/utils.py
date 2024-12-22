@@ -3,6 +3,7 @@ import csv
 import inspect
 from typing import Any
 import typing
+import json
 from inspect import Parameter
 from io import StringIO
 
@@ -222,3 +223,30 @@ def inspect_schema(f):
         f"Input for `{f.__name__}`", __config__=AllowNonTypedParamsConfig, **kw
     ).schema()
     return dict(name=f.__name__, description=f.__doc__, parameters=s)
+
+
+def parse_function_call_from_text(text: str):
+    import re
+
+    """
+    Look for something like:
+
+    CALLING FUNCTION: my_function
+    {
+        "foo": "bar"
+    }
+
+    Return (function_name, arguments_dict) or (None, None) if no function call found.
+    This is a simplistic regex approach. Adjust as needed.
+    """
+    pattern = r"(?s)CALLING\s+FUNCTION:\s*([A-Za-z0-9_]+)\s*\n?\s*(\{.*?\})"
+    match = re.search(pattern, text)
+    if match:
+        function_name = match.group(1).strip()
+        try:
+            # Attempt to parse JSON in the curly braces
+            arguments = json.loads(match.group(2))
+        except json.JSONDecodeError:
+            arguments = {}
+        return function_name, arguments
+    return None, None

@@ -95,7 +95,12 @@ class Autochat:
                 # We override because we have our own retry logic
                 max_retries=0,  # default is 2
             )
-            self.fetch = self.fetch_openai
+            # If AUTOCHAT_HACK is set, we use the hack version
+            # This is useful for testing models without function calls (e.g. o1 at the date of writing)
+            if os.environ.get("AUTOCHAT_HACK") == "true":
+                self.fetch = self.fetch_openai_hack
+            else:
+                self.fetch = self.fetch_openai
         elif self.provider == APIProvider.ANTHROPIC:
             import anthropic
 
@@ -408,6 +413,84 @@ class Autochat:
             content=message.content,
             function_call=message.function_call,
             id=res.id,  # We use the response id as the message id
+        )
+
+    @retry(
+        stop=stop_after_attempt(4),
+        wait=wait_random_exponential(multiplier=2, max=10),
+        # If we get a context_length_exceeded error, we stop the conversation
+        retry=(
+            retry_if_not_exception_type(ContextLengthExceededError)
+            & retry_if_not_exception_type(InvalidRequestError)
+            & retry_if_not_exception_type(InsufficientQuotaError)
+            & retry_if_not_exception_type(AttributeError)
+        ),
+        reraise=True,
+    )
+    def fetch_openai_hack(self):
+        """
+        Calls the OpenAI ChatCompletion endpoint using ONLY text-based instructions for function usage.
+        """
+        import openai
+
+        messages = self.prepare_messages(transform_function=Message.to_openai_hack)
+
+        # Inject function schema into the system message, if we haven't already
+        # or just append it to an existing system message. Example:
+        if self.functions_schema:
+            function_schemas_text = json.dumps(self.functions_schema, indent=2)
+            augmented_instruction = (
+                (self.instruction or "")
+                + "\n\nHere are the available functions you can call, in JSON format:\n"
+                + function_schemas_text
+                + "\n\n"
+                + "When you call a function, respond with:\n"
+                + "```\n"
+                + "CALLING FUNCTION: <function_name>\n"
+                + "{\n"
+                + '  "arg1": "...",\n'
+                + '  "arg2": "..."\n'
+                + "}\n"
+                + "```\n"
+                + "If you do not need to call a function, just respond normally."
+            )
+        else:
+            augmented_instruction = self.instruction
+
+        if augmented_instruction:
+            system_msg = Message(
+                role="user",
+                content=augmented_instruction,
+            )
+            messages = [system_msg.to_openai_hack()] + messages
+
+        try:
+            # Make the request WITHOUT 'functions='
+            res = self.client.chat.completions.create(
+                model=self.model,
+                messages=messages,
+            )
+        except openai.BadRequestError as e:
+            if e.code == "context_length_exceeded":
+                raise ContextLengthExceededError(e)
+            if e.code == "invalid_request_error":
+                raise InvalidRequestError(e)
+            raise
+        except openai.RateLimitError as e:
+            if e.code == "insufficient_quota":
+                raise InsufficientQuotaError(e)
+            raise
+        except openai.APIError as e:
+            raise e
+
+        # OpenAI returns a structure. We'll parse out the text content
+        message = res.choices[0].message
+        # Note that now there is no function_call field because we didn't pass `functions=`.
+        return Message.from_openai_hack(
+            role=message.role,
+            content=message.content,
+            # no function_call here
+            id=res.id,
         )
 
     @retry(
