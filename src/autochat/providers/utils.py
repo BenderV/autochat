@@ -1,6 +1,7 @@
 import os
 from autochat.providers.openai import OpenAIProvider
 from autochat.providers.anthropic import AnthropicProvider
+from autochat.providers.openai_hack import OpenAIProviderHack
 from autochat.providers.base_provider import BaseProvider, APIProvider
 
 # from autochat.chat import Autochat
@@ -37,3 +38,9 @@ def get_provider_and_model(  # TODO: get_provider_and_model ?
         if not model:
             model = os.getenv("AUTOCHAT_MODEL", "claude-3-5-sonnet-20240620")
         return AnthropicProvider(chat, model=model), model
+    elif provider_key == APIProvider.OPENAI_HACK:
+        if not model:
+            model = os.getenv("AUTOCHAT_MODEL", "o1-preview")
+        return OpenAIProviderHack(chat, model=model), model
+    else:
+        raise ValueError(f"Provider {provider_key} is not supported")
