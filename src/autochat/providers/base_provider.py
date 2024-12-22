@@ -7,6 +7,7 @@ import typing
 class APIProvider(Enum):
     OPENAI = "openai"
     ANTHROPIC = "anthropic"
+    OPENAI_HACK = "openai_hack"
 
 
 class BaseProvider(ABC):
