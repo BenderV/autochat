@@ -92,7 +92,7 @@ for message in chat.run_conversation(
 To install the package, you can use pip:
 
 ```bash
-pip install autochat[all]
+pip install 'autochat[all]'
 ```
 
 ## Function Call (as python function)
