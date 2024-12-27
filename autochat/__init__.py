@@ -117,6 +117,16 @@ class Autochat:
             **kwargs,
         )
 
+    def reset(self):
+        """Reset the chat state.
+
+        This will clear the chat history and reset the functions and tools.
+        """
+        self.messages = []
+        self.functions_schema = []
+        self.functions = {}
+        self.tools = {}
+
     @property
     def last_message(self):
         if not self.messages:
