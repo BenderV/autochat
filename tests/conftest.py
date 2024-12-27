@@ -8,7 +8,6 @@ DIFFS = []
 
 
 def replace_file_paths_with_XXX(content: str) -> str:
-    print("replace_file_paths_with_XXX")
     """Replace file paths with XXX for consistent diffs across environments"""
     if "Traceback" in content:
         # Replace any file path in quotes with XXX/filename.py
