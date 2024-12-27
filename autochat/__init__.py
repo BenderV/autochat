@@ -84,8 +84,8 @@ class Autochat:
             from openai import OpenAI
 
             if self.model is None:
-                # Default to gpt-4-turbo
-                self.model = "gpt-4-turbo"
+                # Default to gpt-4o
+                self.model = "gpt-4o"
             self.client = OpenAI(
                 base_url=(
                     f"{AUTOCHAT_HOST}/v1"

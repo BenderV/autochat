@@ -13,10 +13,12 @@ A lightweight Python library to build AI agents with LLMs.
 - 🤝 Support for multiple LLM providers (OpenAI and Anthropic)
 - 🐍 Transform python function or class into a tool
 - 🔁 Run conversation as a generator.
+- 🙈 Handle caching by default (anthropic model claude-3-5-sonnet-20240620)
 - ✨ And more features including:
   - Simple template system
   - Easy function and tool integration
   - Flexible instruction and example management
+  - Support for images
 
 ## Quick Start
 
@@ -123,6 +125,21 @@ for message in classifierGPT.run_conversation(text):
 
 ```
 
+## Image support
+
+```python
+from autochat import Autochat, Message
+
+from PIL import Image
+
+chat = Autochat()
+
+image = Image.open("examples/image.jpg")
+message = Message(role="user", content="describe the image", image=image)
+response = chat.ask(message)
+print(response.to_markdown())
+```
+
 ## Template System
 
 We provide a simple template system for defining the behavior of the chatbot, using markdown-like syntax.
@@ -154,17 +171,19 @@ The template system also supports function calls. Check out the [examples/demo_l
 
 ## Environment Variables
 
-The `AUTOCHAT_MODEL` environment variable specifies the model to use. If not set, it defaults to "gpt-4-turbo".
+The `AUTOCHAT_MODEL` environment variable specifies the model to use. If not set, it defaults to "gpt-4o" for openai and "claude-3-5-sonnet-20240620" for anthropic.
+
+**We recommend to use Anthropic / claude-3-5-sonnet-20240620 for agentic behavior.**
 
 ```bash
-export AUTOCHAT_MODEL="gpt-4-turbo"
+export AUTOCHAT_MODEL="gpt-4o"
 export OPENAI_API_KEY=<your-key>
 ```
 
 or with anthropic
 
 ```bash
-export AUTOCHAT_MODEL="claude-3-opus"
+export AUTOCHAT_MODEL="claude-3-5-sonnet-20240620"
 export ANTHROPIC_API_KEY=<your-key>
 ```
 

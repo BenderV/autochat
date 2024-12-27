@@ -9,7 +9,7 @@ class TestAutochat(unittest.TestCase):
         chat = Autochat(instruction="Test instruction", provider="openai")
         self.assertEqual(chat.instruction, "Test instruction")
         self.assertEqual(chat.provider, APIProvider.OPENAI)
-        self.assertEqual(chat.model, "gpt-4-turbo")
+        self.assertEqual(chat.model, "gpt-4o")
 
     def test_autochat_invalid_provider(self):
         with self.assertRaises(ValueError):
