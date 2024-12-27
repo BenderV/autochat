@@ -51,8 +51,8 @@ class Autochat:
     def __init__(
         self,
         instruction: str = None,
-        examples: list[Message] = [],
-        messages: list[Message] = [],
+        examples: list[Message] | None = None,
+        messages: list[Message] | None = None,
         context: str = None,
         max_interactions: int = 100,
         model=AUTOCHAT_MODEL,
@@ -71,9 +71,17 @@ class Autochat:
         self.model = model
         self.client = None
         self.instruction = instruction
-        self.examples = examples
+        if examples is None:
+            self.examples = []
+        else:
+            self.examples = examples
+
+        if messages is None:
+            self.messages = []
+        else:
+            self.messages = messages
+
         self.context = context
-        self.messages: list[Message] = messages
         self.max_interactions = max_interactions
         self.functions_schema = []
         self.functions = {}
@@ -216,6 +224,7 @@ class Autochat:
     def ask(
         self,
         message: typing.Union[Message, str, None] = None,
+        **kwargs,
     ) -> Message:
         if message:
             if isinstance(message, str):
@@ -226,22 +235,23 @@ class Autochat:
                 )
             self.messages.append(message)  # Add the question to the history
 
-        response = self.fetch()
+        response = self.fetch(**kwargs)
         self.messages.append(response)
         return response
 
     def run_conversation(
-        self, question: str = None
+        self,
+        question: typing.Union[str, Message, None] = None,
     ) -> typing.Generator[Message, None, None]:
         # If there's an initial question, emit it:
-        if question:
+        if isinstance(question, str):
             message = Message(
                 role="user",
                 content=question,
             )
             yield message
         else:
-            message = None
+            message = question
 
         for _ in range(self.max_interactions):
             # TODO: Check if the user has stopped the conversation
@@ -382,7 +392,7 @@ class Autochat:
         # After 5 attempts, we throw the error
         reraise=True,
     )
-    def fetch_openai(self):
+    def fetch_openai(self, **kwargs):
         import openai
 
         messages = self.prepare_messages(transform_function=Message.to_openai_dict)
@@ -400,10 +410,11 @@ class Autochat:
                     model=self.model,
                     messages=messages,
                     functions=self.functions_schema,
+                    **kwargs,
                 )
             else:
                 res = self.client.chat.completions.create(
-                    model=self.model, messages=messages
+                    model=self.model, messages=messages, **kwargs
                 )
         except openai.BadRequestError as e:
             if e.code == "context_length_exceeded":
@@ -441,7 +452,7 @@ class Autochat:
         # After 5 attempts, we throw the error
         reraise=True,
     )
-    def fetch_anthropic(self):
+    def fetch_anthropic(self, **kwargs):
         def add_empty_function_result(messages):
             """
             Ajustement Anthropic pour fusionner ou insérer la « function_result » :
@@ -572,7 +583,6 @@ class Autochat:
 
         # === End of cache_control ===
 
-        kwargs = {}
         if system is not None:
             kwargs["system"] = system
 
