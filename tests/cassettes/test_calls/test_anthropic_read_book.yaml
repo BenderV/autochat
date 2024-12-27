@@ -24,13 +24,13 @@ interactions:
   response:
     body:
       string: !!binary |
-        H4sIAAAAAAAAA2RRXW/bMAz8Kyxf+qIUTpoUqF+7ImnRl2HJgGEdVMVmYrey6JlUVy/wfx/kfmNP
-        Anl3uiN5wLrEHBvZ22y62Nx81S+ra1o+1T8urr9HftytBA1q31JikYjbExrs2KeGE6lFXVA02HBJ
-        HnMsvIslTU4ni4lwCKSTWTabZ2ezDA0WHJSCYv7z8Pqp0lOSj0+OF9Spq4Pvj+DquIQtQeXatgdl
-        6MiVcIvrimDZkVNYOpVtf4uw4w56jiewZigZtKrFwNWx9xCFQCuCuyS2W+aHO9jFUGjN4QRuSKEh
-        6Ei7mh6fmS8JBXg31knzZoCDec/N7G2UtI1xhamONpue/T1dnK9oc74O3zb32z/V5WrT3KPB4Jqk
-        e0uShKGNivkBU21fCMl1Pw64HwfEYfhlUJRb25ETDp/NR0Dod6RQEOYhem8wjnfKD88OVvmBgmA+
-        ny8MFq6oyBbJoeZgPzOyV3yM+R/GUT92ptlsGP4BAAD//wMAYKQvwkMCAAA=
+        H4sIAAAAAAAAAwAAAP//ZFDLTsQwDPwV4wuXLOouW1j1BgjxEHDgceClKG1NW5HG3cZBVKv+O0oB
+        AeJk2TPjGXuDTYkZtr7SyXw5T4eLpr6/P75ZH96dp5fr/K2+QoUydBRZ5L2pCBX2bOPAeN94MU5Q
+        YcslWcywsCaUNNudpTPPzpHMFslimewtElRYsBNygtnj5nup0HuUTyXDI+rFNM4OW3C2XUJOUJuu
+        G0AYejIlPOFtTXDSkxE4MeLz4QnhhXsYOOzABQm0BC8kRQ1SG4Gc+RWCb1wFUhOYN9NYk1sCYbY7
+        OKqfHMxWBx+vm14S+6CT+Wr/ukrdw6072vVXh2lz6tvzg4AKnWmjLsbS0SYKXRcEsw3GXn8Rom81
+        Ba6mwDiOzwq9cKd7Mp7dX/MJ8LQO5ArCzAVrFYbp79nm00ELv5LzmC2XqcLCFDXpIjo07PRfRvKN
+        TzH/YRzk92S1N44fAAAA//8DALnqpvcSAgAA
     headers:
       Connection:
       - keep-alive
@@ -38,12 +38,12 @@ interactions:
       - gzip
       Content-Type:
       - application/json
-      Transfer-Encoding:
-      - chunked
       X-Robots-Tag:
       - none
       request-id:
-      - req_01UJKEDtWbazn1CREm54qfG7
+      - req_01RA3dpVb8QJWuCSfh6NehRt
+      transfer-encoding:
+      - chunked
       via:
       - 1.1 google
     status:
@@ -53,11 +53,10 @@ interactions:
     body: '{"max_tokens": 2000, "messages": [{"role": "user", "content": [{"type":
       "text", "text": "Hello, read book ''the great gatsby''", "cache_control": {"type":
       "ephemeral"}}]}, {"role": "assistant", "content": [{"type": "text", "text":
-      "Certainly! I''d be happy to read \"The Great Gatsby\" for you. To do this,
-      I''ll use the `read_book` function. Let me retrieve the contents of the book
-      for you."}, {"type": "tool_use", "id": "toolu_016z359HeU9TnSUjbwhEHUmj", "name":
-      "read_book", "input": {"book_name": "the great gatsby"}}]}, {"role": "user",
-      "content": [{"type": "tool_result", "tool_use_id": "toolu_016z359HeU9TnSUjbwhEHUmj",
+      "Certainly! I''d be happy to read \"The Great Gatsby\" for you. Let me fetch
+      that book using the available tool."}, {"type": "tool_use", "id": "toolu_0187Rg5nZTnC3sNB5iHsmJAu",
+      "name": "read_book", "input": {"book_name": "the great gatsby"}}]}, {"role":
+      "user", "content": [{"type": "tool_result", "tool_use_id": "toolu_0187Rg5nZTnC3sNB5iHsmJAu",
       "content": "Traceback (most recent call last):\n  File \"/Users/smileos/Workspaces/autochat/tests/test_calls.py\",
       line 17, in read_book\n    return BOOKS[book_name]\n           ~~~~~^^^^^^^^^^^\n\nKeyError:
       ''the great gatsby''"}]}], "model": "claude-3-5-sonnet-20240620", "system":
@@ -82,13 +81,13 @@ interactions:
   response:
     body:
       string: !!binary |
-        H4sIAAAAAAAAA2SRQWvbQBCF/8owZ9nIqusWHQux67Q5JAQaaIqyXo2lxasddWc2tWv034uUhCT0
-        NMy89z7Yt2d0NZbYSVPli+WXpV5f6le9OC762Nytb4536yvMUE89jS4SMQ1hhpH9eDAiTtQExQw7
-        rsljidabVNPsw+zjTDgE0lmRF8t8VeSYoeWgFBTLn+cXqNJxjE+jxC2Ynj037i/BniNoS0AxcpzD
-        VkGIOgFtjU7CjvkA93jbEmwiGYWNUdmd7hGcQGAF82icNztP4MKUsClGCgre7aKJJ+D9BHlmbsGa
-        AMZaEpnDd1LoCGxL9gB/Rv3JaiK9ASdxoZnYD96JVpPnAfYpWHUc5jhkr09l9lWSscCp9XFPVb7Y
-        3G6uL9vH9XFVfzvdXC37H8UFWcwwmG7MvYLHZOiTYnkehl8ZinJfRTLC4T1/EoR+JwqWsAzJ+wzT
-        9Hvl+YlRKR8oCJar4lOG1tiWKjvW6DhU7x35ix7J1P9rnPTt5fNqGP4BAAD//wMA9543ylgCAAA=
+        H4sIAAAAAAAAA2RR32vcMAz+V4SefUcuW7uRt7ErR0v7sNLCYB3BcdTEO8dKbXk0PfK/D3uUtexJ
+        SN8PiU8ntD02OMWhrXa178f56qW7/7z3y9g9Xwz+ev8dFcoyU2ZRjHogVBjY5YGO0UbRXlDhxD05
+        bNA4nXrafNicbSJ7T7Kpq/pjdV5XqNCwF/KCzY/Tq6nQc5aX0uAl6JkdD/aF4JEDyEhAIXDYwqVA
+        JJoiyKilAB3zER7wbiQ4BNICBy2xWx4QbATPAvq3tk53jsD6ojApBPICznZBh2UL1yQwEZiRzLEw
+        nI0C/PhGmrfEcszCaYur+nc6s2tTzIGUFHOf2mq3v7n/8nRXJ3Nz+1V/u5iuaPh1uEWFXk9Zl3e0
+        xTYr/ZwEm9O6/lQYhec2kI7s3/sXINJTIm8IG5+cU5jKN5rTX49W+Eg+YnO+2yk02ozUmhyLZd++
+        Z1SveCDd/49xkreTT2fr+gcAAP//AwAFuNfDKAIAAA==
     headers:
       Connection:
       - keep-alive
@@ -96,12 +95,12 @@ interactions:
       - gzip
       Content-Type:
       - application/json
-      Transfer-Encoding:
-      - chunked
       X-Robots-Tag:
       - none
       request-id:
-      - req_01EqgVKrKb6JFQFhjoc84kfq
+      - req_01QBtDDDXwz8fNqp9cVkR6pk
+      transfer-encoding:
+      - chunked
       via:
       - 1.1 google
     status:
@@ -111,20 +110,19 @@ interactions:
     body: '{"max_tokens": 2000, "messages": [{"role": "user", "content": [{"type":
       "text", "text": "Hello, read book ''the great gatsby''", "cache_control": {"type":
       "ephemeral"}}]}, {"role": "assistant", "content": [{"type": "text", "text":
-      "Certainly! I''d be happy to read \"The Great Gatsby\" for you. To do this,
-      I''ll use the `read_book` function. Let me retrieve the contents of the book
-      for you."}, {"type": "tool_use", "id": "toolu_016z359HeU9TnSUjbwhEHUmj", "name":
-      "read_book", "input": {"book_name": "the great gatsby"}}]}, {"role": "user",
-      "content": [{"type": "tool_result", "tool_use_id": "toolu_016z359HeU9TnSUjbwhEHUmj",
+      "Certainly! I''d be happy to read \"The Great Gatsby\" for you. Let me fetch
+      that book using the available tool."}, {"type": "tool_use", "id": "toolu_0187Rg5nZTnC3sNB5iHsmJAu",
+      "name": "read_book", "input": {"book_name": "the great gatsby"}}]}, {"role":
+      "user", "content": [{"type": "tool_result", "tool_use_id": "toolu_0187Rg5nZTnC3sNB5iHsmJAu",
       "content": "Traceback (most recent call last):\n  File \"/Users/smileos/Workspaces/autochat/tests/test_calls.py\",
       line 17, in read_book\n    return BOOKS[book_name]\n           ~~~~~^^^^^^^^^^^\n\nKeyError:
       ''the great gatsby''"}]}, {"role": "assistant", "content": [{"type": "text",
       "text": "I apologize for the error. It seems that the book \"The Great Gatsby\"
-      is not available in the current library of books that I can access. Let me check
-      what books are available using the `list_books` function."}, {"type": "tool_use",
-      "id": "toolu_01GTGQJhvFx6dKyRM4pW2Eec", "name": "list_books", "input": {}}]},
-      {"role": "user", "content": [{"type": "tool_result", "tool_use_id": "toolu_01GTGQJhvFx6dKyRM4pW2Eec",
-      "content": "The Great Gatsby\nTo Kill a Mockingbird\n1984"}]}], "model": "claude-3-5-sonnet-20240620",
+      is not available in the current library. Let me check the list of available
+      books for you."}, {"type": "tool_use", "id": "toolu_01DMUAqT2ucMRCaQEmJegjGR",
+      "name": "list_books", "input": {}}]}, {"role": "user", "content": [{"type":
+      "tool_result", "tool_use_id": "toolu_01DMUAqT2ucMRCaQEmJegjGR", "content": "The
+      Great Gatsby\nTo Kill a Mockingbird\n1984"}]}], "model": "claude-3-5-sonnet-20240620",
       "system": [{"type": "text", "text": "You are a helpful assistant that can read
       books.", "cache_control": {"type": "ephemeral"}}], "tools": [{"name": "list_books",
       "description": "No description provided", "input_schema": {"properties": {},
@@ -146,14 +144,14 @@ interactions:
   response:
     body:
       string: !!binary |
-        H4sIAAAAAAAAAwAAAP//ZFFfb9NADP8qlp/TKu1WYHlEG2USDxMgYDAUuRc3PXo9h9i30lb57tOF
-        TTB4Otm/f7bvhL7BCnfa1uXs9eXVbkHxy+WHG/26v/101LeHHwss0A4dZxarUstYYC8hN0jVq1E0
-        LHAnDQes0AVKDU/OJouJSoxsk3k5Py9fzEss0Ek0jobVt9OTqfGvLB+fCq+BOgnS+iPDWnqwDYOT
-        uE7qJQJTHzz3U7g2CCJbheC3DHf4ccOw7JkMlmS6OtwheAUfG+YG6J58oFXgAlbJRst1is6yo1dw
-        pDxRjurN3/MU3rHBjsH6A/RMjY/tKFmJbIFa8hH23jaPk/U9OwNHnTcK/kjZdIpD8Wc9kVAnzUcb
-        L53rVJez99LO3tx07asLauL5evnZH6/2t1hgpF3W5eg6Z2Zh7JJhdcJc14+Ef1fGYfheoJp0dc+k
-        Ep+Hj4Dyz8TRMVYxhVBgGr+zOv1OqE22HBWrl2cXBTpyG65dTvAS6+eM8gkfx/wPk2R/d2blfBge
-        AAAA//8DAFFZn59qAgAA
+        H4sIAAAAAAAAA2RRwU7cQAz9FcuXXpJVspRS5QaoRaiw6mHFoVBFzsQko01m0rGTkq7y79WkRRR6
+        suz3nt/M8xFtjQX20pRZ/vXAl7efL6azb/Pt5S5Usvf1yTkmqPPAkcUi1DAmGHwXByRiRckpJtj7
+        mjss0HQ01pyepKepeOdY0222fZ992GaYoPFO2SkW98fnpcpPUb6WAvctuQPMfoRHH2INMJBadoY3
+        cP1uYgiswfLENWjL0FlR8I9AE9mOqo6h8v4gG7hWoGFgCgLaksID7luGq8CkcEUq1fyAYAWsq5nr
+        F30C1ajramEKpoXeNq1CxWBIOBV2YtVOvIEbVugZNMwQmGrrmlUW/YEasg5+Wm3XmfEhsFEwNFil
+        zv4itd5tcEleYvC+K0eJ4a4Xif1YZvnH/Gk6nYf2Lny6mG927XzHvPuCCTrqoy5al9EzCt0wKhZH
+        jH35l/D227gs3xMU9UMZmMS71+YrIPxjjJFj4cauS3Bcz14c/ziU6g/sBIuzfJugIdNyaaKD9a58
+        zcie8fWZ/2F+1H8neZ4ty28AAAD//wMAKlZmGpICAAA=
     headers:
       Connection:
       - keep-alive
@@ -161,12 +159,12 @@ interactions:
       - gzip
       Content-Type:
       - application/json
-      Transfer-Encoding:
-      - chunked
       X-Robots-Tag:
       - none
       request-id:
-      - req_01AoSqhiPt8SsJZ9Cr1bsHa6
+      - req_01KEhCwyZGsYo8FTwP4VrbTT
+      transfer-encoding:
+      - chunked
       via:
       - 1.1 google
     status:
@@ -176,28 +174,27 @@ interactions:
     body: '{"max_tokens": 2000, "messages": [{"role": "user", "content": [{"type":
       "text", "text": "Hello, read book ''the great gatsby''", "cache_control": {"type":
       "ephemeral"}}]}, {"role": "assistant", "content": [{"type": "text", "text":
-      "Certainly! I''d be happy to read \"The Great Gatsby\" for you. To do this,
-      I''ll use the `read_book` function. Let me retrieve the contents of the book
-      for you."}, {"type": "tool_use", "id": "toolu_016z359HeU9TnSUjbwhEHUmj", "name":
-      "read_book", "input": {"book_name": "the great gatsby"}}]}, {"role": "user",
-      "content": [{"type": "tool_result", "tool_use_id": "toolu_016z359HeU9TnSUjbwhEHUmj",
+      "Certainly! I''d be happy to read \"The Great Gatsby\" for you. Let me fetch
+      that book using the available tool."}, {"type": "tool_use", "id": "toolu_0187Rg5nZTnC3sNB5iHsmJAu",
+      "name": "read_book", "input": {"book_name": "the great gatsby"}}]}, {"role":
+      "user", "content": [{"type": "tool_result", "tool_use_id": "toolu_0187Rg5nZTnC3sNB5iHsmJAu",
       "content": "Traceback (most recent call last):\n  File \"/Users/smileos/Workspaces/autochat/tests/test_calls.py\",
       line 17, in read_book\n    return BOOKS[book_name]\n           ~~~~~^^^^^^^^^^^\n\nKeyError:
       ''the great gatsby''"}]}, {"role": "assistant", "content": [{"type": "text",
       "text": "I apologize for the error. It seems that the book \"The Great Gatsby\"
-      is not available in the current library of books that I can access. Let me check
-      what books are available using the `list_books` function."}, {"type": "tool_use",
-      "id": "toolu_01GTGQJhvFx6dKyRM4pW2Eec", "name": "list_books", "input": {}}]},
-      {"role": "user", "content": [{"type": "tool_result", "tool_use_id": "toolu_01GTGQJhvFx6dKyRM4pW2Eec",
-      "content": "The Great Gatsby\nTo Kill a Mockingbird\n1984"}]}, {"role": "assistant",
-      "content": [{"type": "text", "text": "I apologize for the confusion earlier.
-      It looks like \"The Great Gatsby\" is indeed available, but the function is
-      case-sensitive. Let me try reading the book again with the correct capitalization."},
-      {"type": "tool_use", "id": "toolu_01Rog1FPpg89adn4fGWizEwY", "name": "read_book",
-      "input": {"book_name": "The Great Gatsby"}}]}, {"role": "user", "content": [{"type":
-      "tool_result", "tool_use_id": "toolu_01Rog1FPpg89adn4fGWizEwY", "content": "Lorem
-      ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt
-      ut labore et dolore magna aliqua."}]}], "model": "claude-3-5-sonnet-20240620",
+      is not available in the current library. Let me check the list of available
+      books for you."}, {"type": "tool_use", "id": "toolu_01DMUAqT2ucMRCaQEmJegjGR",
+      "name": "list_books", "input": {}}]}, {"role": "user", "content": [{"type":
+      "tool_result", "tool_use_id": "toolu_01DMUAqT2ucMRCaQEmJegjGR", "content": "The
+      Great Gatsby\nTo Kill a Mockingbird\n1984"}]}, {"role": "assistant", "content":
+      [{"type": "text", "text": "Thank you for your patience. I''ve retrieved the
+      list of available books. It appears that \"The Great Gatsby\" is indeed available,
+      but the search might be case-sensitive. Let me try reading the book again with
+      the correct capitalization."}, {"type": "tool_use", "id": "toolu_0181xv5yphVrEByLNhyVeeNK",
+      "name": "read_book", "input": {"book_name": "The Great Gatsby"}}]}, {"role":
+      "user", "content": [{"type": "tool_result", "tool_use_id": "toolu_0181xv5yphVrEByLNhyVeeNK",
+      "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+      eiusmod tempor incididunt ut labore et dolore magna aliqua."}]}], "model": "claude-3-5-sonnet-20240620",
       "system": [{"type": "text", "text": "You are a helpful assistant that can read
       books.", "cache_control": {"type": "ephemeral"}}], "tools": [{"name": "list_books",
       "description": "No description provided", "input_schema": {"properties": {},
@@ -219,18 +216,18 @@ interactions:
   response:
     body:
       string: !!binary |
-        H4sIAAAAAAAAAwAAAP//fFNtixw3DP4rwl/6ZW7ZXNI0nS+lhXI9CKUvgUuTLYvW1s6Ita2JJe92
-        ctx/D57JwZWEfBrGkp8X6fG94+B6l3TYb5/98zy9u7vc/H7iP88vfr78Sm9P9a/Rdc7miVoXqeJA
-        rnNFYjtAVVbDbK5zSQJF1zsfsQa6en71/ZVKzmRX19vrF9uX11vXOS/ZKJvr398/ghr9164vn97d
-        wohnAq3ek+qxxjhDIStMZwpgI8FnCJAj7NybkeCmEBrcoOlh3jk4SoFZ6gZ+kwudqXTABjhNhEXB
-        RrQFBb1VjNBYG1I7OoicgBWyGOAZOeIhUgeYA3BWIwwdXGjVV8gTN0UIU0RPo8RAZYXjDK/ROG/g
-        zcjaECOfKM4QKoEJeJnmwsNoUEitsDeWrCAFIic2XH85r25rKc2tzmqUNru8y83zF6RWMGtEIwWT
-        HnbutRRKwJPWBEGiFNA2h0TWtREqeSOrBTDwxOo5D0CRbQN/U4AgQFw1SQCjNEkBzp4Dh5oNqkHE
-        gxQCshWaIOGQETDyh4qbnYO7kf0IReowxhkSYdYm6g/kDGxK8bjMRc7ULTZTK6hJwYEevcIvddnV
-        3OTwMlfjRB0cMcaml7MJqCSCYYnA1EDauhZ5m51r07oFnCTKwB9p3f4teMxtx1ORMwdqYYEL2/g0
-        F98MWTN4e2z3vgvLbrsVFIxiXODwIKv2NVRSWnCWjtLijKHJxyw2UllbjkXSKuAxeRBZbQN3UmNY
-        QBtTy88pywVSm/pK89VXIGXhesrxk3v4t3NqMu0LoUp2vaMc9lZLdp8LSh8qZU+uzzXGztXlvff3
-        jvNUbW9yoqyuf/XqZec8+pH2vvGy5P3/O7aP9eb2y5pUe3ry7McfHh4+AQAA//8DAKKqupSLBAAA
+        H4sIAAAAAAAAAwAAAP//bJPBbhw3DIZfhdDFl/Fi47RJMZeiRRPHRVC0TdJLt1hwJO4OYQ05Fimv
+        J4bfPdDYDlo0J0Ekf+rXJ+o+cAp9mOy4375488fN7em3N8vv9e7TX5dJXkYfhvehC77M1KrIDI8U
+        ulA0twCasTmKhy5MmiiHPsSMNdH5y/Pvz01FyM8vthffbV9dbEMXooqTeOj/vn9u6nTX5OvSh6uz
+        WwKrMZLZoea8QCEvTLeUYBc+jgSXhdDhEt2GZRfgoAUWrRt4R4XODBCGwnQAuotUZodD0Ql8JBhU
+        r/ud7GQX3muhCXi2OkHSrAWMHXAi7yCqGEUnrwUw8cwWWY5AmX0DHyhBUiCuNmkCp2nWAiyRE6cq
+        DtUh46CFgPyxNcGER0HAzDcVN7vQLFz5mQE3cYMHriDqBD6ig49sX93jPBMWaxUDwZwx0qg5UYHG
+        C1BSU673w+gVMzwRBj18k9cGWqwQZhC9pdzBqbA7CQwLvN3Ah6ju8Jb985EK5tQBN6Yxt6eOretP
+        ExWOKJDZqaDXQmDkwLLa+FOxNGAfTyTOZBu4cnDK2da0uZaltWmbaTGnwloNJs6ZVZALwa+4PPld
+        L9h46GBkxipwYh8f35OwOh9qhl+QbYGfaxxRUDYr4PW0QoCy+Nj82EyRDxzbsJwlyHxNjeq16Alw
+        0OrfHi8tcNKaU5M9iqZVVwgToGg7ZR2t50H8MTz80wVznfeF0FRCH0jS3muR8JQwuqkkkUIvNecu
+        1PVX9feBZa6+d70msdD/8Op1FyLGkfaxuWKV/X8rts/5Zuf/Oa3+78iL1xcPD18AAAD//wMAwFF/
+        5PEDAAA=
     headers:
       Connection:
       - keep-alive
@@ -238,12 +235,12 @@ interactions:
       - gzip
       Content-Type:
       - application/json
-      Transfer-Encoding:
-      - chunked
       X-Robots-Tag:
       - none
       request-id:
-      - req_013m8R5FJDhpdFzsMgn446S9
+      - req_01MqD34CDbMBytbzLtaNw2vK
+      transfer-encoding:
+      - chunked
       via:
       - 1.1 google
     status:
