@@ -1,6 +1,11 @@
 name: Ruff, Test
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
 jobs:
   ruff:
     runs-on: ubuntu-latest

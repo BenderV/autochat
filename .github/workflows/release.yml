@@ -2,7 +2,7 @@ name: Release
 
 on:
   workflow_run:
-    workflows: ["ruff", "test"]
+    workflows: ["Ruff, Test"]
     types:
       - completed
     branches: [master]
