@@ -1,0 +1,191 @@
+interactions:
+- request:
+    body: '{"messages": [{"role": "system", "content": [{"type": "text", "text": "You
+      are a helpful assistant that can read books."}]}, {"role": "user", "content":
+      [{"type": "text", "text": "Hello, read book ''the great gatsby''"}]}, {"role":
+      "assistant", "content": [{"type": "text", "text": "Certainly! I''d be happy
+      to read \"The Great Gatsby\" for you. To do this, I''ll use the `read_book`
+      function. Let me fetch the content of the book for you."}], "function_call":
+      {"name": "read_book", "arguments": "{\"book_name\": \"the great gatsby\"}"}},
+      {"role": "function", "content": [{"type": "text", "text": "Traceback (most recent
+      call last):\n  File \"/Users/smileos/Workspaces/autochat/autochat/__init__.py\",
+      line 269, in run_conversation\n    content = self.functions[function_name](\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError:
+      read_book() got an unexpected keyword argument ''from_response''\n\nDuring handling
+      of the above exception, another exception occurred:\n\nTraceback (most recent
+      call last):\n  File \"/Users/smileos/Workspaces/autochat/autochat/__init__.py\",
+      line 282, in run_conversation\n    content = self.functions[function_name](**function_arguments)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File
+      \"/Users/smileos/Workspaces/autochat/tests/test_calls.py\", line 17, in read_book\n    return
+      BOOKS[book_name]\n           ~~~~~^^^^^^^^^^^\nKeyError: ''the great gatsby''\n"}],
+      "name": "read_book"}, {"role": "assistant", "content": [{"type": "text", "text":
+      "I apologize for the inconvenience. It seems there was an error when trying
+      to read \"The Great Gatsby.\" The book might not be available in the current
+      library or there might be an issue with the system. Let me try to list the available
+      books to see what options we have."}], "function_call": {"name": "list_books",
+      "arguments": "{}"}}, {"role": "function", "content": [{"type": "text", "text":
+      "The Great Gatsby\nTo Kill a Mockingbird\n1984"}], "name": "list_books"}, {"role":
+      "assistant", "content": [{"type": "text", "text": "Thank you for your patience.
+      I''ve retrieved the list of available books. It looks like \"The Great Gatsby\"
+      is indeed available, but there might have been a small issue with the capitalization
+      when I first tried to access it. Let me try reading it again with the correct
+      capitalization:"}], "function_call": {"name": "read_book", "arguments": "{\"book_name\":
+      \"The Great Gatsby\"}"}}, {"role": "function", "content": [{"type": "text",
+      "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+      tempor incididunt ut labore et dolore magna aliqua."}], "name": "read_book"},
+      {"role": "assistant", "content": [{"type": "text", "text": "I''ve successfully
+      accessed \"The Great Gatsby\" for you. However, it seems that the content provided
+      is just a placeholder text in Latin, commonly known as \"Lorem ipsum.\" This
+      is often used as a substitute for actual content in demonstrations or testing.\n\nThe
+      text reads:\n\n\"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed
+      do eiusmod tempor incididunt ut labore et dolore magna aliqua.\"\n\nThis translates
+      roughly to:\n\n\"Pain itself is love, the main storage system. But they do a
+      lot of time to fall into it with great labor and pain.\"\n\nI apologize that
+      I couldn''t provide you with the actual content of \"The Great Gatsby\" by F.
+      Scott Fitzgerald. In a real scenario, this function would typically return the
+      full text or a substantial excerpt from the book. \n\nIs there anything else
+      you''d like to know about \"The Great Gatsby\" or any other book from the available
+      list? I''d be happy to help with any questions about the plot, characters, or
+      themes of the novel based on general knowledge, even though we don''t have access
+      to the full text here."}]}, {"role": "user", "content": [{"type": "text", "text":
+      "Hello, read book ''the great gatsby''"}]}], "model": "gpt-4o", "functions":
+      [{"name": "list_books", "description": null, "parameters": {"properties": {},
+      "title": "Input for `list_books`", "type": "object"}}, {"name": "read_book",
+      "description": null, "parameters": {"properties": {"book_name": {"title": "Book
+      Name", "type": "string"}}, "required": ["book_name"], "title": "Input for `read_book`",
+      "type": "object"}}]}'
+    headers:
+      content-type:
+      - application/json
+      host:
+      - api.openai.com
+    method: POST
+    uri: https://api.openai.com/v1/chat/completions
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAAwAAAP//jFJda9swFH33r7jc57jYSeymfttTGRuDwQZNl2IU+dpWKkuaJI+UkP8+
+        5DSx03awFz3ofHDuufcQAaCosADkLfO8MzL+tFv8bNPdl+9f63z9Z/3wuNo/timtF7/3n7/hLCj0
+        dkfcn1U3XHdGkhdanWBuiXkKruntIlskaZZlA9DpimSQNcbHSx3Pk/kyTlZxkr8KWy04OSzgVwQA
+        cBjeEFFVtMcCktn5pyPnWENYXEgAaLUMP8icE84z5XE2glwrTyqkVr2UE6DuFQ/hS86kvDIEQMW6
+        wdISq8qt1s8TSwBktuk7Uj5kxsMGA6MMmg0WG/zREtyHMuCeebd92eARL+rjJIKlundMvmaL3hBQ
+        6sZYvXVvsmMtlHBtaYk5rUKC61EG2jECeBra7a8KQ2N1Z3zp9TOp4Hybr07GOO5zRNMz6LVncqJa
+        5bMP/MqKPBPSTepEznhL1Sgdl8n6SugJEE3Gf5/mI+9TBUI1/2M/ApyT8VSVxlIl+PXEI81SOPd/
+        0S4tD4HRvThPXVkL1ZA1VgwXh7Ups3qe5Pk8W95hdIz+AgAA//8DAIGfzDR6AwAA
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      access-control-expose-headers:
+      - X-Request-ID
+      alt-svc:
+      - h3=":443"; ma=86400
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages": [{"role": "system", "content": [{"type": "text", "text": "You
+      are a helpful assistant that can read books."}]}, {"role": "user", "content":
+      [{"type": "text", "text": "Hello, read book ''the great gatsby''"}]}, {"role":
+      "assistant", "content": [{"type": "text", "text": "Certainly! I''d be happy
+      to read \"The Great Gatsby\" for you. To do this, I''ll use the `read_book`
+      function. Let me fetch the content of the book for you."}], "function_call":
+      {"name": "read_book", "arguments": "{\"book_name\": \"the great gatsby\"}"}},
+      {"role": "function", "content": [{"type": "text", "text": "Traceback (most recent
+      call last):\n  File \"/Users/smileos/Workspaces/autochat/autochat/__init__.py\",
+      line 269, in run_conversation\n    content = self.functions[function_name](\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError:
+      read_book() got an unexpected keyword argument ''from_response''\n\nDuring handling
+      of the above exception, another exception occurred:\n\nTraceback (most recent
+      call last):\n  File \"/Users/smileos/Workspaces/autochat/autochat/__init__.py\",
+      line 282, in run_conversation\n    content = self.functions[function_name](**function_arguments)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File
+      \"/Users/smileos/Workspaces/autochat/tests/test_calls.py\", line 17, in read_book\n    return
+      BOOKS[book_name]\n           ~~~~~^^^^^^^^^^^\nKeyError: ''the great gatsby''\n"}],
+      "name": "read_book"}, {"role": "assistant", "content": [{"type": "text", "text":
+      "I apologize for the inconvenience. It seems there was an error when trying
+      to read \"The Great Gatsby.\" The book might not be available in the current
+      library or there might be an issue with the system. Let me try to list the available
+      books to see what options we have."}], "function_call": {"name": "list_books",
+      "arguments": "{}"}}, {"role": "function", "content": [{"type": "text", "text":
+      "The Great Gatsby\nTo Kill a Mockingbird\n1984"}], "name": "list_books"}, {"role":
+      "assistant", "content": [{"type": "text", "text": "Thank you for your patience.
+      I''ve retrieved the list of available books. It looks like \"The Great Gatsby\"
+      is indeed available, but there might have been a small issue with the capitalization
+      when I first tried to access it. Let me try reading it again with the correct
+      capitalization:"}], "function_call": {"name": "read_book", "arguments": "{\"book_name\":
+      \"The Great Gatsby\"}"}}, {"role": "function", "content": [{"type": "text",
+      "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+      tempor incididunt ut labore et dolore magna aliqua."}], "name": "read_book"},
+      {"role": "assistant", "content": [{"type": "text", "text": "I''ve successfully
+      accessed \"The Great Gatsby\" for you. However, it seems that the content provided
+      is just a placeholder text in Latin, commonly known as \"Lorem ipsum.\" This
+      is often used as a substitute for actual content in demonstrations or testing.\n\nThe
+      text reads:\n\n\"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed
+      do eiusmod tempor incididunt ut labore et dolore magna aliqua.\"\n\nThis translates
+      roughly to:\n\n\"Pain itself is love, the main storage system. But they do a
+      lot of time to fall into it with great labor and pain.\"\n\nI apologize that
+      I couldn''t provide you with the actual content of \"The Great Gatsby\" by F.
+      Scott Fitzgerald. In a real scenario, this function would typically return the
+      full text or a substantial excerpt from the book. \n\nIs there anything else
+      you''d like to know about \"The Great Gatsby\" or any other book from the available
+      list? I''d be happy to help with any questions about the plot, characters, or
+      themes of the novel based on general knowledge, even though we don''t have access
+      to the full text here."}]}, {"role": "user", "content": [{"type": "text", "text":
+      "Hello, read book ''the great gatsby''"}]}, {"role": "assistant", "content":
+      [], "function_call": {"name": "read_book", "arguments": "{\"book_name\": \"The
+      Great Gatsby\"}"}}, {"role": "function", "content": [{"type": "text", "text":
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
+      incididunt ut labore et dolore magna aliqua."}], "name": "read_book"}], "model":
+      "gpt-4o", "functions": [{"name": "list_books", "description": null, "parameters":
+      {"properties": {}, "title": "Input for `list_books`", "type": "object"}}, {"name":
+      "read_book", "description": null, "parameters": {"properties": {"book_name":
+      {"title": "Book Name", "type": "string"}}, "required": ["book_name"], "title":
+      "Input for `read_book`", "type": "object"}}]}'
+    headers:
+      content-type:
+      - application/json
+      host:
+      - api.openai.com
+    method: POST
+    uri: https://api.openai.com/v1/chat/completions
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAAwAAAP//jFPBThsxEL3nK0a+9JJEIbCB5kZRhZBQpQp6aqrI8c7umtge1zNbSBH/
+        XnmzZINKpV58mDfv+c3z+HkEoGyplqBMo8X46CaXD6ffmk/JXt5+vf1y5+VzvXm6Mlft78X9Halx
+        ZtDmAY28sqaGfHQolsIeNgm1YFY9OT8tTmcnRVF0gKcSXabVUSZnNJnP5meT2cVktuiJDVmDrJbw
+        fQQA8Nyd2WIo8UktYTZ+rXhk1jWq5aEJQCVyuaI0s2XRQdR4AA0FwdC5vhFgRM8gDSYEy6ADWOYW
+        QRuDzDbUGQNtpNUOeipQBSt13yBc5wnhWgtvdtOVglxLKG0KWILgk3SaEJ022JArMYEh7ym4HbSM
+        JVSUQJAlXxTbFImRp7AKq3CLAh5hG+gRbAU7auGRWleCs1sEGypKXuesQW+olc7mhmj7gSE6kjGY
+        RidtBBOPgRLosAPKc0KJoq1jqBJ5qDFg0q67x2FZ4xRuQHvoAhGCBl2ERytNJ/CzzV4pcOfH27oR
+        aPQv7D28G8px9gmrlnV++tA619dfDo/pqI6JNtzjh3plg+VmnVAzhfxwLBRVh76MAH50S9O+2QMV
+        E/koa6Ethix4cVLs9dSwpgN6Pu9BIdHuiHVxPn5Hb91neLR2ymjTYDlQhx3VbWnpCBgdTf23m/e0
+        95PbUP+P/AAYg1GwXMeEpTVvJx7aEuZf/K+2Q8qdYcU7FvTryoYaU0x2/5GquC6q+WyxmBdnH9Xo
+        ZfQHAAD//wMAKjq+/VEEAAA=
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      access-control-expose-headers:
+      - X-Request-ID
+      alt-svc:
+      - h3=":443"; ma=86400
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+    status:
+      code: 200
+      message: OK
+version: 1
