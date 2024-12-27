@@ -6,6 +6,7 @@ import json
 import os
 import traceback
 import typing
+import inspect
 from enum import Enum
 
 from tenacity import (
@@ -266,37 +267,40 @@ class Autochat:
             content = None
 
             # Attempt to call the function/tool
+            def call_with_args(func, **kwargs):
+                sig = inspect.signature(func)
+                # Only include from_response if it's in the function's parameters
+                if "from_response" in sig.parameters:
+                    kwargs["from_response"] = response
+                return func(**kwargs)
+
             try:
-                try:
-                    if function_name.startswith("tool-"):
-                        tool_id, method_name = function_name.split("__")
-                        tool = self.tools[tool_id]
-                        content = tool.__getattribute__(method_name)(
-                            **function_arguments,
-                            from_response=response,
-                        )
-                    else:
-                        content = self.functions[function_name](
-                            **function_arguments,
-                            from_response=response,
-                        )
-                except TypeError:
-                    # If the function does not accept `from_response`, call it without that argument
-                    if function_name.startswith("tool-"):
-                        tool_id, method_name = function_name.split("__")
-                        tool = self.tools[tool_id]
-                        content = tool.__getattribute__(method_name)(
-                            **function_arguments
-                        )
-                    else:
-                        content = self.functions[function_name](**function_arguments)
+                if function_name.startswith("tool-"):
+                    tool_id, method_name = function_name.split("__")
+                    tool = self.tools[tool_id]
+                    method = tool.__getattribute__(method_name)
+                    content = call_with_args(method, **function_arguments)
+                else:
+                    content = call_with_args(
+                        self.functions[function_name], **function_arguments
+                    )
             except Exception as e:
                 if isinstance(e, StopLoopException):
-                    # If the function triggered a loop stop, we stop the conversation
                     yield response
                     return
-                # If the function call failed generically, we continue the conversation with the error message
-                content = traceback.format_exc()  # Flatten the error message
+
+                # We clean the traceback to remove frames from __init__.py
+                tb = traceback.extract_tb(e.__traceback__)
+                filtered_tb = [
+                    frame for frame in tb if "__init__.py" not in frame.filename
+                ]
+                if filtered_tb:
+                    content = "Traceback (most recent call last):\n"
+                    content += "".join(traceback.format_list(filtered_tb))
+                    content += f"\n{e.__class__.__name__}: {str(e)}"
+                else:
+                    # If no relevant frames, use the full traceback
+                    content = traceback.format_exc()
 
             # Yield the assistant message that contained the function call
             yield response
