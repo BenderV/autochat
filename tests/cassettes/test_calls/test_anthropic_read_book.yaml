@@ -1,0 +1,277 @@
+interactions:
+- request:
+    body: '{"max_tokens": 2000, "messages": [{"role": "user", "content": [{"type":
+      "text", "text": "Hello, read book ''the great gatsby''", "cache_control": {"type":
+      "ephemeral"}}]}], "model": "claude-3-5-sonnet-20240620", "system": [{"type":
+      "text", "text": "You are a helpful assistant that can read books.", "cache_control":
+      {"type": "ephemeral"}}], "tools": [{"name": "list_books", "description": "No
+      description provided", "input_schema": {"properties": {}, "title": "Input for
+      `list_books`", "type": "object"}}, {"name": "read_book", "description": "No
+      description provided", "input_schema": {"properties": {"book_name": {"title":
+      "Book Name", "type": "string"}}, "required": ["book_name"], "title": "Input
+      for `read_book`", "type": "object"}, "cache_control": {"type": "ephemeral"}}]}'
+    headers:
+      anthropic-beta:
+      - prompt-caching-2024-07-31
+      anthropic-version:
+      - '2023-06-01'
+      content-type:
+      - application/json
+      host:
+      - api.anthropic.com
+    method: POST
+    uri: https://api.anthropic.com/v1/messages
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAAwAAAP//ZFFdb9swDPwrLF/6ohSOmw6BX7stK9oVKJBlHdbBVWTGdiOLnkUB9QL/
+        90Hq14o9CeTd8Y7UAdsKC+x8XWbzj35z2e2/fL0eHr7d/Nl8vl7ePpBBhTL2FFnkva4JFQ5sY0N7
+        33rRTlBhxxVZLNBYHSqanc7OZp6dI5nlWb7IPuQZKjTshJxg8fPwMlToMcrTU+A5DaJbZ8cjuDiu
+        YEvQ6L4fQRgG0hXc4bohWA2kBVZa/Ha8Q9jxACOHE1gzVAzStF7BxbG1EDyBNAT3UVxumff3sAvO
+        SMvuBK5IoCPYkZgm0Z7jAe9SGfmvw3FSb5mZbRl8vEQ6X6xDmc03nxb5zdWq3T/m201YL+vvpz+W
+        8YBOd1H3miIKXR8EiwPGunwmRNc6LVen5XCafin0wn05kPbs3psnwNPvQM4QFi5YqzCkPyoOTw6l
+        8J6cx2KxOFNotGmoNNGhZVe+Z2QveIr5H8ZB/u3Ms3ya/gIAAP//AwAopdzMPwIAAA==
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      X-Robots-Tag:
+      - none
+      request-id:
+      - req_01NZWskd2JoM8TBRxv1wysoM
+      via:
+      - 1.1 google
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"max_tokens": 2000, "messages": [{"role": "user", "content": [{"type":
+      "text", "text": "Hello, read book ''the great gatsby''", "cache_control": {"type":
+      "ephemeral"}}]}, {"role": "assistant", "content": [{"type": "text", "text":
+      "Certainly! I''d be happy to read \"The Great Gatsby\" for you. To do this,
+      I''ll use the `read_book` function. Let me fetch the content of the book for
+      you."}, {"type": "tool_use", "id": "toolu_01VE42QLGikx2bVuT8gW3Y8c", "name":
+      "read_book", "input": {"book_name": "the great gatsby"}}]}, {"role": "user",
+      "content": [{"type": "tool_result", "tool_use_id": "toolu_01VE42QLGikx2bVuT8gW3Y8c",
+      "content": "Traceback (most recent call last):\n  File \"/Users/smileos/Workspaces/autochat/autochat/__init__.py\",
+      line 269, in run_conversation\n    content = self.functions[function_name](\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError:
+      read_book() got an unexpected keyword argument ''from_response''\n\nDuring handling
+      of the above exception, another exception occurred:\n\nTraceback (most recent
+      call last):\n  File \"/Users/smileos/Workspaces/autochat/autochat/__init__.py\",
+      line 282, in run_conversation\n    content = self.functions[function_name](**function_arguments)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File
+      \"/Users/smileos/Workspaces/autochat/tests/test_calls.py\", line 17, in read_book\n    return
+      BOOKS[book_name]\n           ~~~~~^^^^^^^^^^^\nKeyError: ''the great gatsby''\n"}]}],
+      "model": "claude-3-5-sonnet-20240620", "system": [{"type": "text", "text": "You
+      are a helpful assistant that can read books.", "cache_control": {"type": "ephemeral"}}],
+      "tools": [{"name": "list_books", "description": "No description provided", "input_schema":
+      {"properties": {}, "title": "Input for `list_books`", "type": "object"}}, {"name":
+      "read_book", "description": "No description provided", "input_schema": {"properties":
+      {"book_name": {"title": "Book Name", "type": "string"}}, "required": ["book_name"],
+      "title": "Input for `read_book`", "type": "object"}, "cache_control": {"type":
+      "ephemeral"}}]}'
+    headers:
+      anthropic-beta:
+      - prompt-caching-2024-07-31
+      anthropic-version:
+      - '2023-06-01'
+      content-type:
+      - application/json
+      host:
+      - api.anthropic.com
+    method: POST
+    uri: https://api.anthropic.com/v1/messages
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA2RR0W7TQBD8ldU+O5GTBpr4tSpVBUhAU4SgyDo7S3zKeTe5XceYKP+OzgXaiqfT
+        7ezsjGZO6DdYYKvbMp+9WcuhrlaHL5fXH99/+nCc3X1efF1ihjbsKW2RqtsSZhglpIFT9WqODTNs
+        ZUMBC6yD6zY0uZi8mqgwk03m+XyRv57nmGEtbMSGxbfT36NGPxN9fAq8BbeXIFv/i+CHRLCGwHMt
+        fCT2xDVN4dZAiVpNWCTonYJjoBglQt8Qg8XB8xZMIJLbwAOuG4KbSM7gxplWw/QBIc0qkR20ftsY
+        sBhUBO7ofHBVSKKjdt3FSGwQfBVdHODRUqQ/tERh8KodQe+tGTk6qFE7hXdk0FKyk7wErzbCTxpJ
+        XxOmRNA3zkD25oUVeoLGHWmK5+wpKJFQdpriHztL/67MZ/fX6/nbi9X9ldN5rHdDr3S3SK2xaxMv
+        CZejVGLyvjMsTufz9wzVZF9Gcir88v4IKB26lDgW3IWQYTd2X5web5QmO2LF4nKZZ1i7uqGyThl7
+        4fLlxj881fE/Jp09n6yW5/NvAAAA//8DAKlnffOWAgAA
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      X-Robots-Tag:
+      - none
+      request-id:
+      - req_01HPSh8bSqrYVdnuPvZeF2Fc
+      via:
+      - 1.1 google
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"max_tokens": 2000, "messages": [{"role": "user", "content": [{"type":
+      "text", "text": "Hello, read book ''the great gatsby''", "cache_control": {"type":
+      "ephemeral"}}]}, {"role": "assistant", "content": [{"type": "text", "text":
+      "Certainly! I''d be happy to read \"The Great Gatsby\" for you. To do this,
+      I''ll use the `read_book` function. Let me fetch the content of the book for
+      you."}, {"type": "tool_use", "id": "toolu_01VE42QLGikx2bVuT8gW3Y8c", "name":
+      "read_book", "input": {"book_name": "the great gatsby"}}]}, {"role": "user",
+      "content": [{"type": "tool_result", "tool_use_id": "toolu_01VE42QLGikx2bVuT8gW3Y8c",
+      "content": "Traceback (most recent call last):\n  File \"/Users/smileos/Workspaces/autochat/autochat/__init__.py\",
+      line 269, in run_conversation\n    content = self.functions[function_name](\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError:
+      read_book() got an unexpected keyword argument ''from_response''\n\nDuring handling
+      of the above exception, another exception occurred:\n\nTraceback (most recent
+      call last):\n  File \"/Users/smileos/Workspaces/autochat/autochat/__init__.py\",
+      line 282, in run_conversation\n    content = self.functions[function_name](**function_arguments)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File
+      \"/Users/smileos/Workspaces/autochat/tests/test_calls.py\", line 17, in read_book\n    return
+      BOOKS[book_name]\n           ~~~~~^^^^^^^^^^^\nKeyError: ''the great gatsby''\n"}]},
+      {"role": "assistant", "content": [{"type": "text", "text": "I apologize for
+      the inconvenience. It seems there was an error when trying to read \"The Great
+      Gatsby.\" The book might not be available in the current library or there might
+      be an issue with the system. Let me try to list the available books to see what
+      options we have."}, {"type": "tool_use", "id": "toolu_01UET2K39UCas2rckywseS48",
+      "name": "list_books", "input": {}}]}, {"role": "user", "content": [{"type":
+      "tool_result", "tool_use_id": "toolu_01UET2K39UCas2rckywseS48", "content": "The
+      Great Gatsby\nTo Kill a Mockingbird\n1984"}]}], "model": "claude-3-5-sonnet-20240620",
+      "system": [{"type": "text", "text": "You are a helpful assistant that can read
+      books.", "cache_control": {"type": "ephemeral"}}], "tools": [{"name": "list_books",
+      "description": "No description provided", "input_schema": {"properties": {},
+      "title": "Input for `list_books`", "type": "object"}}, {"name": "read_book",
+      "description": "No description provided", "input_schema": {"properties": {"book_name":
+      {"title": "Book Name", "type": "string"}}, "required": ["book_name"], "title":
+      "Input for `read_book`", "type": "object"}, "cache_control": {"type": "ephemeral"}}]}'
+    headers:
+      anthropic-beta:
+      - prompt-caching-2024-07-31
+      anthropic-version:
+      - '2023-06-01'
+      content-type:
+      - application/json
+      host:
+      - api.anthropic.com
+    method: POST
+    uri: https://api.anthropic.com/v1/messages
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA2RSS2/bMAz+KwQvuziBk3Vr62MPKVLkUBTZhnUdDNqmbS2ylIpU2izIfy/krejr
+        RJH8HgSpA5oGCxykK/PZrL45W1zdz1fX69sFXV08urPu+wIz1P2WE4pFqGPMMHibCiRiRMkpZjj4
+        hi0WWFuKDU8+T75MxDvHOpnn85P86zzHDGvvlJ1i8evwLKr8mOhjKHDdk9vA3kdofUgxwJbUsKt5
+        CstPO4bAGgzvuAHtGawRBd8C7chYqixD5f1GprBUsOkF1mwY7nDdM1wGJoVLUqn2dwhGwLiGuXlh
+        Z1BFTcKBYTBdr9DTjqFidkAgA1kLRiQyPBjtxwlq2hola/6SGu/goWcHS2hNEIU0aQPqgeqaRcDo
+        FFasMDBo2ENgaozrwChQR8a9EvUhcK3vxAs8Zi97896WUdI1xhOmPJb57LSKP04bvd7/+Xaz0qG9
+        /UnteYsZOhoSL5mWaUmJ6LZRsThgysv/gPebwuPxd4aiflsGJvHurfnYEL6P6UZYuGhthnH8J8Xh
+        n0OpfsNOsDjPTzKsqe65rJOD8a58i8if++OYH3o+6uvKbJ4fj08AAAD//wMAef2da8MCAAA=
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      X-Robots-Tag:
+      - none
+      request-id:
+      - req_016fBgmxmF5YQ4sUctNNHt7B
+      via:
+      - 1.1 google
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"max_tokens": 2000, "messages": [{"role": "user", "content": [{"type":
+      "text", "text": "Hello, read book ''the great gatsby''", "cache_control": {"type":
+      "ephemeral"}}]}, {"role": "assistant", "content": [{"type": "text", "text":
+      "Certainly! I''d be happy to read \"The Great Gatsby\" for you. To do this,
+      I''ll use the `read_book` function. Let me fetch the content of the book for
+      you."}, {"type": "tool_use", "id": "toolu_01VE42QLGikx2bVuT8gW3Y8c", "name":
+      "read_book", "input": {"book_name": "the great gatsby"}}]}, {"role": "user",
+      "content": [{"type": "tool_result", "tool_use_id": "toolu_01VE42QLGikx2bVuT8gW3Y8c",
+      "content": "Traceback (most recent call last):\n  File \"/Users/smileos/Workspaces/autochat/autochat/__init__.py\",
+      line 269, in run_conversation\n    content = self.functions[function_name](\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError:
+      read_book() got an unexpected keyword argument ''from_response''\n\nDuring handling
+      of the above exception, another exception occurred:\n\nTraceback (most recent
+      call last):\n  File \"/Users/smileos/Workspaces/autochat/autochat/__init__.py\",
+      line 282, in run_conversation\n    content = self.functions[function_name](**function_arguments)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File
+      \"/Users/smileos/Workspaces/autochat/tests/test_calls.py\", line 17, in read_book\n    return
+      BOOKS[book_name]\n           ~~~~~^^^^^^^^^^^\nKeyError: ''the great gatsby''\n"}]},
+      {"role": "assistant", "content": [{"type": "text", "text": "I apologize for
+      the inconvenience. It seems there was an error when trying to read \"The Great
+      Gatsby.\" The book might not be available in the current library or there might
+      be an issue with the system. Let me try to list the available books to see what
+      options we have."}, {"type": "tool_use", "id": "toolu_01UET2K39UCas2rckywseS48",
+      "name": "list_books", "input": {}}]}, {"role": "user", "content": [{"type":
+      "tool_result", "tool_use_id": "toolu_01UET2K39UCas2rckywseS48", "content": "The
+      Great Gatsby\nTo Kill a Mockingbird\n1984"}]}, {"role": "assistant", "content":
+      [{"type": "text", "text": "Thank you for your patience. I''ve retrieved the
+      list of available books. It looks like \"The Great Gatsby\" is indeed available,
+      but there might have been a small issue with the capitalization when I first
+      tried to access it. Let me try reading it again with the correct capitalization:"},
+      {"type": "tool_use", "id": "toolu_017buW7dtPyjURLtmfZYaf9f", "name": "read_book",
+      "input": {"book_name": "The Great Gatsby"}}]}, {"role": "user", "content": [{"type":
+      "tool_result", "tool_use_id": "toolu_017buW7dtPyjURLtmfZYaf9f", "content": "Lorem
+      ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt
+      ut labore et dolore magna aliqua."}]}], "model": "claude-3-5-sonnet-20240620",
+      "system": [{"type": "text", "text": "You are a helpful assistant that can read
+      books.", "cache_control": {"type": "ephemeral"}}], "tools": [{"name": "list_books",
+      "description": "No description provided", "input_schema": {"properties": {},
+      "title": "Input for `list_books`", "type": "object"}}, {"name": "read_book",
+      "description": "No description provided", "input_schema": {"properties": {"book_name":
+      {"title": "Book Name", "type": "string"}}, "required": ["book_name"], "title":
+      "Input for `read_book`", "type": "object"}, "cache_control": {"type": "ephemeral"}}]}'
+    headers:
+      anthropic-beta:
+      - prompt-caching-2024-07-31
+      anthropic-version:
+      - '2023-06-01'
+      content-type:
+      - application/json
+      host:
+      - api.anthropic.com
+    method: POST
+    uri: https://api.anthropic.com/v1/messages
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA2xUXW/cNhD8KwO++EU+XNw0he+lQIEkNZoGQZOHAL3isEfuSbQprsxdnqMY/u8F
+        dc6H2zyJ4FKzszND3rsY3MaN2u/Wz9727y4vX4aX8xTefvzDrj8Of/15vHads3nidopVqWfXuSKp
+        bZBqVKNsrnOjBE5u43yiGvj8p/Ofz1VyZju/WF88X7+4WLvOecnG2dzm7/svoMaf2u/LZ+Ouzo4M
+        rd6z6qGmNIOWNQds3YeB8bowGV6T6X7eOhykYJa6wu9yx0cuHaJBmUeFDWSwgfHYFFORYwwcEBXX
+        VQ2EKZHnQVLggsYAMeMNWcwdvIyj5DTjJstdBim27o0UHhEnreNq6/BhiNrA5GCcURtJUhC07tWi
+        VeOFH3mrlL7SiBmBR8lqhSxKVkhrrhZzv9rmbW5jLmQKU9BN23rSGkGSFGg00MjWqGZlb2y1gEKc
+        ovqYe3CKtsJ7DggCjlVHCTAeJymI2ccQQ82Gaki0l8JgO0EzRuozgVK8rbTauhOrqLBCWRMZK4rU
+        fkgzTB4ZvqOYEU05HZooSY7cLfqPraAmhXqGzmo8rvBbXcyZGzdCEoMcYHFkmOBAKSFmk+bmXbQB
+        /WL7whOUAyaK+ZHYFWiSJH38zCfPr+ClppDPvlreInLCaXz+44ccfhyt/YxXK7z3YoZX0T73XCiF
+        Fa4yqFmToJ4zlShtzKg41Oybobhr7WHzFD21CJfmTF56t0yfzG2DnJJC2SIl8CfPZTIciozL2b3I
+        zQrLiC3NXBiUZxtO3uoy1VlAijeLaC2noL1U+/E8i3IzpCEt2N860ZFion1ipKj2K67OAvaMgaap
+        GYyB03TSryHc1hbWFtxTt4YwJWlBHKiQNy7aLaEeeGRdjB0YWY6csKd2TSSj59wEXWgnDj134CM3
+        lVqwcMcI0iwc6MiPj0Cj8lTEJsrKPfzTOTWZdoVJJbuN4xx2TXP3WFC+rZw9u02uKXWuLu/Y5t7F
+        PFXbmdxwVrd5tn5x2TlPfuCdb+pFybunR9Zf6u1y/r8m1b7fuXj+y8PDvwAAAP//AwAej+FnZAUA
+        AA==
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      X-Robots-Tag:
+      - none
+      request-id:
+      - req_016zb5Exzgfsx2w89SiQzFdM
+      via:
+      - 1.1 google
+    status:
+      code: 200
+      message: OK
+version: 1

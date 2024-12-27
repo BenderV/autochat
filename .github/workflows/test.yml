@@ -23,8 +23,13 @@ jobs:
       - name: Install dependencies
         run: |
           curl -LsSf https://astral.sh/uv/install.sh | sh
-          uv pip install --system -e ".[all]"
+          uv pip install --system -e ".[dev]"
       - name: Run tests
         env:
           OPENAI_API_KEY: test-key
         run: python -m unittest discover
+      - name: Run Pytest
+        env:
+          OPENAI_API_KEY: fake
+          ANTHROPIC_API_KEY: fake
+        run: pytest tests
