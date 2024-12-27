@@ -38,7 +38,9 @@ dev = [
 version_source = "commit"
 version_variables = [
     "autochat/__init__.py:__version__",
-    "pyproject.toml:project.version"
+]
+version_toml = [
+    "pyproject.toml:project.version",
 ]
 branch = "master"
 upload_to_pypi = false
