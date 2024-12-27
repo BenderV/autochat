@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.4.1 (2024-12-27)
+
+### Bug Fixes
+
+- **workflow**: Version
+  ([`1413ceb`](https://github.com/BenderV/autochat/commit/1413ceb70fe93daa0902c5fca5e6b6bdce5d42a1))
+
+
 ## v0.4.0 (2024-12-27)
 
 ### Bug Fixes
@@ -33,6 +41,9 @@
 
 - **readme**: Update default model & readme
   ([`ec83dcd`](https://github.com/BenderV/autochat/commit/ec83dcd60899b533258b7f18e4d14789bff8a194))
+
+- **release**: Bump version to 0.4.0
+  ([`00128ab`](https://github.com/BenderV/autochat/commit/00128aba05af07523037c38e8a332a4780c5e11d))
 
 - **test**: Add tests
   ([`ead2683`](https://github.com/BenderV/autochat/commit/ead268326cb00bb3f30701bae6fdad44e0dc7554))

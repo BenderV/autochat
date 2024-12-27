@@ -1,6 +1,6 @@
 """AutoChat package."""
 
-__version__ = "0.4.0"
+__version__ = "0.4.1"
 
 import json
 import os
