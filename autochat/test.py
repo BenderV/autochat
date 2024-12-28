@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 
-from autochat import APIProvider, Autochat, ContextLengthExceededError, Message
+from autochat import APIProvider, Autochat, Message
 
 
 class TestAutochat(unittest.TestCase):
@@ -50,16 +50,6 @@ class TestAutochat(unittest.TestCase):
         self.assertEqual(responses[0].content, "Test question")
         self.assertEqual(responses[1].role, "assistant")
         self.assertEqual(responses[1].content, "Final response")
-
-    @patch.object(Autochat, "fetch_openai")
-    def test_context_length_exceeded(self, mock_fetch_openai):
-        mock_fetch_openai.side_effect = ContextLengthExceededError(
-            "Context length exceeded"
-        )
-        chat = Autochat(provider="openai")
-
-        with self.assertRaises(ContextLengthExceededError):
-            chat.ask("Test question")
 
 
 if __name__ == "__main__":

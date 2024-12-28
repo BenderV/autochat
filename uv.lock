@@ -49,13 +49,12 @@ wheels = [
 
 [[package]]
 name = "autochat"
-version = "0.3.13"
+version = "0.4.1"
 source = { editable = "." }
 dependencies = [
     { name = "httpx" },
     { name = "pillow" },
     { name = "pydantic" },
-    { name = "tenacity" },
 ]
 
 [package.optional-dependencies]
@@ -66,11 +65,6 @@ all = [
 anthropic = [
     { name = "anthropic" },
 ]
-openai = [
-    { name = "openai" },
-]
-
-[package.dev-dependencies]
 dev = [
     { name = "anthropic" },
     { name = "openai" },
@@ -78,26 +72,24 @@ dev = [
     { name = "pytest-recording" },
     { name = "ruff" },
 ]
+openai = [
+    { name = "openai" },
+]
 
 [package.metadata]
 requires-dist = [
     { name = "anthropic", marker = "extra == 'all'", specifier = "==0.37.1" },
     { name = "anthropic", marker = "extra == 'anthropic'", specifier = "==0.37.1" },
+    { name = "anthropic", marker = "extra == 'dev'", specifier = "==0.37.1" },
     { name = "httpx", specifier = "==0.27.2" },
     { name = "openai", marker = "extra == 'all'", specifier = "==1.52.2" },
+    { name = "openai", marker = "extra == 'dev'", specifier = "==1.52.2" },
     { name = "openai", marker = "extra == 'openai'", specifier = "==1.52.2" },
     { name = "pillow", specifier = "==10.4.0" },
     { name = "pydantic", specifier = ">=2.10.3" },
-    { name = "tenacity", specifier = "==8.3.0" },
-]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "anthropic", specifier = "==0.37.1" },
-    { name = "openai", specifier = "==1.52.2" },
-    { name = "pytest", specifier = ">=8.3.4" },
-    { name = "pytest-recording", specifier = ">=0.13.2" },
-    { name = "ruff", specifier = ">=0.8.3" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.3.4" },
+    { name = "pytest-recording", marker = "extra == 'dev'", specifier = ">=0.13.2" },
+    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.8.3" },
 ]
 
 [[package]]
@@ -687,15 +679,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/a2/87/a6771e1546d97e7e041b6ae58d80074f81b7d5121207425c964ddf5cfdbd/sniffio-1.3.1.tar.gz", hash = "sha256:f4324edc670a0f49750a81b895f35c3adb843cca46f0530f79fc1babb23789dc", size = 20372 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/e9/44/75a9c9421471a6c4805dbf2356f7c181a29c1879239abab1ea2cc8f38b40/sniffio-1.3.1-py3-none-any.whl", hash = "sha256:2f6da418d1f1e0fddd844478f41680e794e6051915791a034ff65e5f100525a2", size = 10235 },
-]
-
-[[package]]
-name = "tenacity"
-version = "8.3.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/32/6c/57df6196ce52c464cf8556e8f697fec5d3469bb8cd319c1685c0a090e0b4/tenacity-8.3.0.tar.gz", hash = "sha256:953d4e6ad24357bceffbc9707bc74349aca9d245f68eb65419cf0c249a1949a2", size = 43608 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/61/a1/6bb0cbebefb23641f068bb58a2bc56da9beb2b1c550242e3c540b37698f3/tenacity-8.3.0-py3-none-any.whl", hash = "sha256:3649f6443dbc0d9b01b9d8020a9c4ec7a1ff5f6f3c6c8a036ef371f573fe9185", size = 25934 },
 ]
 
 [[package]]
