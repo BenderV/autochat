@@ -14,6 +14,8 @@ def replace_file_paths_with_XXX(content: str) -> str:
         content = re.sub(r"File \\\".*?([^/]+\.py)\\\"", r"File \"XXX/\1\"", content)
         # Replace line number with xxx
         content = re.sub(r"line \d+", r"line xxx", content)
+        # Remove syntax markers (useful for test in different Python versions)
+        content = re.sub(r"\s+~+\^+\s*\\n", "", content)
     return content
 
 
