@@ -218,6 +218,121 @@ class Autochat:
         self.messages.append(response)
         return response
 
+    def _format_callback_message(
+        self, function_name, function_call_part_id, content, image
+    ):
+        if isinstance(content, Message):
+            message = content
+            # TODO: Add name and function_call_id to the message
+            # message.name = function_name
+            # message.function_call_id = function_call_part_id
+            return message
+
+        # We format the function_call response to be used as a next message
+        if content is None:
+            # If no result, continue the loop with no additional message
+            content = None
+        elif isinstance(content, list):
+            # If data is list of dicts, dumps to CSV
+            if not content:
+                content = "[]"
+            elif isinstance(content[0], dict):
+                content = csv_dumps(content, OUTPUT_SIZE_LIMIT)
+            else:  # TODO: Add support for other types of list
+                content = "\n".join(content)
+        elif isinstance(content, dict):
+            content = json.dumps(content)
+            if len(content) > OUTPUT_SIZE_LIMIT:
+                content = (
+                    content[:OUTPUT_SIZE_LIMIT] + f"\n... ({len(content)} characters)"
+                )
+        elif isinstance(content, str):
+            if len(content) > OUTPUT_SIZE_LIMIT:
+                content = (
+                    content[:OUTPUT_SIZE_LIMIT] + f"\n... ({len(content)} characters)"
+                )
+        elif isinstance(content, bytes):
+            # Detect if it's an image
+            try:
+                image = PILImage.open(io.BytesIO(content))
+                content = None
+            except IOError:
+                # Not an image
+                raise ValueError("Returned bytes is not a valid image.")
+        elif isinstance(content, (int, float, bool)):
+            content = str(content)
+        elif isinstance(content, object):
+            # If the function return an object, we add it as a tool
+            # NOTE: Maybe we shouldn't, and rely on a clearer signal / object type ?
+            tool_id = self.add_tool(content)
+            content = f"Added tool: {tool_id}"
+        else:
+            raise ValueError(f"Invalid content type: {type(content)}")
+
+        # Build a function response message
+        return Message(
+            name=function_name,
+            role="function",
+            content=content,
+            image=image,
+            function_call_id=function_call_part_id,
+        )
+
+    def _format_exception(self, e):
+        # We clean the traceback to remove frames from __init__.py
+        tb = traceback.extract_tb(e.__traceback__)
+        filtered_tb = [frame for frame in tb if "chat.py" not in frame.filename]
+        if filtered_tb:
+            content = "Traceback (most recent call last):\n"
+            content += "".join(traceback.format_list(filtered_tb))
+            content += f"\n{e.__class__.__name__}: {str(e)}"
+        else:
+            # If no relevant frames, use the full traceback
+            content = traceback.format_exc()
+        return content
+
+    def _call_with_signature(self, func, from_response, **kwargs):
+        sig = inspect.signature(func)
+        if "from_response" in sig.parameters:
+            return func(**kwargs, from_response=from_response)
+        else:
+            return func(**kwargs)
+
+    def _call_function_and_build_message(
+        self, function_name, function_arguments, response
+    ):
+        """
+        Encapsulate the 'call the function' logic & handle exceptions
+        plus building a function or tool response message.
+        """
+        content = None
+        image = None
+
+        try:
+            if function_name.startswith("tool-"):
+                tool_id, method_name = function_name.split("__")
+                tool = self.tools[tool_id]
+                method = getattr(tool, method_name)
+                content = self._call_with_signature(
+                    method, response, **function_arguments
+                )
+            else:
+                content = self._call_with_signature(
+                    self.functions[function_name], response, **function_arguments
+                )
+        except Exception as e:
+            if isinstance(e, StopLoopException):
+                raise  # re-raise
+            content = self._format_exception(e)
+
+        # Build next message
+        return self._format_callback_message(
+            function_name=function_name,
+            function_call_part_id=response.function_call_id,
+            content=content,
+            image=image,
+        )
+
     def run_conversation(
         self,
         question: typing.Union[str, Message, None] = None,
@@ -243,115 +358,17 @@ class Autochat:
             function_call_part = next(
                 (p for p in response.parts if p.type == "function_call"), None
             )
-            if not function_call_part:
-                # If there's no function call part, it's presumably the final answer
+            if function_call_part:
+                name = function_call_part.function_call["name"]
+                args = function_call_part.function_call["arguments"]
+                message = self._call_function_and_build_message(name, args, response)
                 yield response
-                return
-
-            # Extract name and arguments from the function_call part
-            function_name = function_call_part.function_call["name"]
-            function_arguments = function_call_part.function_call["arguments"]
-
-            image = None
-            content = None
-
-            # Attempt to call the function/tool
-            def call_with_args(func, **kwargs):
-                sig = inspect.signature(func)
-                # Only include from_response if it's in the function's parameters
-                if "from_response" in sig.parameters:
-                    kwargs["from_response"] = response
-                return func(**kwargs)
-
-            try:
-                if function_name.startswith("tool-"):
-                    tool_id, method_name = function_name.split("__")
-                    tool = self.tools[tool_id]
-                    method = tool.__getattribute__(method_name)
-                    content = call_with_args(method, **function_arguments)
-                else:
-                    content = call_with_args(
-                        self.functions[function_name], **function_arguments
-                    )
-            except Exception as e:
-                if isinstance(e, StopLoopException):
-                    yield response
+                yield message
+                if self.should_pause_conversation(response, message):
                     return
-
-                # We clean the traceback to remove frames from __init__.py
-                tb = traceback.extract_tb(e.__traceback__)
-                filtered_tb = [frame for frame in tb if "chat.py" not in frame.filename]
-                if filtered_tb:
-                    content = "Traceback (most recent call last):\n"
-                    content += "".join(traceback.format_list(filtered_tb))
-                    content += f"\n{e.__class__.__name__}: {str(e)}"
-                else:
-                    # If no relevant frames, use the full traceback
-                    content = traceback.format_exc()
-
-            # Yield the assistant message that contained the function call
-            yield response
-
-            # We format the function_call response to be used as a next message
-            if not isinstance(content, Message):
-                if content is None:
-                    # If no result, continue the loop with no additional message
-                    content = None
-                elif isinstance(content, list):
-                    # If data is list of dicts, dumps to CSV
-                    if not content:
-                        content = "[]"
-                    elif isinstance(content[0], dict):
-                        content = csv_dumps(content, OUTPUT_SIZE_LIMIT)
-                    else:  # TODO: Add support for other types of list
-                        content = "\n".join(content)
-                elif isinstance(content, dict):
-                    content = json.dumps(content)
-                    if len(content) > OUTPUT_SIZE_LIMIT:
-                        content = (
-                            content[:OUTPUT_SIZE_LIMIT]
-                            + f"\n... ({len(content)} characters)"
-                        )
-                elif isinstance(content, str):
-                    if len(content) > OUTPUT_SIZE_LIMIT:
-                        content = (
-                            content[:OUTPUT_SIZE_LIMIT]
-                            + f"\n... ({len(content)} characters)"
-                        )
-                elif isinstance(content, bytes):
-                    # Detect if it's an image
-                    try:
-                        image = PILImage.open(io.BytesIO(content))
-                        content = None
-                    except IOError:
-                        # Not an image
-                        raise ValueError("Returned bytes is not a valid image.")
-                elif isinstance(content, (int, float, bool)):
-                    content = str(content)
-                elif isinstance(content, object):
-                    # If the function return an object, we add it as a tool
-                    # NOTE: Maybe we shouldn't, and rely on a clearer signal / object type ?
-                    tool_id = self.add_tool(content)
-                    content = f"Added tool: {tool_id}"
-                else:
-                    raise ValueError(f"Invalid content type: {type(content)}")
-
-                # Build a function response message
-                message = Message(
-                    name=function_name,
-                    role="function",
-                    content=content,
-                    image=image,
-                    function_call_id=function_call_part.function_call_id,
-                )
             else:
-                # If the function returned a new Message, that becomes the next message
-                message = content
-
-            yield message
-
-            # If user code wants to pause:
-            if self.should_pause_conversation(response, message):
+                # final text answer
+                yield response
                 return
 
     def fetch_openai(self, **kwargs):
