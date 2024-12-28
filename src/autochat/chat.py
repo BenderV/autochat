@@ -32,8 +32,8 @@ class Autochat:
     def __init__(
         self,
         instruction: str = None,
-        examples: list[Message] | None = None,
-        messages: list[Message] | None = None,
+        examples: typing.Union[list[Message], None] = None,
+        messages: typing.Union[list[Message], None] = None,
         context: str = None,
         max_interactions: int = 100,
         model=AUTOCHAT_MODEL,
