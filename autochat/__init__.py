@@ -9,13 +9,6 @@ import typing
 import inspect
 from enum import Enum
 
-from tenacity import (
-    retry,
-    retry_if_not_exception_type,
-    stop_after_attempt,
-    wait_random_exponential,
-)
-
 from autochat.model import Message, MessagePart
 from autochat.utils import csv_dumps, inspect_schema, parse_chat_template
 from PIL import Image as PILImage
@@ -31,19 +24,7 @@ class APIProvider(Enum):
     ANTHROPIC = "anthropic"
 
 
-class ContextLengthExceededError(Exception):
-    pass
-
-
-class InvalidRequestError(Exception):
-    pass
-
-
 class StopLoopException(Exception):
-    pass
-
-
-class InsufficientQuotaError(Exception):
     pass
 
 
@@ -101,8 +82,6 @@ class Autochat:
                     if AUTOCHAT_HOST
                     else "https://api.openai.com/v1"
                 ),
-                # We override because we have our own retry logic
-                max_retries=0,  # default is 2
             )
             self.fetch = self.fetch_openai
         elif self.provider == APIProvider.ANTHROPIC:
@@ -377,24 +356,7 @@ class Autochat:
             if self.should_pause_conversation(response, message):
                 return
 
-    @retry(
-        stop=stop_after_attempt(4),
-        wait=wait_random_exponential(multiplier=2, max=10),
-        # If we get a context_length_exceeded error, we stop the conversation
-        retry=(
-            retry_if_not_exception_type(ContextLengthExceededError)
-            & retry_if_not_exception_type(InvalidRequestError)
-            & retry_if_not_exception_type(InsufficientQuotaError)
-            & retry_if_not_exception_type(
-                AttributeError
-            )  # TODO: should only retry if the error is from the api
-        ),
-        # After 5 attempts, we throw the error
-        reraise=True,
-    )
     def fetch_openai(self, **kwargs):
-        import openai
-
         messages = self.prepare_messages(transform_function=Message.to_openai_dict)
         # Add instruction as the first message
         if self.instruction:
@@ -404,30 +366,17 @@ class Autochat:
             )
             messages = [instruction_message.to_openai_dict()] + messages
 
-        try:
-            if self.functions_schema:
-                res = self.client.chat.completions.create(
-                    model=self.model,
-                    messages=messages,
-                    functions=self.functions_schema,
-                    **kwargs,
-                )
-            else:
-                res = self.client.chat.completions.create(
-                    model=self.model, messages=messages, **kwargs
-                )
-        except openai.BadRequestError as e:
-            if e.code == "context_length_exceeded":
-                raise ContextLengthExceededError(e)
-            if e.code == "invalid_request_error":
-                raise InvalidRequestError(e)
-            raise
-        except openai.RateLimitError as e:
-            if e.code == "insufficient_quota":
-                raise InsufficientQuotaError(e)
-            raise
-        except openai.APIError as e:
-            raise e
+        if self.functions_schema:
+            res = self.client.chat.completions.create(
+                model=self.model,
+                messages=messages,
+                functions=self.functions_schema,
+                **kwargs,
+            )
+        else:
+            res = self.client.chat.completions.create(
+                model=self.model, messages=messages, **kwargs
+            )
 
         message = res.choices[0].message
         return Message.from_openai_dict(
@@ -437,21 +386,6 @@ class Autochat:
             id=res.id,  # We use the response id as the message id
         )
 
-    @retry(
-        stop=stop_after_attempt(4),
-        wait=wait_random_exponential(multiplier=2, max=10),
-        # If we get a context_length_exceeded error, we stop the conversation
-        retry=(
-            retry_if_not_exception_type(ContextLengthExceededError)
-            & retry_if_not_exception_type(InvalidRequestError)
-            & retry_if_not_exception_type(InsufficientQuotaError)
-            & retry_if_not_exception_type(
-                TypeError
-            )  # TODO: should only retry if the error is from the api
-        ),
-        # After 5 attempts, we throw the error
-        reraise=True,
-    )
     def fetch_anthropic(self, **kwargs):
         def add_empty_function_result(messages):
             """
