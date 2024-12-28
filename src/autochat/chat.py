@@ -280,9 +280,7 @@ class Autochat:
 
                 # We clean the traceback to remove frames from __init__.py
                 tb = traceback.extract_tb(e.__traceback__)
-                filtered_tb = [
-                    frame for frame in tb if "__init__.py" not in frame.filename
-                ]
+                filtered_tb = [frame for frame in tb if "chat.py" not in frame.filename]
                 if filtered_tb:
                     content = "Traceback (most recent call last):\n"
                     content += "".join(traceback.format_list(filtered_tb))
