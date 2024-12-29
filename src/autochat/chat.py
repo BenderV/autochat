@@ -7,10 +7,12 @@ import os
 import traceback
 import typing
 import inspect
-from enum import Enum
 
 from autochat.model import Message, MessagePart
 from autochat.utils import csv_dumps, inspect_schema, parse_chat_template
+from autochat.providers.base_provider import APIProvider
+from autochat.providers.utils import get_provider_and_model
+from autochat.base import AutochatBase
 from PIL import Image as PILImage
 import io
 
@@ -19,16 +21,11 @@ AUTOCHAT_MODEL = os.getenv("AUTOCHAT_MODEL")
 OUTPUT_SIZE_LIMIT = int(os.getenv("AUTOCHAT_OUTPUT_SIZE_LIMIT", 4000))
 
 
-class APIProvider(Enum):
-    OPENAI = "openai"
-    ANTHROPIC = "anthropic"
-
-
 class StopLoopException(Exception):
     pass
 
 
-class Autochat:
+class Autochat(AutochatBase):
     def __init__(
         self,
         instruction: str = None,
@@ -37,20 +34,12 @@ class Autochat:
         context: str = None,
         max_interactions: int = 100,
         model=AUTOCHAT_MODEL,
-        provider=APIProvider.OPENAI,
+        provider: str = APIProvider.OPENAI,
     ) -> None:
-        if isinstance(provider, APIProvider):
-            self.provider = provider
-        elif isinstance(provider, str):
-            try:
-                self.provider = APIProvider(provider)
-            except ValueError:
-                raise ValueError(f"Provider {provider} is not a valid provider")
-        else:
-            raise ValueError(f"Invalid provider: {provider}")
-
-        self.model = model
-        self.client = None
+        self.provider, self.model = get_provider_and_model(
+            self, provider, model
+        )  # TODO: rename register ?
+        self.client = None  # TODO:
         self.instruction = instruction
         if examples is None:
             self.examples = []
@@ -69,32 +58,6 @@ class Autochat:
         self.tools = {}
         # Give the hability to pause the conversation after a function call or response
         self.should_pause_conversation = lambda function_call, function_response: False
-
-        if self.provider == APIProvider.OPENAI:
-            from openai import OpenAI
-
-            if self.model is None:
-                # Default to gpt-4o
-                self.model = "gpt-4o"
-            self.client = OpenAI(
-                base_url=(
-                    f"{AUTOCHAT_HOST}/v1"
-                    if AUTOCHAT_HOST
-                    else "https://api.openai.com/v1"
-                ),
-            )
-            self.fetch = self.fetch_openai
-        elif self.provider == APIProvider.ANTHROPIC:
-            import anthropic
-
-            if self.model is None:
-                self.model = "claude-3-5-sonnet-20240620"
-            self.client = anthropic.Anthropic(
-                default_headers={"anthropic-beta": "prompt-caching-2024-07-31"}
-            )
-            self.fetch = self.fetch_anthropic
-        else:
-            raise ValueError(f"Invalid provider: {self.provider}")
 
     @classmethod
     def from_template(cls, chat_template: str, **kwargs):
@@ -214,7 +177,8 @@ class Autochat:
                 )
             self.messages.append(message)  # Add the question to the history
 
-        response = self.fetch(**kwargs)
+        # 3. Call the strategy
+        response = self.provider.fetch(**kwargs)
         self.messages.append(response)
         return response
 
@@ -370,180 +334,3 @@ class Autochat:
                 # final text answer
                 yield response
                 return
-
-    def fetch_openai(self, **kwargs):
-        messages = self.prepare_messages(transform_function=Message.to_openai_dict)
-        # Add instruction as the first message
-        if self.instruction:
-            instruction_message = Message(
-                role="system",
-                content=self.instruction,
-            )
-            messages = [instruction_message.to_openai_dict()] + messages
-
-        if self.functions_schema:
-            res = self.client.chat.completions.create(
-                model=self.model,
-                messages=messages,
-                functions=self.functions_schema,
-                **kwargs,
-            )
-        else:
-            res = self.client.chat.completions.create(
-                model=self.model, messages=messages, **kwargs
-            )
-
-        message = res.choices[0].message
-        return Message.from_openai_dict(
-            role=message.role,
-            content=message.content,
-            function_call=message.function_call,
-            id=res.id,  # We use the response id as the message id
-        )
-
-    def fetch_anthropic(self, **kwargs):
-        def add_empty_function_result(messages):
-            """
-            Ajustement Anthropic pour fusionner ou insérer la « function_result » :
-
-            - Premier cas : message `role="function"` suivi d’un `role="user"`.
-            On transforme ce message 'function' en un part de type 'tool_result'
-            inséré au début du message utilisateur suivant.
-
-            - Second cas (inchangé) : message `role="assistant"` avec un `function_call`,
-            suivi d’un message non-`function`. On insère un message vide `role="function"`.
-            """
-            for i in range(len(messages) - 1, 0, -1):
-                if (
-                    messages[i - 1].role == "assistant"
-                    and messages[i - 1].function_call
-                    and not messages[i].role == "function"
-                ):
-                    # Insert an empty function result
-                    messages.insert(
-                        i,
-                        Message(
-                            role="function",
-                            name=messages[i - 1].function_call["name"],
-                            content="",
-                            function_call_id=messages[i - 1].function_call_id,
-                        ),
-                    )
-
-        messages = self.prepare_messages(
-            transform_function=lambda m: m.to_anthropic_dict(),
-            transform_list_function=add_empty_function_result,
-        )
-
-        if self.instruction:
-            system = self.instruction
-        else:
-            system = None
-
-        def merge_messages(messages):
-            """
-            When two messages are in the same role, we merge the following message into the previous.
-            {
-                "role": "user",
-                "content": [
-                    {
-                    "type": "tool_result",
-                    "tool_use_id": "example_19",
-                    "content": ""
-                    }
-                ]
-            },
-            {
-                "role": "user",
-                "content": "Plot distribution of stations per city"
-            }
-            """
-            merged_messages = []
-            for message in messages:
-                if merged_messages and merged_messages[-1]["role"] == message["role"]:
-                    if isinstance(merged_messages[-1]["content"], str):
-                        merged_messages[-1]["content"].append(
-                            {
-                                "type": "text",
-                                "text": merged_messages[-1]["content"],
-                            }
-                        )
-                    elif isinstance(merged_messages[-1]["content"], list):
-                        merged_messages[-1]["content"].extend(message["content"])
-                    else:
-                        raise ValueError(
-                            f"Invalid content type: {type(merged_messages[-1]['content'])}"
-                        )
-                else:
-                    merged_messages.append(message)
-            return merged_messages
-
-        messages = merge_messages(messages)
-
-        # Need to map field "parameters" to "input_schema"
-        tools = [
-            {
-                "name": s["name"],
-                "description": s["description"],
-                "input_schema": s["parameters"],
-            }
-            for s in self.functions_schema
-        ]
-        # Add description to the function is their description is empty
-        for tool in tools:
-            if not tool["description"]:
-                tool["description"] = "No description provided"
-
-        # === Add cache_controls ===
-        # Messages: Find the last message with an index multiple of 10
-        last_message_index = next(
-            (i for i in reversed(range(len(messages))) if i % 10 == 0),
-            None,
-        )
-
-        if last_message_index is not None:
-            if isinstance(messages[last_message_index]["content"], list) and isinstance(
-                messages[last_message_index]["content"][-1], dict
-            ):
-                messages[last_message_index]["content"][-1]["cache_control"] = {
-                    "type": "ephemeral"
-                }
-            elif isinstance(messages[last_message_index]["content"], str):
-                messages[last_message_index]["content"] = [
-                    {
-                        "type": "text",
-                        "text": messages[last_message_index]["content"],
-                        "cache_control": {"type": "ephemeral"},
-                    }
-                ]
-        # Tools: Add cache_control to the last tool function
-        if tools:
-            tools[-1]["cache_control"] = {"type": "ephemeral"}
-
-        # System: add cache_control to the system message
-        if system is not None:
-            system = [
-                {
-                    "type": "text",
-                    "text": system,
-                    "cache_control": {"type": "ephemeral"},
-                }
-            ]
-
-        # === End of cache_control ===
-
-        if system is not None:
-            kwargs["system"] = system
-
-        res = self.client.messages.create(
-            model=self.model,
-            messages=messages,
-            tools=tools,
-            max_tokens=2000,
-            **kwargs,
-        )
-        res_dict = res.to_dict()
-        return Message.from_anthropic_dict(
-            role=res_dict["role"],
-            content=res_dict["content"],
-        )

@@ -1,14 +1,15 @@
 import unittest
 from unittest.mock import patch
 
-from autochat import APIProvider, Autochat, Message
+from autochat import Autochat, Message
+from autochat.providers.openai import OpenAIProvider
 
 
 class TestAutochat(unittest.TestCase):
     def test_autochat_initialization(self):
         chat = Autochat(instruction="Test instruction", provider="openai")
         self.assertEqual(chat.instruction, "Test instruction")
-        self.assertEqual(chat.provider, APIProvider.OPENAI)
+        self.assertEqual(chat.provider.__class__, OpenAIProvider)
         self.assertEqual(chat.model, "gpt-4o")
 
     def test_autochat_invalid_provider(self):
@@ -25,7 +26,7 @@ class TestAutochat(unittest.TestCase):
         self.assertEqual(len(chat.functions_schema), 1)
         self.assertIn("test_function", chat.functions)
 
-    @patch.object(Autochat, "fetch_openai")
+    @patch.object(OpenAIProvider, "fetch")
     def test_ask(self, mock_fetch_openai):
         mock_fetch_openai.return_value = Message(
             role="assistant", content="Test response"
@@ -37,7 +38,7 @@ class TestAutochat(unittest.TestCase):
         self.assertEqual(response.content, "Test response")
         self.assertEqual(len(chat.messages), 2)
 
-    @patch.object(Autochat, "fetch_openai")
+    @patch.object(OpenAIProvider, "fetch")
     def test_run_conversation(self, mock_fetch_openai):
         mock_fetch_openai.return_value = Message(
             role="assistant", content="Final response"

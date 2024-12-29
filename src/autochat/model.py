@@ -1,4 +1,3 @@
-import json
 import typing
 import base64
 from io import BytesIO
@@ -71,62 +70,6 @@ class MessagePart:
         self.function_call = function_call
         self.function_call_id = function_call_id
         self.data = data  # TODO: remove
-
-    def to_openai_dict(self) -> dict:
-        if self.type == "text":
-            return {
-                "type": "text",
-                "text": self.content,
-            }
-        elif self.type == "image":
-            return {
-                "type": "image_url",
-                "image_url": {
-                    "url": f"data:{self.image.format};base64,{self.image.to_base64()}"
-                },
-            }
-        elif self.type == "function_call":
-            return {
-                "name": self.function_call["name"],
-                "arguments": json.dumps(self.function_call["arguments"]),
-            }
-        elif self.type == "function_result":
-            return {
-                "type": "text",
-                "text": self.content,
-            }
-
-        return {}
-
-    def to_anthropic_dict(self) -> dict:
-        if self.type == "text":
-            return {
-                "type": "text",
-                "text": self.content,
-            }
-        elif self.type == "image":
-            return {
-                "type": "image",
-                "source": {
-                    "type": "base64",
-                    "media_type": self.image.format,
-                    "data": self.image.to_base64(),
-                },
-            }
-        elif self.type == "function_call":
-            return {
-                "type": "tool_use",
-                "id": self.function_call_id,
-                "name": self.function_call["name"],
-                "input": self.function_call["arguments"],
-            }
-        elif self.type == "function_result":
-            return {
-                "type": "tool_result",
-                "tool_use_id": self.function_call_id,
-                "content": self.content,
-            }
-        return {}
 
 
 class Message:
@@ -273,63 +216,6 @@ class Message:
         # 3. return the result
         return image_parts[0]
 
-    def to_openai_dict(self) -> dict:
-        res = {
-            "role": self.role,
-            "content": [],
-        }
-
-        for part in self.parts:
-            if part.type == "function_call" and self.role == "assistant":
-                res["function_call"] = part.to_openai_dict()
-            elif part.type == "function_call" and self.role == "user":
-                # Workaround: If the user is triggering a function, we add it's name and arguments to the content
-                res["content"] = (
-                    part.function_call["name"]
-                    + ":"
-                    + json.dumps(part.function_call["arguments"])
-                )
-            else:
-                res["content"].append(part.to_openai_dict())
-
-        if self.name:
-            res["name"] = self.name
-
-        return res
-
-    def to_anthropic_dict(self) -> dict:
-        res = {
-            "role": self.role if self.role in ["user", "assistant"] else "user",
-            "content": [],
-        }
-
-        for part in self.parts:
-            res["content"].append(part.to_anthropic_dict())
-
-        return res
-
-    @classmethod
-    def from_openai_dict(
-        cls,
-        role: str,
-        content: str,
-        function_call: typing.Optional[dict] = None,
-        id: typing.Optional[str] = None,
-    ):
-        # We need to unquote the arguments
-        function_call_dict = None
-        if function_call:
-            try:
-                function_call_dict = {
-                    "name": function_call.name,
-                    "arguments": json.loads(function_call.arguments),
-                }
-            except json.decoder.JSONDecodeError:
-                raise FunctionCallParsingError(id, function_call)
-
-        obj = cls(role=role, content=content, function_call=function_call_dict, id=id)
-        return obj
-
     @classmethod
     def from_anthropic_dict(cls, **kwargs):
         role = kwargs.get("role")
@@ -391,14 +277,3 @@ class Message:
         if not self.parts:
             raise ValueError("Message should have at least one part")
         return text
-
-
-class Conversation:
-    def __init__(self, messages: list[Message]):
-        self.messages = messages
-
-    def to_openai_dict(self) -> list[dict]:
-        return [message.to_openai_dict() for message in self.messages]
-
-    def to_anthropic_dict(self) -> list[dict]:
-        return [message.to_anthropic_dict() for message in self.messages]
