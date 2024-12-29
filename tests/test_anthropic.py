@@ -34,7 +34,7 @@ class TestAnthropic(unittest.TestCase):
                 ],
             }
         ]
-        chat.client = self.mock_anthropic_client
+        chat.provider.client = self.mock_anthropic_client
 
         class FakeAnthropicMessage:
             def __init__(self, role, content):
@@ -52,8 +52,10 @@ class TestAnthropic(unittest.TestCase):
             content="test",
         )
 
-        with patch.object(chat.client.messages, "create", return_value=return_value):
-            chat.fetch_anthropic()
+        with patch.object(
+            chat.provider.client.messages, "create", return_value=return_value
+        ):
+            chat.provider.fetch()
             self.mock_anthropic_client.messages.create.assert_called_once()
             call_args = self.mock_anthropic_client.messages.create.call_args
             actual_messages = call_args.kwargs["messages"]
