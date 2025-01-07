@@ -20,6 +20,40 @@ A lightweight Python library to build AI agents with LLMs.
   - Flexible instruction and example management
   - Support for images
 
+## Example (search capability)
+
+The library supports function call, handling the back-and-forth between the system and the assistant.
+
+```python
+from autochat import Autochat
+
+def search_wikipedia(title: str):
+    """Search wikipedia for information"""
+    import requests
+    from bs4 import BeautifulSoup
+
+    response = requests.get(f"https://en.wikipedia.org/w/index.php?search={title}&title=Special%3ASearch")
+    soup = BeautifulSoup(response.text, 'html.parser')
+    body_content = soup.find('div', {'id': 'bodyContent'})
+    return body_content.text.strip()
+
+classifierGPT = Autochat()
+classifierGPT.add_function(search_wikipedia)
+
+text = "Since when is the lastest iphone available?"
+for message in classifierGPT.run_conversation(text):
+    print(message.to_markdown())
+
+# > ## user
+# > Since when is the lastest iphone available?
+# > ## assistant
+# > search_wikipedia(title=iPhone)
+# > ## function
+# > Result: (html content)
+# > ## assistant
+# > The latest flagship iPhone models, the iPhone 16 and 16 Plus, along with the higher-end iPhone 16 Pro and 16 Pro Max, were available as of January 1, 2024.
+```
+
 ## Quick Start
 
 ### Initialize with OpenAI (default)
@@ -53,14 +87,12 @@ for message in chat.run_conversation("Explain quantum computing in simple terms"
 ### Add a function call as python function
 
 ```python
-def search_top_result(query: str):
-    import requests
-    response = requests.get(f"https://google.com/search?q={query}")
-    return response.text
+def multiply(a: int, b: int) -> int:
+    return a * b
 
 chatGPT = Autochat()
-chatGPT.add_function(search_top_result)
-text = "since when is the lastest iphone available?"
+chatGPT.add_function(multiply)
+text = "What is 343354 * 13243343214"
 for message in chatGPT.run_conversation(text):
     print(message.to_markdown())
 ```
@@ -95,34 +127,6 @@ To install the package, you can use pip:
 
 ```bash
 pip install 'autochat[all]'
-```
-
-## Function Call (as python function)
-
-The library supports function call, handling the back-and-forth between the system and the assistant.
-
-```python
-from autochat import Autochat, Message
-import requests
-
-def search_top_result(query: str):
-    response = requests.get(f"https://google.com/search?q={query}")
-    return response.text
-
-classifierGPT = Autochat(instruction="You are a helpful assistant that can search the web for information")
-classifierGPT.add_function(search_top_result)
-
-text = "since when is the lastest iphone available?"
-for message in classifierGPT.run_conversation(text):
-    print(message.to_markdown())
-
-# > ## assistant
-# > search_top_result(query=next iphone release date)
-# > ## function
-# > (html content)
-# > ## assistant
-# > The latest iPhone models, iPhone 14, iPhone 14 Plus, iPhone 14 Pro, and iPhone 14 Pro Max, were released on September 16, 2022.
-
 ```
 
 ## Image support
