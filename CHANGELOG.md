@@ -1,12 +1,48 @@
 # CHANGELOG
 
 
+## v0.5.0 (2025-01-09)
+
+### Chores
+
+- **clean**: Best practices
+  ([`d21049f`](https://github.com/BenderV/autochat/commit/d21049f7e15ca9aaf7d3de8ae13e2f457b7847e5))
+
+- **clean**: Refacto
+  ([`90c083f`](https://github.com/BenderV/autochat/commit/90c083ff94eaac97705ba16bd8ead522d65b6b08))
+
+- **errors**: Remove retry and error
+  ([`3bfcf72`](https://github.com/BenderV/autochat/commit/3bfcf72cc014f9d24756aaea0a97e895308751d8))
+
+- **readme**: Update example
+  ([`014cdb9`](https://github.com/BenderV/autochat/commit/014cdb9c0b1966618d2967047aeb6eed53b575a3))
+
+- **refacto**: Set providers
+  ([`2ffa126`](https://github.com/BenderV/autochat/commit/2ffa126d9ced9dba529806cd063e46afb1247b2d))
+
+- **version**: Support python 3.9
+  ([`a4c67b7`](https://github.com/BenderV/autochat/commit/a4c67b7c70832e673b8bf41d13f36292049079ac))
+
+- **workflow**: Fix workflow
+  ([`5cb13d5`](https://github.com/BenderV/autochat/commit/5cb13d53d4b432cb90ba156d86f20230b3da9eca))
+
+### Features
+
+- **model**: Add support for function in o1
+  ([`8672f20`](https://github.com/BenderV/autochat/commit/8672f20e2b4b8b72516a72432d283f76254ed851))
+
+
 ## v0.4.1 (2024-12-27)
 
 ### Bug Fixes
 
 - **workflow**: Version
   ([`1413ceb`](https://github.com/BenderV/autochat/commit/1413ceb70fe93daa0902c5fca5e6b6bdce5d42a1))
+
+### Chores
+
+- **release**: Bump version to 0.4.1
+  ([`bfa8a60`](https://github.com/BenderV/autochat/commit/bfa8a607c0f077e61579f2f55c882bfb2f785ac4))
 
 
 ## v0.4.0 (2024-12-27)
