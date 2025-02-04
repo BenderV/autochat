@@ -218,6 +218,9 @@ class Autochat(AutochatBase):
             except IOError:
                 # Not an image
                 raise ValueError("Returned bytes is not a valid image.")
+        elif isinstance(content, PILImage.Image):
+            image = content
+            content = None
         elif isinstance(content, (int, float, bool)):
             content = str(content)
         elif isinstance(content, object):

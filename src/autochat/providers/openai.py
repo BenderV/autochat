@@ -60,8 +60,15 @@ def parts_to_openai_dict(part: MessagePart) -> dict:
             "type": "text",
             "text": part.content,
         }
+    elif part.type == "function_result_image":
+        return {
+            "type": "image_url",
+            "image_url": {
+                "url": f"data:{part.image.format};base64,{part.image.to_base64()}"
+            },
+        }
 
-    return {}
+    raise ValueError(f"Unknown part type: {part.type}")
 
 
 def message_to_openai_dict(message: Message) -> dict:
@@ -86,6 +93,13 @@ def message_to_openai_dict(message: Message) -> dict:
     if message.name:
         res["name"] = message.name
 
+    # Workaround
+    # Image URLs are only allowed for messages with role 'user'
+    # If the message contains an image, we change it's role to 'user'
+    if message.role == "function" and any(
+        part.type == "function_result_image" for part in message.parts
+    ):
+        res["role"] = "user"
     return res
 
 
