@@ -29,6 +29,20 @@ class BaseProvider(ABC):
                     MessagePart(type="text", content=self.chat.context),
                     *first_message.content,
                 ]
+
+        if self.chat.last_context:
+            # Add last context to the beginning of the last message
+            last_message = self.chat.messages[-1]
+            if isinstance(last_message.content, str):
+                last_message.parts[0].content = (
+                    self.chat.last_context + "\n" + last_message.parts[0].content
+                )
+            elif isinstance(last_message.content, list):
+                last_message.content = [
+                    MessagePart(type="text", content=self.chat.last_context),
+                    *last_message.content,
+                ]
+
         messages = self.chat.examples + [first_message] + self.chat.messages[1:]
         transform_list_function(messages)
         return [transform_function(m) for m in messages]
