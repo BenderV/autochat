@@ -26,13 +26,28 @@ def part_to_anthropic_dict(part: MessagePart) -> dict:
             "name": part.function_call["name"],
             "input": part.function_call["arguments"],
         }
+    elif part.type == "function_result_image":
+        return {
+            "type": "tool_result",
+            "content": [
+                {
+                    "type": "image",
+                    "source": {
+                        "type": "base64",
+                        "media_type": part.image.format,
+                        "data": part.image.to_base64(),
+                    },
+                }
+            ],
+            "tool_use_id": part.function_call_id,
+        }
     elif part.type == "function_result":
         return {
             "type": "tool_result",
             "tool_use_id": part.function_call_id,
             "content": part.content,
         }
-    return {}
+    raise ValueError(f"Unknown part type: {part.type}")
 
 
 def message_to_anthropic_dict(message: Message) -> dict:

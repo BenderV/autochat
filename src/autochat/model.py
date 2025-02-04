@@ -57,7 +57,9 @@ class MessagePart:
     def __init__(
         self,
         # TODO: function_result should be named "tool_result" ?
-        type: Literal["text", "image", "function_call", "function_result"],
+        type: Literal[
+            "text", "image", "function_call", "function_result", "function_result_image"
+        ],
         content: typing.Optional[str] = None,  # TODO: should be named "text" !
         image: typing.Optional[PILImage.Image] = None,
         function_call: typing.Optional[dict] = None,
@@ -115,13 +117,22 @@ class Message:
                         )
                     )
             else:
-                self.parts.append(
-                    MessagePart(
-                        type="function_result",
-                        content=content,
-                        function_call_id=function_call_id,
+                if content is not None:
+                    self.parts.append(
+                        MessagePart(
+                            type="function_result",
+                            content=content,
+                            function_call_id=function_call_id,
+                        )
                     )
-                )
+                if image:
+                    self.parts.append(
+                        MessagePart(
+                            type="function_result_image",
+                            image=image,
+                            function_call_id=function_call_id,
+                        )
+                    )
 
     @property
     def content(self) -> str:
@@ -134,9 +145,10 @@ class Message:
                 part.content for part in self.parts if part.type == "function_result"
             ]
             assert (
-                len(results) == 1
-            ), "Function messages should have exactly one function_result part"
-            return results[0]
+                len(results) <= 1
+            ), "Function messages should have at most one function_result part"
+            return results[0] if results else None
+
         # 1. get all text parts
         text_parts = [part.content for part in self.parts if part.type == "text"]
         # 2. verify that there is only one text part
@@ -207,7 +219,11 @@ class Message:
         If one part, then provide the sugar syntax
         """
         # 1. get all image parts
-        image_parts = [part.image for part in self.parts if part.type == "image"]
+        image_parts = [
+            part.image
+            for part in self.parts
+            if part.type == "image" or part.type == "function_result_image"
+        ]
         # 2. verify that there is only one image part
         if not image_parts:
             return None
