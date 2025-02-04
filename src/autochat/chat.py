@@ -8,7 +8,7 @@ import traceback
 import typing
 import inspect
 
-from autochat.model import Message, MessagePart
+from autochat.model import Message
 from autochat.utils import csv_dumps, inspect_schema, parse_chat_template
 from autochat.providers.base_provider import APIProvider
 from autochat.providers.utils import get_provider_and_model
@@ -84,6 +84,30 @@ class Autochat(AutochatBase):
             return None
         return self.messages[-1].content
 
+    @property
+    def last_context(self) -> typing.Optional[str]:
+        """We add the last repr() of each tool to the last message context"""
+        # If there are no tools, return None
+        if not self.tools:
+            return None
+        tool_reprs = []
+        for tool_id, tool in self.tools.items():
+            tool_name = f"{tool.__class__.__name__}-{tool_id}"
+            if hasattr(tool, "__repr__"):
+                tool_reprs.append(f"### {tool_name}\n{repr(tool)}")
+
+        tool_context = "\n".join(tool_reprs)
+
+        """
+        ## Last Tools States
+        ### Tool 1
+        {state}
+        ### Tool 2
+        {state}
+        --- End of Last Tools States ---
+        """
+        return f"## Last Tools States\n{tool_context}\n--- End of Last Tools States ---"
+
     def load_messages(self, messages: list[Message]):
         # Check order of messages (based on createdAt)
         # Oldest first (createdAt ASC)
@@ -102,34 +126,27 @@ class Autochat(AutochatBase):
         self.functions_schema.append(function_schema)
         self.functions[function_schema["name"]] = function
 
-    def add_tool(self, tool: typing.Union[type, object], tool_id: str = None) -> str:
+    def add_tool(
+        self, tool: typing.Union[type, object], tool_id: typing.Optional[str] = None
+    ) -> str:
         """Add a tool class or instance to the chat instance and return the tool id"""
         if isinstance(tool, type):
             # If a class is provided, instantiate it
-            tool_instance = tool()
-            tool_class = tool
-        else:
-            # If an instance is provided, use it directly
-            tool_instance = tool
-            tool_class = tool.__class__
+            tool = tool()
 
-        if not tool_id:
-            tool_id = (
-                "tool-" + str(id(tool_instance))
-                if isinstance(tool, object)
-                else tool_class.__name__
-            )
+        if tool_id is None:
+            tool_id = str(id(tool))
 
-        self.tools[tool_id] = tool_instance
-        # Add all methods from the tool class to the functions schema
-        for method_name, method in tool_class.__dict__.items():
-            if not method_name.startswith("_"):  # Skip private methods
-                if isinstance(method, classmethod):
-                    method = method.__get__(None, tool_class)
-                schema = inspect_schema(method)
-                schema["name"] = f"{tool_id}__{method_name}"  # Prefix with class name
-                self.functions_schema.append(schema)
-                self.functions[schema["name"]] = getattr(tool_instance, method_name)
+        self.tools[tool_id] = tool
+
+        class_name = tool.__class__.__name__
+        tool_name = f"{class_name}-{tool_id}"
+        for method_name, method in inspect.getmembers(tool, inspect.ismethod):
+            if method_name.startswith("_"):  # Skip private methods
+                continue
+            function_schema = inspect_schema(method)
+            function_schema["name"] = f"{tool_name}__{method_name}"
+            self.add_function(method, function_schema)
         return tool_id
 
     def remove_tool(self, tool_id: str):
@@ -140,28 +157,6 @@ class Autochat(AutochatBase):
         self.functions = {
             name: func for name, func in self.functions.items() if name != tool_id
         }
-
-    def prepare_messages(
-        self,
-        transform_function: typing.Callable,
-        transform_list_function: typing.Callable = lambda x: x,
-    ) -> list[dict]:
-        """Prepare messages for API requests using a transformation function."""
-        first_message = self.messages[0]
-        if self.context:
-            # Add context to the first message
-            if isinstance(first_message.content, str):
-                first_message.parts[0].content = (
-                    self.context + "\n" + first_message.parts[0].content
-                )
-            elif isinstance(first_message.content, list):
-                first_message.content = [
-                    MessagePart(type="text", content=self.context),
-                    *first_message.content,
-                ]
-        messages = self.examples + [first_message] + self.messages[1:]
-        transform_list_function(messages)
-        return [transform_function(m) for m in messages]
 
     def ask(
         self,
