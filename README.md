@@ -37,11 +37,11 @@ def search_wikipedia(title: str):
     body_content = soup.find('div', {'id': 'bodyContent'})
     return body_content.text.strip()
 
-classifierGPT = Autochat()
-classifierGPT.add_function(search_wikipedia)
+classifier_agent = Autochat()
+classifier_agent.add_function(search_wikipedia)
 
 text = "Since when is the lastest iphone available?"
-for message in classifierGPT.run_conversation(text):
+for message in classifier_agent.run_conversation(text):
     print(message.to_markdown())
 
 # > ## user
@@ -59,28 +59,28 @@ for message in classifierGPT.run_conversation(text):
 ### Initialize with OpenAI (default)
 
 ```python
-chat = Autochat(instruction="You are a helpful assistant")
+agent = Autochat(instruction="You are a helpful assistant")
 ```
 
 ### Simple conversation
 
 ```python
-response = chat.ask("What is the capital of France?")
+response = agent.ask("What is the capital of France?")
 print(response.content)
 ```
 
 ### Using Anthropic's Claude
 
 ```python
-chat = Autochat(provider="anthropic")
-response = chat.ask("Explain quantum computing in simple terms")
+agent = Autochat(provider="anthropic")
+response = agent.ask("Explain quantum computing in simple terms")
 print(response.content)
 ```
 
 ### Run conversation as a generator
 
 ```python
-for message in chat.run_conversation("Explain quantum computing in simple terms"):
+for message in agent.run_conversation("Explain quantum computing in simple terms"):
     print(message.to_markdown())
 ```
 
@@ -90,10 +90,10 @@ for message in chat.run_conversation("Explain quantum computing in simple terms"
 def multiply(a: int, b: int) -> int:
     return a * b
 
-chatGPT = Autochat()
-chatGPT.add_function(multiply)
+agent = Autochat()
+agent.add_function(multiply)
 text = "What is 343354 * 13243343214"
-for message in chatGPT.run_conversation(text):
+for message in agent.run_conversation(text):
     print(message.to_markdown())
 ```
 
@@ -113,9 +113,9 @@ class Calculator:
 
 calculator = Calculator()
 
-chat = Autochat()
-chat.add_tool(calculator)
-for message in chat.run_conversation(
+agent = Autochat()
+agent.add_tool(calculator)
+for message in agent.run_conversation(
     "What make 343354 * 13243343214"
 ):
     print(message)
@@ -136,11 +136,11 @@ from autochat import Autochat, Message
 
 from PIL import Image
 
-chat = Autochat()
+agent = Autochat()
 
 image = Image.open("examples/image.jpg")
 message = Message(role="user", content="describe the image", image=image)
-response = chat.ask(message)
+response = agent.ask(message)
 print(response.to_markdown())
 ```
 

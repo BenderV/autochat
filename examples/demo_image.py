@@ -16,10 +16,10 @@ parser.add_argument(
 )
 args = parser.parse_args()
 
-ai = Autochat(provider=args.provider)
+agent = Autochat(provider=args.provider)
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 image = Image.open(os.path.join(current_dir, "image.jpg"))
 message = Message(role="user", content="describe the image", image=image)
-response = ai.ask(message)
+response = agent.ask(message)
 print(response)

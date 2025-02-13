@@ -12,8 +12,8 @@ def report_mileage(km: int):
 
 @pytest.mark.vcr
 def test_openai_read_image():
-    chat = Autochat(provider=APIProvider.OPENAI)
-    chat.add_function(report_mileage)
+    agent = Autochat(provider=APIProvider.OPENAI)
+    agent.add_function(report_mileage)
 
     image = Image.open("tests/images/mileage.jpg")
     message = Message(
@@ -21,7 +21,7 @@ def test_openai_read_image():
         content="report the  mileage of the car",
         image=image,
     )
-    response = chat.ask(
+    response = agent.ask(
         message,
         # TODO: support tools in openai to be able to enforce the tool call
         # tool_choice={"type": "function", "function": {"name": "report_mileage"}},
@@ -33,8 +33,8 @@ def test_openai_read_image():
 
 @pytest.mark.vcr
 def test_anthropic_read_image():
-    chat = Autochat(provider=APIProvider.ANTHROPIC)
-    chat.add_function(report_mileage)
+    agent = Autochat(provider=APIProvider.ANTHROPIC)
+    agent.add_function(report_mileage)
 
     image = Image.open("tests/images/mileage.jpg")
     message = Message(
@@ -42,6 +42,8 @@ def test_anthropic_read_image():
         content="report the  mileage of the car",
         image=image,
     )
-    response = chat.ask(message, tool_choice={"type": "tool", "name": "report_mileage"})
+    response = agent.ask(
+        message, tool_choice={"type": "tool", "name": "report_mileage"}
+    )
     assert response.function_call["name"] == "report_mileage"
     assert isinstance(response.function_call["arguments"].get("km"), int)

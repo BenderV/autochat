@@ -10,8 +10,8 @@ class TestAnthropic(unittest.TestCase):
         self.mock_anthropic_client = MagicMock()
 
     def test_transform_conversation_anthropic(self):
-        chat = Autochat(instruction="Test instruction", provider=APIProvider.ANTHROPIC)
-        chat.messages = [
+        agent = Autochat(instruction="Test instruction", provider=APIProvider.ANTHROPIC)
+        agent.messages = [
             Message(
                 role="function",
                 name="SUBMIT",
@@ -34,7 +34,7 @@ class TestAnthropic(unittest.TestCase):
                 ],
             }
         ]
-        chat.provider.client = self.mock_anthropic_client
+        agent.provider.client = self.mock_anthropic_client
 
         class FakeAnthropicMessage:
             def __init__(self, role, content):
@@ -53,9 +53,9 @@ class TestAnthropic(unittest.TestCase):
         )
 
         with patch.object(
-            chat.provider.client.messages, "create", return_value=return_value
+            agent.provider.client.messages, "create", return_value=return_value
         ):
-            chat.provider.fetch()
+            agent.provider.fetch()
             self.mock_anthropic_client.messages.create.assert_called_once()
             call_args = self.mock_anthropic_client.messages.create.call_args
             actual_messages = call_args.kwargs["messages"]

@@ -14,9 +14,9 @@ def multiply(a: int, b: int) -> int:
 
 
 # The only model thing you need to do is set the provider to "openai_hack"
-chatGPT = Autochat(provider="openai_hack", model="o1-mini")
-chatGPT.add_function(multiply)
+agent = Autochat(provider="openai_hack", model="o1-mini")
+agent.add_function(multiply)
 
 text = "What is 343354 * 13243343214"
-for message in chatGPT.run_conversation(text):
+for message in agent.run_conversation(text):
     print(message.to_markdown())

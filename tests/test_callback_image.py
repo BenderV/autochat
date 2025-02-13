@@ -12,27 +12,27 @@ def read_image():
 
 @pytest.mark.vcr
 def test_anthropic_callback_image():
-    chat = Autochat(
+    agent = Autochat(
         provider=APIProvider.ANTHROPIC,
     )
-    chat.add_function(read_image)
+    agent.add_function(read_image)
 
     user_query = "Hello, read the image and explain it"
     messages = []
-    for message in chat.run_conversation(user_query):
+    for message in agent.run_conversation(user_query):
         print(message.to_markdown())  # For debugging
         messages.append(message)
 
 
 @pytest.mark.vcr
 def test_openai_callback_image():
-    chat = Autochat(
+    agent = Autochat(
         provider=APIProvider.OPENAI,
     )
-    chat.add_function(read_image)
+    agent.add_function(read_image)
 
     user_query = "Hello, read the image and explain it"
     messages = []
-    for message in chat.run_conversation(user_query):
+    for message in agent.run_conversation(user_query):
         print(message.to_markdown())  # For debugging
         messages.append(message)
