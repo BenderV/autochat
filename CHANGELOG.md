@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.8.0 (2025-02-20)
+
+### Features
+
+- **dependencies**: Upgrade anthropic
+  ([`dd66fc3`](https://github.com/BenderV/autochat/commit/dd66fc339aafcd49dc9da7a29c4fee980fdf4012))
+
+
 ## v0.7.0 (2025-02-20)
 
 ### Features
