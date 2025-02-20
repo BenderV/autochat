@@ -1,6 +1,24 @@
 # CHANGELOG
 
 
+## v0.6.0 (2025-02-20)
+
+### Chores
+
+- **lock**: Update
+  ([`40b42cb`](https://github.com/BenderV/autochat/commit/40b42cb77db30b217b481c1fd1034ae349f958c9))
+
+And add small CONTRIBUTE.md file
+
+- **name**: Rename chat to agent
+  ([`80580e6`](https://github.com/BenderV/autochat/commit/80580e6d0a72e6f7df528bed1ded57c5e8b1e498))
+
+### Features
+
+- **dependencies**: Clean lock file
+  ([`46fa7ab`](https://github.com/BenderV/autochat/commit/46fa7ab522d6d77940eac14ea2eabdf4be853cdb))
+
+
 ## v0.5.0 (2025-01-09)
 
 ### Chores
@@ -39,11 +57,6 @@
 - **workflow**: Version
   ([`1413ceb`](https://github.com/BenderV/autochat/commit/1413ceb70fe93daa0902c5fca5e6b6bdce5d42a1))
 
-### Chores
-
-- **release**: Bump version to 0.4.1
-  ([`bfa8a60`](https://github.com/BenderV/autochat/commit/bfa8a607c0f077e61579f2f55c882bfb2f785ac4))
-
 
 ## v0.4.0 (2024-12-27)
 
@@ -77,9 +90,6 @@
 
 - **readme**: Update default model & readme
   ([`ec83dcd`](https://github.com/BenderV/autochat/commit/ec83dcd60899b533258b7f18e4d14789bff8a194))
-
-- **release**: Bump version to 0.4.0
-  ([`00128ab`](https://github.com/BenderV/autochat/commit/00128aba05af07523037c38e8a332a4780c5e11d))
 
 - **test**: Add tests
   ([`ead2683`](https://github.com/BenderV/autochat/commit/ead268326cb00bb3f30701bae6fdad44e0dc7554))
