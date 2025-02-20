@@ -18,14 +18,14 @@ Repository = "https://github.com/BenderV/autochat"
 Changelog = "https://github.com/BenderV/autochat/blob/master/CHANGELOG.md"
 
 [project.optional-dependencies]
-anthropic = ["anthropic>=0.37.1"]
+anthropic = ["anthropic>=0.46.0"]
 openai = ["openai>=1.63.2"]
 all = [
-    "anthropic>=0.37.1",
+    "anthropic>=0.46.0",
     "openai>=1.63.2",
 ]
 dev = [
-    "anthropic>=0.37.1",
+    "anthropic>=0.46.0",
     "openai>=1.52.2",
     "pytest-recording>=0.13.2",
     "pytest>=8.3.4",
