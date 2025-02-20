@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.7.0 (2025-02-20)
+
+### Features
+
+- **dependencies**: Upgrade openai
+  ([`e3d1e48`](https://github.com/BenderV/autochat/commit/e3d1e483319a08f62ce8416fbc9a94b4e7907ffd))
+
+
 ## v0.6.0 (2025-02-20)
 
 ### Chores
