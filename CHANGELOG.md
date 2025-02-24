@@ -1,6 +1,16 @@
 # CHANGELOG
 
 
+## v0.9.0 (2025-02-24)
+
+### Features
+
+- Improve inspect schema
+  ([`371b7c5`](https://github.com/BenderV/autochat/commit/371b7c587b9355cce9cccbeff6ea3ff7262b48b0))
+
+support from_response and args in description
+
+
 ## v0.8.0 (2025-02-20)
 
 ### Features
