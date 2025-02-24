@@ -187,7 +187,32 @@ def sums(a: int, b: int = 1):
     return a + b
 
 
+def function_with_description_and_default_value(a: int, b: int = 1):
+    """Adds a + b
+    Args:
+        a: The first number to add
+        b: The second number to add, defaults to 1
+    Returns:
+        The sum of a and b
+    """
+    return a + b
+
+
+# We should ignore from_response argument
+def function_with_from_response(a: int, from_response: bool = False):
+    """
+    Args:
+        a: The number to return
+        from_response: The message which triggered the function call
+    Returns:
+        The number a
+    """
+    return a
+
+
 class TestInspectSchema(unittest.TestCase):
+    maxDiff = None
+
     def test_inspect_schema(self):
         result = inspect_schema(sums)
         expected = {
@@ -216,6 +241,52 @@ class TestInspectSchema(unittest.TestCase):
                 },
                 "required": ["test"],
                 "title": "Input for `empty_function`",
+                "type": "object",
+            },
+        }
+        self.assertEqual(result, expected)
+
+    def test_inspect_schema_with_default_value(self):
+        result = inspect_schema(function_with_description_and_default_value)
+        expected = {
+            "name": "function_with_description_and_default_value",
+            "description": "Adds a + b",
+            "parameters": {
+                "properties": {
+                    "a": {
+                        "title": "A",
+                        "type": "integer",
+                        "description": "The first number to add",
+                    },
+                    "b": {
+                        "default": 1,
+                        "title": "B",
+                        "type": "integer",
+                        "description": "The second number to add, defaults to 1",
+                    },
+                },
+                "required": ["a"],
+                "title": "Input for `function_with_description_and_default_value`",
+                "type": "object",
+            },
+        }
+        self.assertDictEqual(result, expected)
+
+    def test_inspect_schema_with_from_response(self):
+        result = inspect_schema(function_with_from_response)
+        expected = {
+            "name": "function_with_from_response",
+            "description": None,
+            "parameters": {
+                "properties": {
+                    "a": {
+                        "title": "A",
+                        "type": "integer",
+                        "description": "The number to return",
+                    },
+                },
+                "required": ["a"],
+                "title": "Input for `function_with_from_response`",
                 "type": "object",
             },
         }

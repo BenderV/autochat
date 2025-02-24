@@ -1,12 +1,12 @@
 import ast
 import csv
 import inspect
-from typing import Any
 import typing
 from inspect import Parameter
 from io import StringIO
+from typing import Any
 
-from pydantic import BaseConfig, create_model
+from pydantic import BaseConfig, Field, create_model
 
 from autochat.model import Message
 
@@ -213,15 +213,50 @@ class AllowNonTypedParamsConfig(BaseConfig):
 
 def inspect_schema(f):
     kw = {}
+    param_descriptions = {}
+
+    # Parse docstring and clean up the description
+    description = None
+    if f.__doc__:
+        doc_lines = f.__doc__.split("\n")
+        description_lines = []
+        in_args = False
+
+        for line in doc_lines:
+            line = line.strip()
+            if line.lower().startswith("args:"):
+                in_args = True
+                continue
+            if in_args:
+                if not line or line.lower().startswith("returns:"):
+                    break
+                if ":" in line:
+                    param_name, param_desc = line.split(":", 1)
+                    param_descriptions[param_name.strip()] = param_desc.strip()
+            else:
+                if line:  # Only add non-empty lines to description
+                    description_lines.append(line)
+
+        description = " ".join(description_lines) if description_lines else None
+
+    # Get function parameters
     for n, o in inspect.signature(f).parameters.items():
-        # Skip 'self' parameter
-        if n == "self":
+        # Skip 'self' parameter and 'from_response' parameter
+        if n in ["self", "from_response"]:
             continue
         annotation = o.annotation if o.annotation != Parameter.empty else Any
         default = ... if o.default == Parameter.empty else o.default
-        kw[n] = (annotation, default)
+
+        # Create Field with description if available
+        if n in param_descriptions:
+            kw[n] = (
+                annotation,
+                Field(default=default, description=param_descriptions[n]),
+            )
+        else:
+            kw[n] = (annotation, default)
 
     s = create_model(
         f"Input for `{f.__name__}`", __config__=AllowNonTypedParamsConfig, **kw
     ).schema()
-    return dict(name=f.__name__, description=f.__doc__, parameters=s)
+    return dict(name=f.__name__, description=description, parameters=s)
