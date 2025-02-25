@@ -13,7 +13,7 @@ A lightweight Python library to build AI agents with LLMs.
 - 🤝 Support for multiple LLM providers (OpenAI and Anthropic)
 - 🐍 Transform python function or class into a tool
 - 🔁 Run conversation as a generator.
-- 🙈 Handle caching by default (anthropic model claude-3-5-sonnet-20240620)
+- 🙈 Handle caching by default (anthropic model claude-3-7-sonnet-latest)
 - ✨ And more features including:
   - Simple template system
   - Easy function and tool integration
@@ -175,9 +175,9 @@ The template system also supports function calls. Check out the [examples/demo_l
 
 ## Environment Variables
 
-The `AUTOCHAT_MODEL` environment variable specifies the model to use. If not set, it defaults to "gpt-4o" for openai and "claude-3-5-sonnet-20240620" for anthropic.
+The `AUTOCHAT_MODEL` environment variable specifies the model to use. If not set, it defaults to "gpt-4o" for openai and "claude-3-7-sonnet-latest" for anthropic.
 
-**We recommend to use Anthropic / claude-3-5-sonnet-20240620 for agentic behavior.**
+**We recommend to use Anthropic / claude-3-7-sonnet-latest for agentic behavior.**
 
 ```bash
 export AUTOCHAT_MODEL="gpt-4o"
@@ -187,7 +187,7 @@ export OPENAI_API_KEY=<your-key>
 or with anthropic
 
 ```bash
-export AUTOCHAT_MODEL="claude-3-5-sonnet-20240620"
+export AUTOCHAT_MODEL="claude-3-7-sonnet-latest"
 export ANTHROPIC_API_KEY=<your-key>
 ```
 
