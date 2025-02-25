@@ -1,5 +1,8 @@
-import typing
 import base64
+import os
+import tempfile
+import typing
+import uuid
 from io import BytesIO
 from typing import Literal
 
@@ -144,9 +147,9 @@ class Message:
             results = [
                 part.content for part in self.parts if part.type == "function_result"
             ]
-            assert (
-                len(results) <= 1
-            ), "Function messages should have at most one function_result part"
+            assert len(results) <= 1, (
+                "Function messages should have at most one function_result part"
+            )
             return results[0] if results else None
 
         # 1. get all text parts
@@ -290,6 +293,65 @@ class Message:
                 text += f"> {part.function_call['name']}({', '.join([f'{k}={v}' for k, v in part.function_call['arguments'].items()])})\n"
             elif part.type == "function_result":
                 text += f"> Result: {part.content}\n"
+            elif part.type == "function_result_image":
+                image_data_url = f"data:image/png;base64,{part.image.to_base64()}"
+                text += f"> Result image: ![Image]({image_data_url})\n"
+            elif part.type == "image":
+                image_data_url = f"data:image/png;base64,{part.image.to_base64()}"
+                text += f"> Image: ![Image]({image_data_url})\n"
+        if not self.parts:
+            raise ValueError("Message should have at least one part")
+        return text
+
+    def to_terminal(self, display_image=False) -> str:
+        """
+        Convert message to terminal-friendly format with either links or inline images.
+        """
+        terminal_program = os.environ.get("TERM_PROGRAM")
+
+        text = f"## {self.role}\n"
+        for part in self.parts:
+            if part.type == "text":
+                text += part.content + "\n"
+            elif part.type == "function_call":
+                text += f"> {part.function_call['name']}({', '.join([f'{k}={v}' for k, v in part.function_call['arguments'].items()])})\n"
+            elif part.type == "function_result":
+                text += f"> Result: {part.content}\n"
+            elif part.type == "function_result_image" or part.type == "image":
+                label = (
+                    "Result image" if part.type == "function_result_image" else "Image"
+                )
+                if display_image:
+                    if terminal_program == "iTerm.app":
+                        # Get base64 encoded image for iTerm2 display
+                        img_base64 = part.image.to_base64()
+                        # Create iTerm2 inline image using escape sequences
+                        iterm2_seq = f"\033]1337;File=inline=1;width=auto;preserveAspectRatio=1:{img_base64}\007"
+                        text += f"> {label}:\n{iterm2_seq}\n"
+                    else:
+                        raise ValueError(
+                            f"Inline images are not supported in this terminal {terminal_program}"
+                        )
+                else:
+                    # Save the image to a temporary file with a unique name
+                    unique_id = str(uuid.uuid4())[:8]
+                    file_format = (
+                        part.image.image.format.lower()
+                        if part.image.image.format
+                        else "png"
+                    )
+                    file_name = f"autochat_image_{unique_id}.{file_format}"
+                    file_path = os.path.join(tempfile.gettempdir(), file_name)
+
+                    # Save the image to the temp file
+                    part.image.image.save(file_path)
+
+                    # Create a file:// URL to the temporary file
+                    file_url = f"file://{file_path}"
+
+                    # Add test standard URL and local file URL
+                    text += f"Image {file_url}\n"
+
         if not self.parts:
             raise ValueError("Message should have at least one part")
         return text
