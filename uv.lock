@@ -51,7 +51,7 @@ wheels = [
 
 [[package]]
 name = "autochat"
-version = "0.7.0"
+version = "0.9.0"
 source = { editable = "." }
 dependencies = [
     { name = "pillow" },
@@ -77,6 +77,11 @@ openai = [
     { name = "openai" },
 ]
 
+[package.dev-dependencies]
+dev = [
+    { name = "autochat" },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "anthropic", marker = "extra == 'all'", specifier = ">=0.46.0" },
@@ -91,6 +96,9 @@ requires-dist = [
     { name = "pytest-recording", marker = "extra == 'dev'", specifier = ">=0.13.2" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.8.3" },
 ]
+
+[package.metadata.requires-dev]
+dev = [{ name = "autochat", editable = "." }]
 
 [[package]]
 name = "certifi"
