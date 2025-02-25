@@ -1,7 +1,11 @@
+import os
+
 import pytest
 from PIL import Image
 
-from autochat import Autochat, Message, APIProvider
+from autochat import APIProvider, Autochat, Message
+
+img_path = os.path.join(os.path.dirname(__file__), "images", "mileage.jpg")
 
 
 def report_mileage(km: int):
@@ -15,7 +19,7 @@ def test_openai_read_image():
     agent = Autochat(provider=APIProvider.OPENAI)
     agent.add_function(report_mileage)
 
-    image = Image.open("tests/images/mileage.jpg")
+    image = Image.open(img_path)
     message = Message(
         role="user",
         content="report the  mileage of the car",
@@ -36,7 +40,7 @@ def test_anthropic_read_image():
     agent = Autochat(provider=APIProvider.ANTHROPIC)
     agent.add_function(report_mileage)
 
-    image = Image.open("tests/images/mileage.jpg")
+    image = Image.open(img_path)
     message = Message(
         role="user",
         content="report the  mileage of the car",

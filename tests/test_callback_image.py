@@ -1,13 +1,17 @@
-"""We want to be able to return an image from a function call.
-"""
+"""We want to be able to return an image from a function call."""
+
+import os
 
 import pytest
-from autochat import Autochat, APIProvider
 from PIL import Image
+
+from autochat import APIProvider, Autochat
+
+img_path = os.path.join(os.path.dirname(__file__), "images", "mileage.jpg")
 
 
 def read_image():
-    return Image.open("tests/images/mileage.jpg")
+    return Image.open(img_path)
 
 
 @pytest.mark.vcr
