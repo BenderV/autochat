@@ -2,19 +2,20 @@
 
 __version__ = "0.4.1"
 
+import inspect
+import io
 import json
 import os
 import traceback
 import typing
-import inspect
 
+from PIL import Image as PILImage
+
+from autochat.base import AutochatBase
 from autochat.model import Message
-from autochat.utils import csv_dumps, inspect_schema, parse_chat_template
 from autochat.providers.base_provider import APIProvider
 from autochat.providers.utils import get_provider_and_model
-from autochat.base import AutochatBase
-from PIL import Image as PILImage
-import io
+from autochat.utils import csv_dumps, inspect_schema, parse_chat_template
 
 AUTOCHAT_HOST = os.getenv("AUTOCHAT_HOST")
 AUTOCHAT_MODEL = os.getenv("AUTOCHAT_MODEL")
@@ -282,9 +283,9 @@ class Autochat(AutochatBase):
                 content = self._call_with_signature(
                     self.functions[function_name], response, **function_arguments
                 )
+        except StopLoopException:
+            raise
         except Exception as e:
-            if isinstance(e, StopLoopException):
-                raise  # re-raise
             content = self._format_exception(e)
 
         # Build next message
@@ -323,9 +324,17 @@ class Autochat(AutochatBase):
             if function_call_part:
                 name = function_call_part.function_call["name"]
                 args = function_call_part.function_call["arguments"]
-                message = self._call_function_and_build_message(name, args, response)
+
                 yield response
+                try:
+                    message = self._call_function_and_build_message(
+                        name, args, response
+                    )
+                except StopLoopException:
+                    return
+
                 yield message
+
                 if self.should_pause_conversation(response, message):
                     return
             else:
