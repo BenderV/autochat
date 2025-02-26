@@ -1,6 +1,19 @@
 # CHANGELOG
 
 
+## v0.9.3 (2025-02-26)
+
+### Bug Fixes
+
+- Handle None return from function_call
+  ([`22e348b`](https://github.com/BenderV/autochat/commit/22e348beb89f223ca4fac3224048914171f0b330))
+
+### Chores
+
+- Upgrade version
+  ([`fb8a234`](https://github.com/BenderV/autochat/commit/fb8a23454cd99091a2392dafe475f9c06b36d653))
+
+
 ## v0.9.2 (2025-02-26)
 
 ### Bug Fixes
