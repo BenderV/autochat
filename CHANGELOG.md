@@ -1,6 +1,22 @@
 # CHANGELOG
 
 
+## v0.9.1 (2025-02-26)
+
+### Bug Fixes
+
+- Stoploopexception
+  ([`8010e22`](https://github.com/BenderV/autochat/commit/8010e22004abb1627335c40329e51b08575c7600))
+
+### Chores
+
+- Fix test path dep
+  ([`6daba02`](https://github.com/BenderV/autochat/commit/6daba025babda5840a19c2dd5939bb347eb9c638))
+
+- Switch to sonnet 3-7 by default
+  ([`4cd667e`](https://github.com/BenderV/autochat/commit/4cd667ee436230b74d166fb32d7ad09224388216))
+
+
 ## v0.9.0 (2025-02-24)
 
 ### Features
