@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.9.2 (2025-02-26)
+
+### Bug Fixes
+
+- Order of yield message
+  ([`a5f42db`](https://github.com/BenderV/autochat/commit/a5f42dbd2c6c1b3784d894da82d01b9189cbf20f))
+
+
 ## v0.9.1 (2025-02-26)
 
 ### Bug Fixes
