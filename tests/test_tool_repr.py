@@ -1,4 +1,5 @@
 import unittest
+
 from autochat.chat import Autochat
 from autochat.model import Message
 
@@ -17,31 +18,31 @@ class MockTool:
 
 
 class TestToolRepr(unittest.TestCase):
-    def test_tool_repr_in_last_context(self):
+    def test_tool_repr_in_last_tools_states(self):
         agent = Autochat(provider="openai")
         mock_tool = MockTool("TestTool")
         class_name = mock_tool.__class__.__name__
         tool_id = agent.add_tool(mock_tool)
 
-        last_context = agent.last_context
+        last_tools_states = agent.last_tools_states
 
         assert (
             f"### {class_name}-{tool_id}\nMockTool(name=TestTool, call_count=0)"
-            in last_context
+            in last_tools_states
         )
 
         # Increment the mock tool's call count
         agent.functions[f"MockTool-{tool_id}__increment"]()
 
-        last_context = agent.last_context
+        last_tools_states = agent.last_tools_states
         assert (
             f"### {class_name}-{tool_id}\nMockTool(name=TestTool, call_count=1)"
-            in last_context
+            in last_tools_states
         )
 
-    def test_last_context_in_last_message(self):
+    def test_last_tools_states_in_last_message(self):
         """
-        We want to check that the last_context is in the last_message
+        We want to check that the last_tools_states is in the last_message
 
         """
         agent = Autochat(provider="openai")
@@ -55,7 +56,7 @@ class TestToolRepr(unittest.TestCase):
             messages = agent.provider.prepare_messages(lambda x: x)
             last_message = messages[-1]
 
-            # Verify the last_context is in the last message's content
+            # Verify the last_tools_states is in the last message's content
             self.assertIn(
                 f"### {class_name}-{tool_id}\nMockTool(name=TestTool, call_count=0)",
                 last_message.parts[0].content,
