@@ -86,8 +86,8 @@ class Autochat(AutochatBase):
         return self.messages[-1].content
 
     @property
-    def last_context(self) -> typing.Optional[str]:
-        """We add the last repr() of each tool to the last message context"""
+    def last_tools_states(self) -> typing.Optional[str]:
+        """We add the repr() of each tool to the system context"""
         # If there are no tools, return None
         if not self.tools:
             return None

@@ -1,9 +1,10 @@
+import json
 import os
 import typing
-import json
-from autochat.providers.base_provider import BaseProvider
-from autochat.model import Message, MessagePart
+
 from autochat.base import AutochatBase
+from autochat.model import Message, MessagePart
+from autochat.providers.base_provider import BaseProvider
 
 AUTOCHAT_HOST = os.getenv("AUTOCHAT_HOST")
 
@@ -119,12 +120,23 @@ class OpenAIProvider(BaseProvider):
     def fetch(self, **kwargs) -> Message:
         messages = self.prepare_messages(transform_function=message_to_openai_dict)
         # Add instruction as the first message
+
+        system_messages = []
         if self.chat.instruction:
-            instruction_message = Message(
-                role="system",
-                content=self.chat.instruction,
+            system_messages.append(
+                Message(
+                    role="system",
+                    content=self.chat.instruction,
+                )
             )
-            messages = [message_to_openai_dict(instruction_message)] + messages
+        if self.chat.last_tools_states:
+            system_messages.append(
+                Message(
+                    role="system",
+                    content=self.chat.last_tools_states,
+                )
+            )
+        messages = [message_to_openai_dict(sm) for sm in system_messages] + messages
 
         if self.chat.functions_schema:
             res = self.client.chat.completions.create(

@@ -190,19 +190,29 @@ class AnthropicProvider(BaseProvider):
             tools[-1]["cache_control"] = {"type": "ephemeral"}
 
         # System: add cache_control to the system message
+        system_messages = []
         if system is not None:
-            system = [
+            system_messages.append(
                 {
                     "type": "text",
                     "text": system,
                     "cache_control": {"type": "ephemeral"},
                 }
-            ]
+            )
+
+        if self.chat.last_tools_states:
+            # add to system message
+            system_messages.append(
+                {
+                    "type": "text",
+                    "text": self.chat.last_tools_states,
+                }
+            )
 
         # === End of cache_control ===
 
-        if system is not None:
-            kwargs["system"] = system
+        if system_messages:
+            kwargs["system"] = system_messages
 
         res = self.client.messages.create(
             model=self.model,
