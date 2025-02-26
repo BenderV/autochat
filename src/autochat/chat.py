@@ -325,14 +325,14 @@ class Autochat(AutochatBase):
                 name = function_call_part.function_call["name"]
                 args = function_call_part.function_call["arguments"]
 
-                yield response
                 try:
                     message = self._call_function_and_build_message(
                         name, args, response
                     )
                 except StopLoopException:
                     return
-
+                finally:
+                    yield response  # Should be after call function so we can use the response object (from_response)
                 yield message
 
                 if self.should_pause_conversation(response, message):
