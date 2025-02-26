@@ -190,8 +190,8 @@ class Autochat(AutochatBase):
 
         # We format the function_call response to be used as a next message
         if content is None:
-            # If no result, continue the loop with no additional message
-            content = None
+            # When content is None, use an empty string instead to prevent the "Message should have at least one part" error
+            content = ""
         elif isinstance(content, list):
             # If data is list of dicts, dumps to CSV
             if not content:
