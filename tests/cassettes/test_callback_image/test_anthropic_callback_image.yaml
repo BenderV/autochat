@@ -1,7 +1,7 @@
 interactions:
   - request:
       body:
-        '{"max_tokens": 2000, "messages": [{"role": "user", "content": [{"type":
+        '{"max_tokens": 10000, "messages": [{"role": "user", "content": [{"type":
         "text", "text": "Hello, read the image and explain it", "cache_control": {"type":
         "ephemeral"}}]}], "model": "claude-3-7-sonnet-latest", "tools": [{"name":
         "read_image", "description": "No description provided", "input_schema": {"properties":
@@ -48,7 +48,7 @@ interactions:
         message: OK
   - request:
       body:
-        '{"max_tokens": 2000, "messages": [{"role": "user", "content": [{"type":
+        '{"max_tokens": 10000, "messages": [{"role": "user", "content": [{"type":
         "text", "text": "Hello, read the image and explain it", "cache_control": {"type":
         "ephemeral"}}]}, {"role": "assistant", "content": [{"type": "text", "text":
         "Certainly! I''d be happy to read the image and explain it to you. However,

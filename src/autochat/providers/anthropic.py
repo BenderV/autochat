@@ -208,7 +208,7 @@ class AnthropicProvider(BaseProvider):
             model=self.model,
             messages=messages,
             tools=tools,
-            max_tokens=2000,
+            max_tokens=10000,
             **kwargs,
         )
         res_dict = res.to_dict()

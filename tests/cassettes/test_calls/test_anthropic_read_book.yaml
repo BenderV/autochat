@@ -1,7 +1,7 @@
 interactions:
   - request:
       body:
-        '{"max_tokens": 2000, "messages": [{"role": "user", "content": [{"type":
+        '{"max_tokens": 10000, "messages": [{"role": "user", "content": [{"type":
         "text", "text": "Hello, read book ''the great gatsby''", "cache_control": {"type":
         "ephemeral"}}]}], "model": "claude-3-7-sonnet-latest", "system": [{"type":
         "text", "text": "You are a helpful assistant that can read books.", "cache_control":
@@ -52,7 +52,7 @@ interactions:
         message: OK
   - request:
       body:
-        '{"max_tokens": 2000, "messages": [{"role": "user", "content": [{"type":
+        '{"max_tokens": 10000, "messages": [{"role": "user", "content": [{"type":
         "text", "text": "Hello, read book ''the great gatsby''", "cache_control": {"type":
         "ephemeral"}}]}, {"role": "assistant", "content": [{"type": "text", "text":
         "Certainly! I''d be happy to read \"The Great Gatsby\" for you. Let me fetch
@@ -110,7 +110,7 @@ interactions:
         message: OK
   - request:
       body:
-        '{"max_tokens": 2000, "messages": [{"role": "user", "content": [{"type":
+        '{"max_tokens": 10000, "messages": [{"role": "user", "content": [{"type":
         "text", "text": "Hello, read book ''the great gatsby''", "cache_control": {"type":
         "ephemeral"}}]}, {"role": "assistant", "content": [{"type": "text", "text":
         "Certainly! I''d be happy to read \"The Great Gatsby\" for you. Let me fetch
@@ -175,7 +175,7 @@ interactions:
         message: OK
   - request:
       body:
-        '{"max_tokens": 2000, "messages": [{"role": "user", "content": [{"type":
+        '{"max_tokens": 10000, "messages": [{"role": "user", "content": [{"type":
         "text", "text": "Hello, read book ''the great gatsby''", "cache_control": {"type":
         "ephemeral"}}]}, {"role": "assistant", "content": [{"type": "text", "text":
         "Certainly! I''d be happy to read \"The Great Gatsby\" for you. Let me fetch
