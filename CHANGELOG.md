@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.10.0 (2025-02-27)
+
+### Features
+
+- Rework last tools states
+  ([`5e860ee`](https://github.com/BenderV/autochat/commit/5e860ee0873c1870e1ba38d97a6b82f756e9956d))
+
+
 ## v0.9.3 (2025-02-26)
 
 ### Bug Fixes

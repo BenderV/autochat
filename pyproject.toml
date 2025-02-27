@@ -1,6 +1,6 @@
 [project]
 name = "autochat"
-version = "0.9.3"
+version = "0.10.0"
 description = "Small OpenAI/Anthropic library to support chat templates, and function calls."
 authors = [
     {name = "Benjamin Derville", email = "benderville@gmail.com"}
