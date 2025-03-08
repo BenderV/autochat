@@ -1,6 +1,19 @@
 # CHANGELOG
 
 
+## v0.10.1 (2025-03-08)
+
+### Bug Fixes
+
+- **anthropic**: Cache bug when no content
+  ([`717ca9f`](https://github.com/BenderV/autochat/commit/717ca9f4a826fac9879ab5efc53be6b655f9357b))
+
+### Chores
+
+- Update uv.lock
+  ([`a221f18`](https://github.com/BenderV/autochat/commit/a221f1834736cbf33e2c87bff04c8a30b90daf13))
+
+
 ## v0.10.0 (2025-02-27)
 
 ### Features
