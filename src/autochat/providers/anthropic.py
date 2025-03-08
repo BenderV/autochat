@@ -1,7 +1,8 @@
 import anthropic
-from autochat.providers.base_provider import BaseProvider
-from autochat.model import Message, MessagePart
+
 from autochat.base import AutochatBase
+from autochat.model import Message, MessagePart
+from autochat.providers.base_provider import BaseProvider
 
 
 def part_to_anthropic_dict(part: MessagePart) -> dict:
@@ -171,8 +172,12 @@ class AnthropicProvider(BaseProvider):
         )
 
         if last_message_index is not None:
-            if isinstance(messages[last_message_index]["content"], list) and isinstance(
-                messages[last_message_index]["content"][-1], dict
+            # Only try to modify the cache control if there are messages and content
+            if (
+                messages
+                and isinstance(messages[last_message_index]["content"], list)
+                and len(messages[last_message_index]["content"]) > 0
+                and isinstance(messages[last_message_index]["content"][-1], dict)
             ):
                 messages[last_message_index]["content"][-1]["cache_control"] = {
                     "type": "ephemeral"
