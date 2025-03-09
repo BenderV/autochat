@@ -86,7 +86,7 @@ class Message:
     def __init__(
         self,
         role: Literal["user", "assistant", "function"],
-        content: str = None,
+        content: typing.Optional[str] = None,
         name: typing.Optional[str] = None,
         function_call: typing.Optional[dict] = None,
         id: typing.Optional[int] = None,
@@ -120,7 +120,7 @@ class Message:
                         )
                     )
             else:
-                if content is not None:
+                if content is not None:  # We try to add content before image
                     self.parts.append(
                         MessagePart(
                             type="function_result",
@@ -133,6 +133,15 @@ class Message:
                         MessagePart(
                             type="function_result_image",
                             image=image,
+                            function_call_id=function_call_id,
+                        )
+                    )
+
+                if not self.parts:
+                    # If no content or image, we add an empty function_result part
+                    self.parts.append(
+                        MessagePart(
+                            type="function_result",
                             function_call_id=function_call_id,
                         )
                     )
