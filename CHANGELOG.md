@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.10.2 (2025-03-09)
+
+### Bug Fixes
+
+- Handle function_result if they return None
+  ([`0d3b92f`](https://github.com/BenderV/autochat/commit/0d3b92f055aae2ea3240a798acd3de72f5600c35))
+
+
 ## v0.10.1 (2025-03-08)
 
 ### Bug Fixes
