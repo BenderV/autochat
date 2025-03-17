@@ -34,9 +34,6 @@ dev = [
 
 [tool.semantic_release]
 version_source = "commit"
-version_variables = [
-    "src/autochat/__init__.py:__version__",
-]
 version_toml = [
     "pyproject.toml:project.version",
 ]
