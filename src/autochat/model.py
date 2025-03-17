@@ -120,6 +120,9 @@ class Message:
                         )
                     )
             else:
+                # Will be able to add this condition when switching to OpenAI "tools"
+                # if function_call_id is None:
+                #     raise ValueError("Function messages should have a function_call_id")
                 if content is not None:  # We try to add content before image
                     self.parts.append(
                         MessagePart(
