@@ -193,10 +193,18 @@ class Autochat(AutochatBase):
             # When content is None, use an empty string instead to prevent the "Message should have at least one part" error
             content = ""
         elif isinstance(content, list):
-            # If data is list of dicts, dumps to CSV
             if not content:
                 content = "[]"
-            elif isinstance(content[0], dict):
+
+            for item in content:
+                if isinstance(item, str):
+                    content.append(item)
+                elif isinstance(item, object):
+                    tool_id = self.add_tool(item)
+                    content.append(f"Added tool: {tool_id}")
+
+            # If data is list of dicts, dumps to CSV
+            if isinstance(content[0], dict):
                 content = csv_dumps(content, OUTPUT_SIZE_LIMIT)
             else:  # TODO: Add support for other types of list
                 content = "\n".join(content)
@@ -224,6 +232,7 @@ class Autochat(AutochatBase):
             content = None
         elif isinstance(content, (int, float, bool)):
             content = str(content)
+        #
         elif isinstance(content, object):
             # If the function return an object, we add it as a tool
             # NOTE: Maybe we shouldn't, and rely on a clearer signal / object type ?
