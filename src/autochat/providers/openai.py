@@ -138,6 +138,9 @@ class OpenAIProvider(BaseProvider):
             )
         messages = [message_to_openai_dict(sm) for sm in system_messages] + messages
 
+        if self.chat.use_tools_only and "tool_choice" not in kwargs:
+            kwargs["tool_choice"] = {"type": "required"}
+
         if self.chat.functions_schema:
             res = self.client.chat.completions.create(
                 model=self.model,

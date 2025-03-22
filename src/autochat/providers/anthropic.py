@@ -219,6 +219,9 @@ class AnthropicProvider(BaseProvider):
         if system_messages:
             kwargs["system"] = system_messages
 
+        if self.chat.use_tools_only and "tool_choice" not in kwargs:
+            kwargs["tool_choice"] = {"type": "any"}
+
         res = self.client.messages.create(
             model=self.model,
             messages=messages,

@@ -8,6 +8,7 @@ import json
 import os
 import traceback
 import typing
+import warnings
 
 from PIL import Image as PILImage
 
@@ -36,10 +37,23 @@ class Autochat(AutochatBase):
         max_interactions: int = 100,
         model=AUTOCHAT_MODEL,
         provider: str = APIProvider.OPENAI,
+        use_tools_only: bool = False,
     ) -> None:
+        """
+        Initialize the Autochat instance.
+        Args:
+            use_tools_only: bool = False,
+                If True, the chat will only use tools and not the LLM.
+                This is a beta feature and may change in the future.
+        """
         self.provider, self.model = get_provider_and_model(
             self, provider, model
         )  # TODO: rename register ?
+        if use_tools_only:
+            warnings.warn(
+                "use_tools_only is a beta feature and may change in the future"
+            )
+        self.use_tools_only = use_tools_only
         self.client = None  # TODO:
         self.instruction = instruction
         if examples is None:
