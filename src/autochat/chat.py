@@ -27,6 +27,15 @@ class StopLoopException(Exception):
     pass
 
 
+def simple_response_default_callback(response: Message) -> Message:
+    """
+    This function is called when the response is a simple response (no function call).
+    By default, the conversation will stop after a simple response.
+    You can override this function to change this behavior.
+    """
+    raise StopLoopException("Stopping the conversation after a simple response")
+
+
 class Autochat(AutochatBase):
     def __init__(
         self,
@@ -49,6 +58,7 @@ class Autochat(AutochatBase):
         self.provider, self.model = get_provider_and_model(
             self, provider, model
         )  # TODO: rename register ?
+        self.simple_response_callback = simple_response_default_callback
         if use_tools_only:
             warnings.warn(
                 "use_tools_only is a beta feature and may change in the future"
@@ -246,7 +256,6 @@ class Autochat(AutochatBase):
             content = None
         elif isinstance(content, (int, float, bool)):
             content = str(content)
-        #
         elif isinstance(content, object):
             # If the function return an object, we add it as a tool
             # NOTE: Maybe we shouldn't, and rely on a clearer signal / object type ?
@@ -344,7 +353,13 @@ class Autochat(AutochatBase):
             function_call_part = next(
                 (p for p in response.parts if p.type == "function_call"), None
             )
-            if function_call_part:
+            if not function_call_part:
+                yield response
+                try:
+                    message = self.simple_response_callback(response)
+                except StopLoopException:
+                    return
+            else:
                 name = function_call_part.function_call["name"]
                 args = function_call_part.function_call["arguments"]
 
@@ -358,9 +373,5 @@ class Autochat(AutochatBase):
                     yield response  # Should be after call function so we can use the response object (from_response)
                 yield message
 
-                if self.should_pause_conversation(response, message):
-                    return
-            else:
-                # final text answer
-                yield response
+            if self.should_pause_conversation(response, message):
                 return

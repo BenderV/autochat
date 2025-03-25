@@ -4,6 +4,8 @@
 [![image](https://img.shields.io/github/license/BenderV/autochat)](https://github.com/BenderV/autochat/blob/master/LICENSE)
 [![Actions status](https://github.com/BenderV/autochat/actions/workflows/test.yml/badge.svg)](https://github.com/BenderV/autochat/actions)
 
+> ⚠️ **Warning**: Since agentic capabilities are evolving fast, expect the API to change.
+
 A lightweight Python library to build AI agents with LLMs.
 
 ![image](https://www-cdn.anthropic.com/images/4zrzovbb/website/58d9f10c985c4eb5d53798dea315f7bb5ab6249e-2401x1000.png)
