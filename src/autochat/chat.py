@@ -81,8 +81,6 @@ class Autochat(AutochatBase):
         self.functions_schema = []
         self.functions = {}
         self.tools = {}
-        # Give the hability to pause the conversation after a function call or response
-        self.should_pause_conversation = lambda function_call, function_response: False
 
     @classmethod
     def from_template(cls, chat_template: str, **kwargs):
@@ -372,6 +370,3 @@ class Autochat(AutochatBase):
                 finally:
                     yield response  # Should be after call function so we can use the response object (from_response)
                 yield message
-
-            if self.should_pause_conversation(response, message):
-                return
