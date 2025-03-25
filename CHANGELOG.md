@@ -1,6 +1,44 @@
 # CHANGELOG
 
 
+## v0.11.0 (2025-03-25)
+
+### Bug Fixes
+
+- Bug when handling image as function response
+  ([`f9c6622`](https://github.com/BenderV/autochat/commit/f9c6622f2f11cb9e4b409c6a36cd0aa1816ba00b))
+
+- Infinite loop when handling list of strings as response...
+  ([`64cefcf`](https://github.com/BenderV/autochat/commit/64cefcfa8a4b9af799a040a5cdce54c22d92a654))
+
+### Chores
+
+- Add capacity to have list of instance to create tools
+  ([`701efae`](https://github.com/BenderV/autochat/commit/701efaebdd55870e6e394564c2d27c9c51d81420))
+
+- Add comment
+  ([`cac7e98`](https://github.com/BenderV/autochat/commit/cac7e98f9abc0fbc139597a912d94783ddfd7a5b))
+
+- Remove self.should_pause_conversation
+  ([`b05be02`](https://github.com/BenderV/autochat/commit/b05be02ebb98d293436b1fa6e954bede348d9c56))
+
+breaking change 😨
+
+- Remove unused version_variables
+  ([`f71227f`](https://github.com/BenderV/autochat/commit/f71227fbc23048b41ddffc7aeec6b2b5670493c7))
+
+- Update version in lock
+  ([`e584ce9`](https://github.com/BenderV/autochat/commit/e584ce95eb5c3100cfa2afcc41a4ab4b42760edd))
+
+### Features
+
+- Add self.simple_response_callback
+  ([`009acb0`](https://github.com/BenderV/autochat/commit/009acb06a7f5e39e5e2f8536036c2a360c381824))
+
+- Add use_tools_only
+  ([`2f59e26`](https://github.com/BenderV/autochat/commit/2f59e26779f74fc7c1e9a402d7f0909d423ccf84))
+
+
 ## v0.10.2 (2025-03-09)
 
 ### Bug Fixes
