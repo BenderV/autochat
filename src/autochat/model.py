@@ -218,7 +218,8 @@ class Message:
         function_call_parts = [
             part.function_call_id
             for part in self.parts
-            if part.type in ["function_call", "function_result"]
+            if part.type
+            in ["function_call", "function_result", "function_result_image"]
         ]
         # 2. verify that there is only one function_call_id part
         if not function_call_parts:
