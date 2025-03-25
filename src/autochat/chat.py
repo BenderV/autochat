@@ -213,52 +213,66 @@ class Autochat(AutochatBase):
         # We format the function_call response to be used as a next message
         if content is None:
             # When content is None, use an empty string instead to prevent the "Message should have at least one part" error
-            content = ""
+            formatted_content = ""
         elif isinstance(content, list):
+            formatted_content = []
             if not content:
-                content = "[]"
-
-            for item in content:
-                if isinstance(item, str):
-                    content.append(item)
-                elif isinstance(item, object):
-                    tool_id = self.add_tool(item)
-                    content.append(f"Added tool: {tool_id}")
-
-            # If data is list of dicts, dumps to CSV
-            if isinstance(content[0], dict):
-                content = csv_dumps(content, OUTPUT_SIZE_LIMIT)
-            else:  # TODO: Add support for other types of list
-                content = "\n".join(content)
-        elif isinstance(content, dict):
-            content = json.dumps(content)
-            if len(content) > OUTPUT_SIZE_LIMIT:
-                content = (
-                    content[:OUTPUT_SIZE_LIMIT] + f"\n... ({len(content)} characters)"
+                formatted_content = "[]"
+            elif isinstance(content[0], dict):
+                # If data is list of dicts, dumps to CSV
+                formatted_content = csv_dumps(content, OUTPUT_SIZE_LIMIT)
+            else:
+                for item in content:
+                    if isinstance(item, str):
+                        formatted_content.append(item)
+                    elif isinstance(item, object):
+                        tool_id = self.add_tool(item)
+                        formatted_content.append(f"Added tool: {tool_id}")
+                    elif isinstance(item, (int, float, bool)):
+                        formatted_content.append(str(item))
+                    else:
+                        raise ValueError(f"Invalid item type: {type(item)}")
+            formatted_content = "\n".join(formatted_content)
+            # Limit the size of the content
+            if len(formatted_content) > OUTPUT_SIZE_LIMIT:
+                formatted_content = (
+                    formatted_content[:OUTPUT_SIZE_LIMIT]
+                    + f"\n... ({len(formatted_content)} characters)"
                 )
+        elif isinstance(content, dict):
+            content_dump = json.dumps(content)
+            if len(content_dump) > OUTPUT_SIZE_LIMIT:
+                formatted_content = (
+                    content_dump[:OUTPUT_SIZE_LIMIT]
+                    + f"\n... ({len(content_dump)} characters)"
+                )
+            else:
+                formatted_content = content_dump
         elif isinstance(content, str):
             if len(content) > OUTPUT_SIZE_LIMIT:
-                content = (
+                formatted_content = (
                     content[:OUTPUT_SIZE_LIMIT] + f"\n... ({len(content)} characters)"
                 )
+            else:
+                formatted_content = content
         elif isinstance(content, bytes):
             # Detect if it's an image
             try:
                 image = PILImage.open(io.BytesIO(content))
-                content = None
+                formatted_content = None
             except IOError:
                 # Not an image
                 raise ValueError("Returned bytes is not a valid image.")
         elif isinstance(content, PILImage.Image):
             image = content
-            content = None
+            formatted_content = None
         elif isinstance(content, (int, float, bool)):
-            content = str(content)
+            formatted_content = str(content)
         elif isinstance(content, object):
             # If the function return an object, we add it as a tool
             # NOTE: Maybe we shouldn't, and rely on a clearer signal / object type ?
             tool_id = self.add_tool(content)
-            content = f"Added tool: {tool_id}"
+            formatted_content = f"Added tool: {tool_id}"
         else:
             raise ValueError(f"Invalid content type: {type(content)}")
 
@@ -266,7 +280,7 @@ class Autochat(AutochatBase):
         return Message(
             name=function_name,
             role="function",
-            content=content,
+            content=formatted_content,
             image=image,
             function_call_id=function_call_part_id,
         )
