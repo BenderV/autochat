@@ -48,6 +48,7 @@ class Autochat(AutochatBase):
         model=AUTOCHAT_MODEL,
         provider: str = APIProvider.OPENAI,
         use_tools_only: bool = False,
+        mcp_servers: typing.Union[list[str], None] = [],
     ) -> None:
         """
         Initialize the Autochat instance.
@@ -82,6 +83,7 @@ class Autochat(AutochatBase):
         self.functions_schema = []
         self.functions = {}
         self.tools = {}
+        self.mcp_servers = [self.add_mcp_server(m) for m in mcp_servers]
 
     @classmethod
     def from_template(cls, chat_template: str, **kwargs):
@@ -101,6 +103,7 @@ class Autochat(AutochatBase):
         self.functions_schema = []
         self.functions = {}
         self.tools = {}
+        self.mcp_servers = []
 
     @property
     def last_message(self):
@@ -149,6 +152,30 @@ class Autochat(AutochatBase):
 
         self.functions_schema.append(function_schema)
         self.functions[function_schema["name"]] = function
+
+    async def add_mcp_server(self, mcp_server: typing.Union[type, object]):
+        # Add mcp_servers functions to the chat instance
+        # TODO: ideally, we want to retrieve at each call the list of tools
+        # TODO: we should add "resource"
+        mcp_server_tools = await mcp_server.list_tools()
+
+        for tool in mcp_server_tools.tools:
+            functions_schema = tool.model_dump()
+            functions_schema["parameters"] = functions_schema.pop("inputSchema")
+            self.functions_schema.append(functions_schema)
+
+            # add function that will encapsulate the call to the tool
+            def call_tool_wrapper(function_name):
+                async def call_tool(**kwargs):
+                    result = await mcp_server.call_tool(function_name, arguments=kwargs)
+                    # NOTE: for now, we only return the text of the result
+                    return result.content[0].text
+
+                return call_tool
+
+            call_tool = call_tool_wrapper(functions_schema["name"])
+            self.functions[functions_schema["name"]] = call_tool
+        self.mcp_servers.append(mcp_server)
 
     def add_tool(
         self, tool: typing.Union[type, object], tool_id: typing.Optional[str] = None

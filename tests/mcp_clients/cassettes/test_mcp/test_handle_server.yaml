@@ -1,0 +1,89 @@
+interactions:
+- request:
+    body: '{"max_tokens":10000,"messages":[{"role":"user","content":[{"type":"text","text":"Use
+      calculator to add 1 and 2","cache_control":{"type":"ephemeral"}}]}],"model":"claude-3-7-sonnet-latest","tools":[{"name":"add","description":"Add
+      two numbers","input_schema":{"properties":{"a":{"title":"A","type":"integer"},"b":{"title":"B","type":"integer"}},"required":["a","b"],"title":"addArguments","type":"object"},"cache_control":{"type":"ephemeral"}}]}'
+    headers:
+      anthropic-beta:
+      - prompt-caching-2024-07-31
+      anthropic-version:
+      - '2023-06-01'
+      content-type:
+      - application/json
+      host:
+      - api.anthropic.com
+      x-stainless-read-timeout:
+      - '600'
+      x-stainless-timeout:
+      - '600'
+    method: POST
+    uri: https://api.anthropic.com/v1/messages
+  response:
+    body:
+      string: '{"id":"msg_016UFpmnnx3hFMUQjGFoFYVA","type":"message","role":"assistant","model":"claude-3-7-sonnet-20250219","content":[{"type":"text","text":"I
+        can use the calculator tool to add 1 and 2 for you."},{"type":"tool_use","id":"toolu_013rryebe9ew2Trapd62SgGr","name":"add","input":{"a":1,"b":2}}],"stop_reason":"tool_use","stop_sequence":null,"usage":{"input_tokens":412,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":87}}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - ''
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      X-Robots-Tag:
+      - none
+      anthropic-organization-id:
+      - 61a15141-02df-4127-8350-1bd919d75ec8
+      request-id:
+      - req_014ouVQyKcTQBy1rQS9E29T9
+      via:
+      - 1.1 google
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"max_tokens":10000,"messages":[{"role":"user","content":[{"type":"text","text":"Use
+      calculator to add 1 and 2","cache_control":{"type":"ephemeral"}}]},{"role":"assistant","content":[{"type":"text","text":"I
+      can use the calculator tool to add 1 and 2 for you."},{"type":"tool_use","id":"toolu_013rryebe9ew2Trapd62SgGr","name":"add","input":{"a":1,"b":2}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_013rryebe9ew2Trapd62SgGr","content":"3"}]}],"model":"claude-3-7-sonnet-latest","tools":[{"name":"add","description":"Add
+      two numbers","input_schema":{"properties":{"a":{"title":"A","type":"integer"},"b":{"title":"B","type":"integer"}},"required":["a","b"],"title":"addArguments","type":"object"},"cache_control":{"type":"ephemeral"}}]}'
+    headers:
+      anthropic-beta:
+      - prompt-caching-2024-07-31
+      anthropic-version:
+      - '2023-06-01'
+      content-type:
+      - application/json
+      host:
+      - api.anthropic.com
+      x-stainless-read-timeout:
+      - '600'
+      x-stainless-timeout:
+      - '600'
+    method: POST
+    uri: https://api.anthropic.com/v1/messages
+  response:
+    body:
+      string: '{"id":"msg_01NEZStNtyFj7XjYqhgXbZ8g","type":"message","role":"assistant","model":"claude-3-7-sonnet-20250219","content":[{"type":"text","text":"The
+        result of adding 1 and 2 is 3."}],"stop_reason":"end_turn","stop_sequence":null,"usage":{"input_tokens":511,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":19}}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - ''
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      X-Robots-Tag:
+      - none
+      anthropic-organization-id:
+      - 61a15141-02df-4127-8350-1bd919d75ec8
+      request-id:
+      - req_0122ZQ4NJnXW8NR2XEP96tzN
+      via:
+      - 1.1 google
+    status:
+      code: 200
+      message: OK
+version: 1

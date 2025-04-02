@@ -20,9 +20,13 @@ Changelog = "https://github.com/BenderV/autochat/blob/master/CHANGELOG.md"
 [project.optional-dependencies]
 anthropic = ["anthropic>=0.46.0"]
 openai = ["openai>=1.63.2"]
+mcp = [
+    "mcp>=1.6.0; python_version >= '3.10'",
+]
 all = [
     "anthropic>=0.46.0",
     "openai>=1.63.2",
+    "mcp>=1.6.0; python_version >= '3.10'",
 ]
 dev = [
     "anthropic>=0.46.0",
