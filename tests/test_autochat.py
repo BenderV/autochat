@@ -28,7 +28,7 @@ class TestAutochat(unittest.TestCase):
         self.assertEqual(len(agent.functions_schema), 1)
         self.assertIn("test_function", agent.functions)
 
-    @patch.object(OpenAIProvider, "fetch")
+    @patch.object(OpenAIProvider, "fetch_async")
     def test_ask(self, mock_fetch_openai):
         mock_fetch_openai.return_value = Message(
             role="assistant", content="Test response"
@@ -40,7 +40,7 @@ class TestAutochat(unittest.TestCase):
         self.assertEqual(response.content, "Test response")
         self.assertEqual(len(agent.messages), 2)
 
-    @patch.object(OpenAIProvider, "fetch")
+    @patch.object(OpenAIProvider, "fetch_async")
     def test_run_conversation(self, mock_fetch_openai):
         mock_fetch_openai.return_value = Message(
             role="assistant", content="Final response"

@@ -71,17 +71,17 @@ class AnthropicProvider(BaseProvider):
         )
         self.chat = chat
 
-    def fetch(self, **kwargs):
+    async def fetch_async(self, **kwargs):
         def add_empty_function_result(messages):
             """
             Ajustement Anthropic pour fusionner ou insérer la « function_result » :
 
-            - Premier cas : message `role="function"` suivi d’un `role="user"`.
+            - Premier cas : message `role="function"` suivi d'un `role="user"`.
             On transforme ce message 'function' en un part de type 'tool_result'
             inséré au début du message utilisateur suivant.
 
             - Second cas (inchangé) : message `role="assistant"` avec un `function_call`,
-            suivi d’un message non-`function`. On insère un message vide `role="function"`.
+            suivi d'un message non-`function`. On insère un message vide `role="function"`.
             """
             for i in range(len(messages) - 1, 0, -1):
                 if (
