@@ -86,6 +86,29 @@ for message in agent.run_conversation("Explain quantum computing in simple terms
     print(message.to_markdown())
 ```
 
+### Async Interface
+
+Autochat provides async versions of its core methods for use in async applications:
+
+```python
+# Async version of ask
+response = await agent.ask_async("What is the capital of France?")
+print(response.content)
+
+# Async version of run_conversation
+async for message in agent.run_conversation_async("Explain quantum computing"):
+    print(message.to_markdown())
+
+# Async function calls are also supported
+async def async_calculator(a: int, b: int) -> int:
+    await asyncio.sleep(0.1)  # Some async work
+    return a + b
+
+agent.add_function(async_calculator)
+async for message in agent.run_conversation_async("What is 5 + 3?"):
+    print(message.to_markdown())
+```
+
 ### Add a function call as python function
 
 ```python
