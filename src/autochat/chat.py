@@ -2,6 +2,7 @@
 
 __version__ = "0.4.1"
 
+import asyncio
 import inspect
 import io
 import json
@@ -181,11 +182,12 @@ class Autochat(AutochatBase):
             name: func for name, func in self.functions.items() if name != tool_id
         }
 
-    def ask(
+    async def ask_async(
         self,
         message: typing.Union[Message, str, None] = None,
         **kwargs,
     ) -> Message:
+        """Async version of ask method that uses the async fetch_async provider method"""
         if message:
             if isinstance(message, str):
                 # If message is instance of string, then convert to Message
@@ -195,10 +197,19 @@ class Autochat(AutochatBase):
                 )
             self.messages.append(message)  # Add the question to the history
 
-        # 3. Call the strategy
-        response = self.provider.fetch(**kwargs)
+        # Call the async strategy
+        response = await self.provider.fetch_async(**kwargs)
         self.messages.append(response)
         return response
+
+    def ask(
+        self,
+        message: typing.Union[Message, str, None] = None,
+        **kwargs,
+    ) -> Message:
+        # For backward compatibility, use run_until_complete to execute the async method
+        loop = asyncio.get_event_loop()
+        return loop.run_until_complete(self.ask_async(message, **kwargs))
 
     def _format_callback_message(
         self, function_name, function_call_part_id, content, image
@@ -298,14 +309,20 @@ class Autochat(AutochatBase):
             content = traceback.format_exc()
         return content
 
-    def _call_with_signature(self, func, from_response, **kwargs):
+    async def _call_with_signature(self, func, from_response, **kwargs):
         sig = inspect.signature(func)
         if "from_response" in sig.parameters:
-            return func(**kwargs, from_response=from_response)
+            result = func(**kwargs, from_response=from_response)
         else:
-            return func(**kwargs)
+            result = func(**kwargs)
 
-    def _call_function_and_build_message(
+        # If the function is async, await the result
+        if inspect.iscoroutine(result):
+            return await result
+        else:
+            return result
+
+    async def _call_function_and_build_message(
         self, function_name, function_arguments, response
     ):
         """
@@ -320,11 +337,11 @@ class Autochat(AutochatBase):
                 tool_id, method_name = function_name.split("__")
                 tool = self.tools[tool_id]
                 method = getattr(tool, method_name)
-                content = self._call_with_signature(
+                content = await self._call_with_signature(
                     method, response, **function_arguments
                 )
             else:
-                content = self._call_with_signature(
+                content = await self._call_with_signature(
                     self.functions[function_name], response, **function_arguments
                 )
         except StopLoopException:
@@ -340,10 +357,11 @@ class Autochat(AutochatBase):
             image=image,
         )
 
-    def run_conversation(
+    async def run_conversation_async(
         self,
         question: typing.Union[str, Message, None] = None,
-    ) -> typing.Generator[Message, None, None]:
+    ) -> typing.AsyncGenerator[Message, None]:
+        """Async version of run_conversation"""
         # If there's an initial question, emit it:
         if isinstance(question, str):
             message = Message(
@@ -355,12 +373,9 @@ class Autochat(AutochatBase):
             message = question
 
         for _ in range(self.max_interactions):
-            # TODO: Check if the user has stopped the conversation
-
             # Ask the LLM with the current message (if any)
-            response = self.ask(message)
+            response = await self.ask_async(message)
 
-            # TODO: Add support for multiple function calls
             # Locate a function_call part in the assistant's response
             function_call_part = next(
                 (p for p in response.parts if p.type == "function_call"), None
@@ -376,11 +391,35 @@ class Autochat(AutochatBase):
                 args = function_call_part.function_call["arguments"]
 
                 try:
-                    message = self._call_function_and_build_message(
+                    message = await self._call_function_and_build_message(
                         name, args, response
                     )
                 except StopLoopException:
                     return
                 finally:
-                    yield response  # Should be after call function so we can use the response object (from_response)
+                    yield response
                 yield message
+
+    def run_conversation(self, question: typing.Union[str, Message, None] = None):
+        # For backward compatibility, use run_until_complete to execute the async method
+        loop = asyncio.get_event_loop()
+
+        # Create an iterator that will yield results from the async generator
+        async def collect_async_results():
+            async_gen = self.run_conversation_async(question)
+            try:
+                while True:
+                    item = await async_gen.__anext__()
+                    # Store each yielded value to be returned by our sync generator
+                    results.append(item)
+            except StopAsyncIteration:
+                pass
+
+        # Storage for messages yielded by async generator
+        results = []
+
+        # Run the collector function to fill results
+        loop.run_until_complete(collect_async_results())
+
+        # Yield each result in a synchronous manner
+        yield from results

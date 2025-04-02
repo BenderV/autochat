@@ -117,7 +117,7 @@ class OpenAIProvider(BaseProvider):
             ),
         )
 
-    def fetch(self, **kwargs) -> Message:
+    async def fetch_async(self, **kwargs) -> Message:
         messages = self.prepare_messages(transform_function=message_to_openai_dict)
         # Add instruction as the first message
 

@@ -47,6 +47,7 @@ commit_message = "chore(release): bump version to {version}"
 
 [tool.uv.sources]
 autochat = { workspace = true }
+vcrpy = { git = "https://github.com/tysonholub/vcrpy.git", rev = "fix.httpx-async" }
 
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]
@@ -55,4 +56,6 @@ build-backend = "setuptools.build_meta"
 [dependency-groups]
 dev = [
     "autochat",
+    "pytest-asyncio>=0.26.0",
+    "vcrpy",
 ]
