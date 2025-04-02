@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.12.0 (2025-04-02)
+
+### Features
+
+- Add async methods
+  ([`28acdad`](https://github.com/BenderV/autochat/commit/28acdadcd910e2e0b37d0505598f01887fa8e43b))
+
+
 ## v0.11.0 (2025-03-25)
 
 ### Bug Fixes
