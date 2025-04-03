@@ -1,4 +1,5 @@
 import ast
+import asyncio
 import csv
 import inspect
 import typing
@@ -260,3 +261,15 @@ def inspect_schema(f):
         f"Input for `{f.__name__}`", __config__=AllowNonTypedParamsConfig, **kw
     ).schema()
     return dict(name=f.__name__, description=description, parameters=s)
+
+
+def get_event_loop_or_create():
+    try:
+        return asyncio.get_event_loop()
+    except RuntimeError as e:
+        if str(e).startswith("There is no current event loop in thread"):
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            return loop
+        else:
+            raise

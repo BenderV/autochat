@@ -17,7 +17,12 @@ from autochat.base import AutochatBase
 from autochat.model import Message
 from autochat.providers.base_provider import APIProvider
 from autochat.providers.utils import get_provider_and_model
-from autochat.utils import csv_dumps, inspect_schema, parse_chat_template
+from autochat.utils import (
+    csv_dumps,
+    get_event_loop_or_create,
+    inspect_schema,
+    parse_chat_template,
+)
 
 AUTOCHAT_HOST = os.getenv("AUTOCHAT_HOST")
 AUTOCHAT_MODEL = os.getenv("AUTOCHAT_MODEL")
@@ -208,7 +213,7 @@ class Autochat(AutochatBase):
         **kwargs,
     ) -> Message:
         # For backward compatibility, use run_until_complete to execute the async method
-        loop = asyncio.get_event_loop()
+        loop = get_event_loop_or_create()
         return loop.run_until_complete(self.ask_async(message, **kwargs))
 
     def _format_callback_message(
@@ -402,7 +407,7 @@ class Autochat(AutochatBase):
 
     def run_conversation(self, question: typing.Union[str, Message, None] = None):
         # For backward compatibility, use run_until_complete to execute the async method
-        loop = asyncio.get_event_loop()
+        loop = get_event_loop_or_create()
 
         # Create an iterator that will yield results from the async generator
         async def collect_async_results():

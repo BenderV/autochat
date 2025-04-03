@@ -1,9 +1,9 @@
-import asyncio
 import typing
 from abc import ABC, abstractmethod
 from enum import Enum
 
 from autochat.model import Message, MessagePart
+from autochat.utils import get_event_loop_or_create
 
 
 class APIProvider(Enum):
@@ -50,5 +50,5 @@ class BaseProvider(ABC):
         Given a chat context, returns a single new Message from the LLM.
         """
         # For backward compatibility, use run_until_complete to execute the async method
-        loop = asyncio.get_event_loop()
+        loop = get_event_loop_or_create()
         return loop.run_until_complete(self.fetch_async(**kwargs))
