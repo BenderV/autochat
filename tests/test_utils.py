@@ -1,5 +1,8 @@
 import unittest
 
+from pydantic import BaseModel
+
+from autochat.model import Message
 from autochat.utils import inspect_schema, limit_data_size, parse_function
 
 
@@ -199,11 +202,45 @@ def function_with_description_and_default_value(a: int, b: int = 1):
 
 
 # We should ignore from_response argument
-def function_with_from_response(a: int, from_response: bool = False):
+def function_with_from_response(a: int, from_response: Message):
     """
     Args:
         a: The number to return
         from_response: The message which triggered the function call
+    Returns:
+        The number a
+    """
+    return a
+
+
+class RandomClass:
+    def __init__(self, content: str):
+        self.content = content
+
+
+def function_with_class(a: int, b: RandomClass):
+    """
+    Args:
+        a: The number to return
+        b: The message which triggered the function call
+    Returns:
+        The number a
+    """
+    return a
+
+
+class RandomClassInheritedFromBaseModel(BaseModel):
+    def __init__(self, content: str):
+        self.content = content
+
+
+def function_with_class_inherited_from_base_model(
+    a: int, b: RandomClassInheritedFromBaseModel
+):
+    """
+    Args:
+        a: The number to return
+        b: The message which triggered the function call
     Returns:
         The number a
     """
@@ -287,6 +324,60 @@ class TestInspectSchema(unittest.TestCase):
                 },
                 "required": ["a"],
                 "title": "Input for `function_with_from_response`",
+                "type": "object",
+            },
+        }
+        self.assertEqual(result, expected)
+
+    def test_inspect_schema_with_class(self):
+        """
+        Class should be omitted from the json schema
+        """
+        result = inspect_schema(function_with_class)
+        expected = {
+            "name": "function_with_class",
+            "description": None,
+            "parameters": {
+                "properties": {
+                    "a": {
+                        "description": "The number to return",
+                        "title": "A",
+                        "type": "integer",
+                    }
+                },
+                "required": ["a"],
+                "title": "Input for `function_with_class`",
+                "type": "object",
+            },
+        }
+        self.assertEqual(result, expected)
+
+    def test_inspect_schema_with_class_inherited_from_base_model(self):
+        result = inspect_schema(function_with_class_inherited_from_base_model)
+        expected = {
+            "name": "function_with_class_inherited_from_base_model",
+            "description": None,
+            "parameters": {
+                "$defs": {
+                    "RandomClassInheritedFromBaseModel": {
+                        "properties": {},
+                        "title": "RandomClassInheritedFromBaseModel",
+                        "type": "object",
+                    }
+                },
+                "properties": {
+                    "a": {
+                        "title": "A",
+                        "type": "integer",
+                        "description": "The number to return",
+                    },
+                    "b": {
+                        "$ref": "#/$defs/RandomClassInheritedFromBaseModel",
+                        "description": "The message which triggered the function call",
+                    },
+                },
+                "required": ["a", "b"],
+                "title": "Input for `function_with_class_inherited_from_base_model`",
                 "type": "object",
             },
         }

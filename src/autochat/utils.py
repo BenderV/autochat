@@ -8,6 +8,8 @@ from io import StringIO
 from typing import Any
 
 from pydantic import BaseConfig, Field, create_model
+from pydantic.json_schema import GenerateJsonSchema
+from pydantic_core import PydanticOmit
 
 from autochat.model import Message
 
@@ -212,6 +214,11 @@ class AllowNonTypedParamsConfig(BaseConfig):
     arbitrary_types_allowed = True
 
 
+class OmitClassJsonSchema(GenerateJsonSchema):
+    def handle_invalid_for_json_schema(self, schema, error_info: str):
+        raise PydanticOmit
+
+
 def inspect_schema(f):
     kw = {}
     param_descriptions = {}
@@ -252,14 +259,14 @@ def inspect_schema(f):
         if n in param_descriptions:
             kw[n] = (
                 annotation,
-                Field(default=default, description=param_descriptions[n]),
+                Field(default=default, description=param_descriptions[n], exclude=True),
             )
         else:
             kw[n] = (annotation, default)
 
     s = create_model(
         f"Input for `{f.__name__}`", __config__=AllowNonTypedParamsConfig, **kw
-    ).schema()
+    ).model_json_schema(mode="validation", schema_generator=OmitClassJsonSchema)
     return dict(name=f.__name__, description=description, parameters=s)
 
 
