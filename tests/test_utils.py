@@ -1,5 +1,6 @@
 import unittest
 
+from autochat.model import Message
 from autochat.utils import inspect_schema, limit_data_size, parse_function
 
 
@@ -199,11 +200,27 @@ def function_with_description_and_default_value(a: int, b: int = 1):
 
 
 # We should ignore from_response argument
-def function_with_from_response(a: int, from_response: bool = False):
+def function_with_from_response(a: int, from_response: Message):
     """
     Args:
         a: The number to return
         from_response: The message which triggered the function call
+    Returns:
+        The number a
+    """
+    return a
+
+
+class RandomObject:
+    def __init__(self, content: str):
+        self.content = content
+
+
+def function_with_object(a: int, b: RandomObject):
+    """
+    Args:
+        a: The number to return
+        b: The message which triggered the function call
     Returns:
         The number a
     """
@@ -289,6 +306,14 @@ class TestInspectSchema(unittest.TestCase):
                 "title": "Input for `function_with_from_response`",
                 "type": "object",
             },
+        }
+        self.assertEqual(result, expected)
+
+    def test_inspect_schema_with_object(self):
+        result = inspect_schema(function_with_object)
+        expected = {
+            "name": "function_with_object",
+            "description": None,
         }
         self.assertEqual(result, expected)
 
