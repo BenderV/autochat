@@ -1,6 +1,19 @@
 # CHANGELOG
 
 
+## v0.12.1 (2025-04-03)
+
+### Bug Fixes
+
+- Improve async/sync support
+  ([`0dfba35`](https://github.com/BenderV/autochat/commit/0dfba35817663707969859a54e4d4d2710cbf52b))
+
+### Documentation
+
+- About async
+  ([`27923e7`](https://github.com/BenderV/autochat/commit/27923e721b9cb336c036cb46c7552a213323f869))
+
+
 ## v0.12.0 (2025-04-02)
 
 ### Features
