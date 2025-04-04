@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.12.2 (2025-04-04)
+
+### Bug Fixes
+
+- Ruff
+  ([`208ec1a`](https://github.com/BenderV/autochat/commit/208ec1a96a3d3d7d9d491a06495ec29f97895ee2))
+
+
 ## v0.12.1 (2025-04-03)
 
 ### Bug Fixes
