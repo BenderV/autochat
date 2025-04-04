@@ -2,7 +2,6 @@
 
 __version__ = "0.4.1"
 
-import asyncio
 import inspect
 import io
 import json
