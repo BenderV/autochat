@@ -15,7 +15,6 @@ import warnings
 from PIL import Image as PILImage
 
 from autochat.base import AutochatBase
-from autochat.mcp import fetch_mcp_server_resources, fetch_mcp_server_tools
 from autochat.model import Message
 from autochat.providers.base_provider import APIProvider
 from autochat.providers.utils import get_provider_and_model
@@ -192,6 +191,8 @@ class Autochat(AutochatBase):
         Add a MCP server to the agent instance.
         The MCP server will be used to call tools and resources.
         """
+        from autochat.mcp import fetch_mcp_server_resources, fetch_mcp_server_tools
+
         logging.warning("Experimental feature: MCP servers")
         tools_functions, schemas = await fetch_mcp_server_tools(mcp_server)
         self.functions.update(tools_functions)

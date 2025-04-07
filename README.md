@@ -21,6 +21,7 @@ A lightweight Python library to build AI agents with LLMs.
   - Easy function and tool integration
   - Flexible instruction and example management
   - Support for images
+  - Support for MCP servers
 
 ## Example (search capability)
 
@@ -122,6 +123,11 @@ for message in agent.run_conversation(
 ):
     print(message)
 ```
+
+### Add a MCP server
+
+Experimental feature.
+Check out the [tests/mcp_clients](tests/mcp_clients) for more information.
 
 ## Installation
 
