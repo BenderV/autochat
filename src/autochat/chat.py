@@ -5,6 +5,7 @@ __version__ = "0.4.1"
 import inspect
 import io
 import json
+import logging
 import os
 import traceback
 import typing
@@ -52,6 +53,7 @@ class Autochat(AutochatBase):
         model=AUTOCHAT_MODEL,
         provider: str = APIProvider.OPENAI,
         use_tools_only: bool = False,
+        mcp_servers: typing.Union[list[object], None] = [],
     ) -> None:
         """
         Initialize the Autochat instance.
@@ -86,6 +88,8 @@ class Autochat(AutochatBase):
         self.functions_schema = []
         self.functions = {}
         self.tools = {}
+        for m in mcp_servers:
+            self.add_mcp_server(m)
 
     @classmethod
     def from_template(cls, chat_template: str, **kwargs):
@@ -185,6 +189,21 @@ class Autochat(AutochatBase):
         self.functions = {
             name: func for name, func in self.functions.items() if name != tool_id
         }
+
+    async def add_mcp_server(self, mcp_server):
+        """
+        Add a MCP server to the agent instance.
+        The MCP server will be used to call tools and resources.
+        """
+        from autochat.mcp import fetch_mcp_server_resources, fetch_mcp_server_tools
+
+        logging.warning("Experimental feature: MCP servers")
+        tools_functions, schemas = await fetch_mcp_server_tools(mcp_server)
+        self.functions.update(tools_functions)
+        self.functions_schema.extend(schemas)
+        resources_functions, schemas = await fetch_mcp_server_resources(mcp_server)
+        self.functions.update(resources_functions)
+        self.functions_schema.extend(schemas)
 
     async def ask_async(
         self,

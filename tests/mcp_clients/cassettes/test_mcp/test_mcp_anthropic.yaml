@@ -1,0 +1,236 @@
+interactions:
+- request:
+    body: '{"max_tokens":10000,"messages":[{"role":"user","content":[{"type":"text","text":"Use
+      calculator to add 1 and 2","cache_control":{"type":"ephemeral"}}]}],"model":"claude-3-7-sonnet-latest","tools":[{"name":"add","description":"Add
+      two numbers","input_schema":{"properties":{"a":{"title":"A","type":"integer"},"b":{"title":"B","type":"integer"}},"required":["a","b"],"title":"addArguments","type":"object"}},{"name":"files__","description":"uri:files://","input_schema":{"properties":{},"required":[],"type":"object"}},{"name":"files__file_name","description":"uri:files://{file_name}\nGet
+      a file","input_schema":{"properties":{"file_name":{"title":"file_name","type":"string"}},"required":["file_name"],"type":"object"},"cache_control":{"type":"ephemeral"}}]}'
+    headers:
+      anthropic-beta:
+      - prompt-caching-2024-07-31
+      anthropic-version:
+      - '2023-06-01'
+      content-type:
+      - application/json
+      host:
+      - api.anthropic.com
+      x-stainless-read-timeout:
+      - '600'
+      x-stainless-timeout:
+      - '600'
+    method: POST
+    uri: https://api.anthropic.com/v1/messages
+  response:
+    body:
+      string: '{"id":"msg_01Ps8gBg8bzzWzQea8m8MRzM","type":"message","role":"assistant","model":"claude-3-7-sonnet-20250219","content":[{"type":"text","text":"I''ll
+        use the calculator to add 1 and 2 for you."},{"type":"tool_use","id":"toolu_01LAVLk2hVqSA8idAxjQ276g","name":"add","input":{"a":1,"b":2}}],"stop_reason":"tool_use","stop_sequence":null,"usage":{"input_tokens":528,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":86}}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - ''
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      X-Robots-Tag:
+      - none
+      anthropic-organization-id:
+      - 61a15141-02df-4127-8350-1bd919d75ec8
+      request-id:
+      - req_01HgTv6BHvbtDdyM6GabxLgi
+      via:
+      - 1.1 google
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"max_tokens":10000,"messages":[{"role":"user","content":[{"type":"text","text":"Use
+      calculator to add 1 and 2","cache_control":{"type":"ephemeral"}}]},{"role":"assistant","content":[{"type":"text","text":"I''ll
+      use the calculator to add 1 and 2 for you."},{"type":"tool_use","id":"toolu_01LAVLk2hVqSA8idAxjQ276g","name":"add","input":{"a":1,"b":2}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_01LAVLk2hVqSA8idAxjQ276g","content":"3"}]}],"model":"claude-3-7-sonnet-latest","tools":[{"name":"add","description":"Add
+      two numbers","input_schema":{"properties":{"a":{"title":"A","type":"integer"},"b":{"title":"B","type":"integer"}},"required":["a","b"],"title":"addArguments","type":"object"}},{"name":"files__","description":"uri:files://","input_schema":{"properties":{},"required":[],"type":"object"}},{"name":"files__file_name","description":"uri:files://{file_name}\nGet
+      a file","input_schema":{"properties":{"file_name":{"title":"file_name","type":"string"}},"required":["file_name"],"type":"object"},"cache_control":{"type":"ephemeral"}}]}'
+    headers:
+      anthropic-beta:
+      - prompt-caching-2024-07-31
+      anthropic-version:
+      - '2023-06-01'
+      content-type:
+      - application/json
+      host:
+      - api.anthropic.com
+      x-stainless-read-timeout:
+      - '600'
+      x-stainless-timeout:
+      - '600'
+    method: POST
+    uri: https://api.anthropic.com/v1/messages
+  response:
+    body:
+      string: '{"id":"msg_01RnVBpVb9E9k1fhZ7kJTcRf","type":"message","role":"assistant","model":"claude-3-7-sonnet-20250219","content":[{"type":"text","text":"The
+        result of adding 1 and 2 is 3."}],"stop_reason":"end_turn","stop_sequence":null,"usage":{"input_tokens":626,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":19}}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - ''
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      X-Robots-Tag:
+      - none
+      anthropic-organization-id:
+      - 61a15141-02df-4127-8350-1bd919d75ec8
+      request-id:
+      - req_019Gcre59wiiRzGkuLp32iEq
+      via:
+      - 1.1 google
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"max_tokens":10000,"messages":[{"role":"user","content":[{"type":"text","text":"Use
+      calculator to add 1 and 2","cache_control":{"type":"ephemeral"}}]},{"role":"assistant","content":[{"type":"text","text":"I''ll
+      use the calculator to add 1 and 2 for you."},{"type":"tool_use","id":"toolu_01LAVLk2hVqSA8idAxjQ276g","name":"add","input":{"a":1,"b":2}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_01LAVLk2hVqSA8idAxjQ276g","content":"3"}]},{"role":"assistant","content":[{"type":"text","text":"The
+      result of adding 1 and 2 is 3."}]},{"role":"user","content":[{"type":"text","text":"List
+      files and then get file1"}]}],"model":"claude-3-7-sonnet-latest","tools":[{"name":"add","description":"Add
+      two numbers","input_schema":{"properties":{"a":{"title":"A","type":"integer"},"b":{"title":"B","type":"integer"}},"required":["a","b"],"title":"addArguments","type":"object"}},{"name":"files__","description":"uri:files://","input_schema":{"properties":{},"required":[],"type":"object"}},{"name":"files__file_name","description":"uri:files://{file_name}\nGet
+      a file","input_schema":{"properties":{"file_name":{"title":"file_name","type":"string"}},"required":["file_name"],"type":"object"},"cache_control":{"type":"ephemeral"}}]}'
+    headers:
+      anthropic-beta:
+      - prompt-caching-2024-07-31
+      anthropic-version:
+      - '2023-06-01'
+      content-type:
+      - application/json
+      host:
+      - api.anthropic.com
+      x-stainless-read-timeout:
+      - '600'
+      x-stainless-timeout:
+      - '600'
+    method: POST
+    uri: https://api.anthropic.com/v1/messages
+  response:
+    body:
+      string: '{"id":"msg_01PtZsqKWuE8EJHmLoYibqnr","type":"message","role":"assistant","model":"claude-3-7-sonnet-20250219","content":[{"type":"text","text":"I''ll
+        list the available files first and then get file1 for you."},{"type":"tool_use","id":"toolu_01G4HbM12XwaErkthLTXE2KQ","name":"files__","input":{}}],"stop_reason":"tool_use","stop_sequence":null,"usage":{"input_tokens":655,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":52}}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - ''
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      X-Robots-Tag:
+      - none
+      anthropic-organization-id:
+      - 61a15141-02df-4127-8350-1bd919d75ec8
+      request-id:
+      - req_011jn12jAZ8cMLw21xECFj7f
+      via:
+      - 1.1 google
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"max_tokens":10000,"messages":[{"role":"user","content":[{"type":"text","text":"Use
+      calculator to add 1 and 2","cache_control":{"type":"ephemeral"}}]},{"role":"assistant","content":[{"type":"text","text":"I''ll
+      use the calculator to add 1 and 2 for you."},{"type":"tool_use","id":"toolu_01LAVLk2hVqSA8idAxjQ276g","name":"add","input":{"a":1,"b":2}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_01LAVLk2hVqSA8idAxjQ276g","content":"3"}]},{"role":"assistant","content":[{"type":"text","text":"The
+      result of adding 1 and 2 is 3."}]},{"role":"user","content":[{"type":"text","text":"List
+      files and then get file1"}]},{"role":"assistant","content":[{"type":"text","text":"I''ll
+      list the available files first and then get file1 for you."},{"type":"tool_use","id":"toolu_01G4HbM12XwaErkthLTXE2KQ","name":"files__","input":{}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_01G4HbM12XwaErkthLTXE2KQ","content":"file1\nfile2"}]}],"model":"claude-3-7-sonnet-latest","tools":[{"name":"add","description":"Add
+      two numbers","input_schema":{"properties":{"a":{"title":"A","type":"integer"},"b":{"title":"B","type":"integer"}},"required":["a","b"],"title":"addArguments","type":"object"}},{"name":"files__","description":"uri:files://","input_schema":{"properties":{},"required":[],"type":"object"}},{"name":"files__file_name","description":"uri:files://{file_name}\nGet
+      a file","input_schema":{"properties":{"file_name":{"title":"file_name","type":"string"}},"required":["file_name"],"type":"object"},"cache_control":{"type":"ephemeral"}}]}'
+    headers:
+      anthropic-beta:
+      - prompt-caching-2024-07-31
+      anthropic-version:
+      - '2023-06-01'
+      content-type:
+      - application/json
+      host:
+      - api.anthropic.com
+      x-stainless-read-timeout:
+      - '600'
+      x-stainless-timeout:
+      - '600'
+    method: POST
+    uri: https://api.anthropic.com/v1/messages
+  response:
+    body:
+      string: '{"id":"msg_01478ZMKL5N47z3cwKRsEA7a","type":"message","role":"assistant","model":"claude-3-7-sonnet-20250219","content":[{"type":"text","text":"Now
+        I''ll get the contents of file1:"},{"type":"tool_use","id":"toolu_01PEJ6zwodxnzY9iJBdH8WoT","name":"files__file_name","input":{"file_name":"file1"}}],"stop_reason":"tool_use","stop_sequence":null,"usage":{"input_tokens":723,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":70}}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - ''
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      X-Robots-Tag:
+      - none
+      anthropic-organization-id:
+      - 61a15141-02df-4127-8350-1bd919d75ec8
+      request-id:
+      - req_01JxT4ZknYBcUianAE2zZmyS
+      via:
+      - 1.1 google
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"max_tokens":10000,"messages":[{"role":"user","content":[{"type":"text","text":"Use
+      calculator to add 1 and 2","cache_control":{"type":"ephemeral"}}]},{"role":"assistant","content":[{"type":"text","text":"I''ll
+      use the calculator to add 1 and 2 for you."},{"type":"tool_use","id":"toolu_01LAVLk2hVqSA8idAxjQ276g","name":"add","input":{"a":1,"b":2}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_01LAVLk2hVqSA8idAxjQ276g","content":"3"}]},{"role":"assistant","content":[{"type":"text","text":"The
+      result of adding 1 and 2 is 3."}]},{"role":"user","content":[{"type":"text","text":"List
+      files and then get file1"}]},{"role":"assistant","content":[{"type":"text","text":"I''ll
+      list the available files first and then get file1 for you."},{"type":"tool_use","id":"toolu_01G4HbM12XwaErkthLTXE2KQ","name":"files__","input":{}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_01G4HbM12XwaErkthLTXE2KQ","content":"file1\nfile2"}]},{"role":"assistant","content":[{"type":"text","text":"Now
+      I''ll get the contents of file1:"},{"type":"tool_use","id":"toolu_01PEJ6zwodxnzY9iJBdH8WoT","name":"files__file_name","input":{"file_name":"file1"}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_01PEJ6zwodxnzY9iJBdH8WoT","content":"Hello
+      world"}]}],"model":"claude-3-7-sonnet-latest","tools":[{"name":"add","description":"Add
+      two numbers","input_schema":{"properties":{"a":{"title":"A","type":"integer"},"b":{"title":"B","type":"integer"}},"required":["a","b"],"title":"addArguments","type":"object"}},{"name":"files__","description":"uri:files://","input_schema":{"properties":{},"required":[],"type":"object"}},{"name":"files__file_name","description":"uri:files://{file_name}\nGet
+      a file","input_schema":{"properties":{"file_name":{"title":"file_name","type":"string"}},"required":["file_name"],"type":"object"},"cache_control":{"type":"ephemeral"}}]}'
+    headers:
+      anthropic-beta:
+      - prompt-caching-2024-07-31
+      anthropic-version:
+      - '2023-06-01'
+      content-type:
+      - application/json
+      host:
+      - api.anthropic.com
+      x-stainless-read-timeout:
+      - '600'
+      x-stainless-timeout:
+      - '600'
+    method: POST
+    uri: https://api.anthropic.com/v1/messages
+  response:
+    body:
+      string: '{"id":"msg_01J2Va8SiwKYxXRYawknro6B","type":"message","role":"assistant","model":"claude-3-7-sonnet-20250219","content":[{"type":"text","text":"The
+        contents of file1 is: \"Hello world\""}],"stop_reason":"end_turn","stop_sequence":null,"usage":{"input_tokens":806,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":16}}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - ''
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      X-Robots-Tag:
+      - none
+      anthropic-organization-id:
+      - 61a15141-02df-4127-8350-1bd919d75ec8
+      request-id:
+      - req_016vrTmgfSGL8nST72eauq6H
+      via:
+      - 1.1 google
+    status:
+      code: 200
+      message: OK
+version: 1
