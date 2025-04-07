@@ -1,6 +1,21 @@
 # CHANGELOG
 
 
+## v0.13.0 (2025-04-07)
+
+### Features
+
+- Add MCP support
+  ([`a688b74`](https://github.com/BenderV/autochat/commit/a688b743e608c8776b03cd1f31a8c9b3f2d85ecd))
+
+Fetch tools & resources
+
+### Refactoring
+
+- Remove print
+  ([`cacf05a`](https://github.com/BenderV/autochat/commit/cacf05a54b3fc3a25db7818446fb4932fbb86309))
+
+
 ## v0.12.2 (2025-04-04)
 
 ### Bug Fixes
