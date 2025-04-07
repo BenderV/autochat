@@ -2,6 +2,11 @@ from mcp.server.fastmcp import FastMCP
 
 mcp = FastMCP("Demo")
 
+FILES = {
+    "file1": "Hello world",
+    "file2": "Hello world 2",
+}
+
 
 @mcp.tool()
 def add(a: int, b: int) -> int:
@@ -9,13 +14,15 @@ def add(a: int, b: int) -> int:
     return a + b
 
 
-@mcp.resource("echo://")
-def echo_simple() -> str:
-    """Echo a message as a resource"""
-    return "Resource echo: hello world"
+@mcp.resource("files://")
+def list_files() -> str:
+    """List files in the current directory"""
+    return "\n".join(FILES.keys())
 
 
-@mcp.resource("echo2://{message}")
-def echo_resource(message: str) -> str:
-    """Echo a message as a resource"""
-    return f"Resource echo: {message}"
+@mcp.resource("files://{file_name}")
+def get_file(file_name: str) -> str:
+    """Get a file"""
+    if file_name not in FILES:
+        raise ValueError("File " + file_name + " not found")
+    return FILES[file_name]

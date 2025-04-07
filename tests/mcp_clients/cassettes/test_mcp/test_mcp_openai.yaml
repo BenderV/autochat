@@ -1,0 +1,258 @@
+interactions:
+- request:
+    body: '{"messages":[{"role":"user","content":[{"type":"text","text":"Use calculator
+      to add 1 and 2"}]}],"model":"gpt-4o","functions":[{"name":"add","description":"Add
+      two numbers","parameters":{"properties":{"a":{"title":"A","type":"integer"},"b":{"title":"B","type":"integer"}},"required":["a","b"],"title":"addArguments","type":"object"}},{"name":"echo__","description":"uri:echo__","parameters":{"properties":{},"required":[],"type":"object"}},{"name":"echo2__message","description":"uri:echo2__message\nEcho
+      a message as a resource","parameters":{"properties":{},"required":[],"type":"object"}}]}'
+    headers:
+      content-type:
+      - application/json
+      host:
+      - api.openai.com
+      x-stainless-read-timeout:
+      - '600'
+    method: POST
+    uri: https://api.openai.com/v1/chat/completions
+  response:
+    body:
+      string: "{\n  \"id\": \"chatcmpl-BJeSyqQim7STL41jNq101jcG7pDAc\",\n  \"object\":
+        \"chat.completion\",\n  \"created\": 1744023484,\n  \"model\": \"gpt-4o-2024-08-06\",\n
+        \ \"choices\": [\n    {\n      \"index\": 0,\n      \"message\": {\n        \"role\":
+        \"assistant\",\n        \"content\": null,\n        \"function_call\": {\n
+        \         \"name\": \"add\",\n          \"arguments\": \"{\\\"a\\\":1,\\\"b\\\":2}\"\n
+        \       },\n        \"refusal\": null,\n        \"annotations\": []\n      },\n
+        \     \"logprobs\": null,\n      \"finish_reason\": \"function_call\"\n    }\n
+        \ ],\n  \"usage\": {\n    \"prompt_tokens\": 99,\n    \"completion_tokens\":
+        18,\n    \"total_tokens\": 117,\n    \"prompt_tokens_details\": {\n      \"cached_tokens\":
+        0,\n      \"audio_tokens\": 0\n    },\n    \"completion_tokens_details\":
+        {\n      \"reasoning_tokens\": 0,\n      \"audio_tokens\": 0,\n      \"accepted_prediction_tokens\":
+        0,\n      \"rejected_prediction_tokens\": 0\n    }\n  },\n  \"service_tier\":
+        \"default\",\n  \"system_fingerprint\": \"fp_6dd05565ef\"\n}\n"
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - ''
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      access-control-expose-headers:
+      - X-Request-ID
+      alt-svc:
+      - h3=":443"; ma=86400
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages":[{"role":"user","content":[{"type":"text","text":"Use calculator
+      to add 1 and 2"}]},{"role":"assistant","content":[],"function_call":{"name":"add","arguments":"{\"a\":
+      1, \"b\": 2}"}},{"role":"function","content":[{"type":"text","text":"3"}],"name":"add"}],"model":"gpt-4o","functions":[{"name":"add","description":"Add
+      two numbers","parameters":{"properties":{"a":{"title":"A","type":"integer"},"b":{"title":"B","type":"integer"}},"required":["a","b"],"title":"addArguments","type":"object"}},{"name":"echo__","description":"uri:echo__","parameters":{"properties":{},"required":[],"type":"object"}},{"name":"echo2__message","description":"uri:echo2__message\nEcho
+      a message as a resource","parameters":{"properties":{},"required":[],"type":"object"}}]}'
+    headers:
+      content-type:
+      - application/json
+      host:
+      - api.openai.com
+      x-stainless-read-timeout:
+      - '600'
+    method: POST
+    uri: https://api.openai.com/v1/chat/completions
+  response:
+    body:
+      string: "{\n  \"id\": \"chatcmpl-BJeSyRVNl3mhwmTZ5ZJA85Osmhmtp\",\n  \"object\":
+        \"chat.completion\",\n  \"created\": 1744023484,\n  \"model\": \"gpt-4o-2024-08-06\",\n
+        \ \"choices\": [\n    {\n      \"index\": 0,\n      \"message\": {\n        \"role\":
+        \"assistant\",\n        \"content\": \"The result of adding 1 and 2 is 3.\",\n
+        \       \"refusal\": null,\n        \"annotations\": []\n      },\n      \"logprobs\":
+        null,\n      \"finish_reason\": \"stop\"\n    }\n  ],\n  \"usage\": {\n    \"prompt_tokens\":
+        124,\n    \"completion_tokens\": 15,\n    \"total_tokens\": 139,\n    \"prompt_tokens_details\":
+        {\n      \"cached_tokens\": 0,\n      \"audio_tokens\": 0\n    },\n    \"completion_tokens_details\":
+        {\n      \"reasoning_tokens\": 0,\n      \"audio_tokens\": 0,\n      \"accepted_prediction_tokens\":
+        0,\n      \"rejected_prediction_tokens\": 0\n    }\n  },\n  \"service_tier\":
+        \"default\",\n  \"system_fingerprint\": \"fp_6dd05565ef\"\n}\n"
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - ''
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      access-control-expose-headers:
+      - X-Request-ID
+      alt-svc:
+      - h3=":443"; ma=86400
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages":[{"role":"user","content":[{"type":"text","text":"Use calculator
+      to add 1 and 2"}]},{"role":"assistant","content":[],"function_call":{"name":"add","arguments":"{\"a\":
+      1, \"b\": 2}"}},{"role":"function","content":[{"type":"text","text":"3"}],"name":"add"},{"role":"assistant","content":[{"type":"text","text":"The
+      result of adding 1 and 2 is 3."}]},{"role":"user","content":[{"type":"text","text":"Call
+      echo and then echo with parameter ''hello''"}]}],"model":"gpt-4o","functions":[{"name":"add","description":"Add
+      two numbers","parameters":{"properties":{"a":{"title":"A","type":"integer"},"b":{"title":"B","type":"integer"}},"required":["a","b"],"title":"addArguments","type":"object"}},{"name":"echo__","description":"uri:echo__","parameters":{"properties":{},"required":[],"type":"object"}},{"name":"echo2__message","description":"uri:echo2__message\nEcho
+      a message as a resource","parameters":{"properties":{},"required":[],"type":"object"}}]}'
+    headers:
+      content-type:
+      - application/json
+      host:
+      - api.openai.com
+      x-stainless-read-timeout:
+      - '600'
+    method: POST
+    uri: https://api.openai.com/v1/chat/completions
+  response:
+    body:
+      string: "{\n  \"id\": \"chatcmpl-BJeSzArGCBn9f95hqvH2iXKuFv7yN\",\n  \"object\":
+        \"chat.completion\",\n  \"created\": 1744023485,\n  \"model\": \"gpt-4o-2024-08-06\",\n
+        \ \"choices\": [\n    {\n      \"index\": 0,\n      \"message\": {\n        \"role\":
+        \"assistant\",\n        \"content\": null,\n        \"function_call\": {\n
+        \         \"name\": \"echo__\",\n          \"arguments\": \"{}\"\n        },\n
+        \       \"refusal\": null,\n        \"annotations\": []\n      },\n      \"logprobs\":
+        null,\n      \"finish_reason\": \"function_call\"\n    }\n  ],\n  \"usage\":
+        {\n    \"prompt_tokens\": 155,\n    \"completion_tokens\": 11,\n    \"total_tokens\":
+        166,\n    \"prompt_tokens_details\": {\n      \"cached_tokens\": 0,\n      \"audio_tokens\":
+        0\n    },\n    \"completion_tokens_details\": {\n      \"reasoning_tokens\":
+        0,\n      \"audio_tokens\": 0,\n      \"accepted_prediction_tokens\": 0,\n
+        \     \"rejected_prediction_tokens\": 0\n    }\n  },\n  \"service_tier\":
+        \"default\",\n  \"system_fingerprint\": \"fp_6dd05565ef\"\n}\n"
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - ''
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      access-control-expose-headers:
+      - X-Request-ID
+      alt-svc:
+      - h3=":443"; ma=86400
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages":[{"role":"user","content":[{"type":"text","text":"Use calculator
+      to add 1 and 2"}]},{"role":"assistant","content":[],"function_call":{"name":"add","arguments":"{\"a\":
+      1, \"b\": 2}"}},{"role":"function","content":[{"type":"text","text":"3"}],"name":"add"},{"role":"assistant","content":[{"type":"text","text":"The
+      result of adding 1 and 2 is 3."}]},{"role":"user","content":[{"type":"text","text":"Call
+      echo and then echo with parameter ''hello''"}]},{"role":"assistant","content":[],"function_call":{"name":"echo__","arguments":"{}"}},{"role":"function","content":[{"type":"text","text":"Resource
+      echo: hello world"}],"name":"echo__"}],"model":"gpt-4o","functions":[{"name":"add","description":"Add
+      two numbers","parameters":{"properties":{"a":{"title":"A","type":"integer"},"b":{"title":"B","type":"integer"}},"required":["a","b"],"title":"addArguments","type":"object"}},{"name":"echo__","description":"uri:echo__","parameters":{"properties":{},"required":[],"type":"object"}},{"name":"echo2__message","description":"uri:echo2__message\nEcho
+      a message as a resource","parameters":{"properties":{},"required":[],"type":"object"}}]}'
+    headers:
+      content-type:
+      - application/json
+      host:
+      - api.openai.com
+      x-stainless-read-timeout:
+      - '600'
+    method: POST
+    uri: https://api.openai.com/v1/chat/completions
+  response:
+    body:
+      string: "{\n  \"id\": \"chatcmpl-BJeSzQnXTyknYAE77XY98Lk3gCGSP\",\n  \"object\":
+        \"chat.completion\",\n  \"created\": 1744023485,\n  \"model\": \"gpt-4o-2024-08-06\",\n
+        \ \"choices\": [\n    {\n      \"index\": 0,\n      \"message\": {\n        \"role\":
+        \"assistant\",\n        \"content\": null,\n        \"function_call\": {\n
+        \         \"name\": \"echo2__message\",\n          \"arguments\": \"{}\"\n
+        \       },\n        \"refusal\": null,\n        \"annotations\": []\n      },\n
+        \     \"logprobs\": null,\n      \"finish_reason\": \"function_call\"\n    }\n
+        \ ],\n  \"usage\": {\n    \"prompt_tokens\": 178,\n    \"completion_tokens\":
+        13,\n    \"total_tokens\": 191,\n    \"prompt_tokens_details\": {\n      \"cached_tokens\":
+        0,\n      \"audio_tokens\": 0\n    },\n    \"completion_tokens_details\":
+        {\n      \"reasoning_tokens\": 0,\n      \"audio_tokens\": 0,\n      \"accepted_prediction_tokens\":
+        0,\n      \"rejected_prediction_tokens\": 0\n    }\n  },\n  \"service_tier\":
+        \"default\",\n  \"system_fingerprint\": \"fp_6dd05565ef\"\n}\n"
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - ''
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      access-control-expose-headers:
+      - X-Request-ID
+      alt-svc:
+      - h3=":443"; ma=86400
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages":[{"role":"user","content":[{"type":"text","text":"Use calculator
+      to add 1 and 2"}]},{"role":"assistant","content":[],"function_call":{"name":"add","arguments":"{\"a\":
+      1, \"b\": 2}"}},{"role":"function","content":[{"type":"text","text":"3"}],"name":"add"},{"role":"assistant","content":[{"type":"text","text":"The
+      result of adding 1 and 2 is 3."}]},{"role":"user","content":[{"type":"text","text":"Call
+      echo and then echo with parameter ''hello''"}]},{"role":"assistant","content":[],"function_call":{"name":"echo__","arguments":"{}"}},{"role":"function","content":[{"type":"text","text":"Resource
+      echo: hello world"}],"name":"echo__"},{"role":"assistant","content":[],"function_call":{"name":"echo2__message","arguments":"{}"}},{"role":"function","content":[{"type":"text","text":"Resource
+      echo: message"}],"name":"echo2__message"}],"model":"gpt-4o","functions":[{"name":"add","description":"Add
+      two numbers","parameters":{"properties":{"a":{"title":"A","type":"integer"},"b":{"title":"B","type":"integer"}},"required":["a","b"],"title":"addArguments","type":"object"}},{"name":"echo__","description":"uri:echo__","parameters":{"properties":{},"required":[],"type":"object"}},{"name":"echo2__message","description":"uri:echo2__message\nEcho
+      a message as a resource","parameters":{"properties":{},"required":[],"type":"object"}}]}'
+    headers:
+      content-type:
+      - application/json
+      host:
+      - api.openai.com
+      x-stainless-read-timeout:
+      - '600'
+    method: POST
+    uri: https://api.openai.com/v1/chat/completions
+  response:
+    body:
+      string: "{\n  \"id\": \"chatcmpl-BJeT1QdBh58XVUMmKsQ85l1z8SOA1\",\n  \"object\":
+        \"chat.completion\",\n  \"created\": 1744023487,\n  \"model\": \"gpt-4o-2024-08-06\",\n
+        \ \"choices\": [\n    {\n      \"index\": 0,\n      \"message\": {\n        \"role\":
+        \"assistant\",\n        \"content\": \"I have called `echo`, which returned
+        \\\"hello world\\\", and then `echo with parameter 'hello'`, which returned
+        a resource labeled \\\"message\\\".\",\n        \"refusal\": null,\n        \"annotations\":
+        []\n      },\n      \"logprobs\": null,\n      \"finish_reason\": \"stop\"\n
+        \   }\n  ],\n  \"usage\": {\n    \"prompt_tokens\": 204,\n    \"completion_tokens\":
+        32,\n    \"total_tokens\": 236,\n    \"prompt_tokens_details\": {\n      \"cached_tokens\":
+        0,\n      \"audio_tokens\": 0\n    },\n    \"completion_tokens_details\":
+        {\n      \"reasoning_tokens\": 0,\n      \"audio_tokens\": 0,\n      \"accepted_prediction_tokens\":
+        0,\n      \"rejected_prediction_tokens\": 0\n    }\n  },\n  \"service_tier\":
+        \"default\",\n  \"system_fingerprint\": \"fp_6dd05565ef\"\n}\n"
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - ''
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      access-control-expose-headers:
+      - X-Request-ID
+      alt-svc:
+      - h3=":443"; ma=86400
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+    status:
+      code: 200
+      message: OK
+version: 1
