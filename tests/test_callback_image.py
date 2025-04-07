@@ -24,7 +24,6 @@ def test_anthropic_callback_image():
     user_query = "Hello, read the image and explain it"
     messages = []
     for message in agent.run_conversation(user_query):
-        print(message.to_markdown())  # For debugging
         messages.append(message)
 
 
@@ -38,5 +37,4 @@ def test_openai_callback_image():
     user_query = "Hello, read the image and explain it"
     messages = []
     for message in agent.run_conversation(user_query):
-        print(message.to_markdown())  # For debugging
         messages.append(message)
