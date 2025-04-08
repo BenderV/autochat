@@ -426,23 +426,14 @@ class Autochat(AutochatBase):
     def run_conversation(self, question: typing.Union[str, Message, None] = None):
         # For backward compatibility, use run_until_complete to execute the async method
         loop = get_event_loop_or_create()
+        async_gen = self.run_conversation_async(question)
 
-        # Create an iterator that will yield results from the async generator
-        async def collect_async_results():
-            async_gen = self.run_conversation_async(question)
+        while True:
             try:
-                while True:
-                    item = await async_gen.__anext__()
-                    # Store each yielded value to be returned by our sync generator
-                    results.append(item)
+                # Get the next item from the async generator
+                item = loop.run_until_complete(async_gen.__anext__())
+                # Yield the item immediately
+                yield item
             except StopAsyncIteration:
-                pass
-
-        # Storage for messages yielded by async generator
-        results = []
-
-        # Run the collector function to fill results
-        loop.run_until_complete(collect_async_results())
-
-        # Yield each result in a synchronous manner
-        yield from results
+                # Stop when the async generator is exhausted
+                break
