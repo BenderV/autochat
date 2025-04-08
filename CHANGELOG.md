@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.13.1 (2025-04-08)
+
+### Bug Fixes
+
+- Yield in run_conversation
+  ([`7930a0a`](https://github.com/BenderV/autochat/commit/7930a0a6c07772d581c1b8c779591f0fbc2da431))
+
+
 ## v0.13.0 (2025-04-07)
 
 ### Features
