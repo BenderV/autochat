@@ -67,14 +67,12 @@ class MessagePart:
         image: typing.Optional[PILImage.Image] = None,
         function_call: typing.Optional[dict] = None,
         function_call_id: typing.Optional[str] = None,
-        data: typing.Optional[dict] = None,
     ) -> None:
         self.type = type
         self.content = content
         self.image = Image(image) if image else None
         self.function_call = function_call
         self.function_call_id = function_call_id
-        self.data = data  # TODO: remove
 
 
 class Message:
