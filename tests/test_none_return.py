@@ -1,5 +1,6 @@
 import pytest
-from autochat import Autochat, APIProvider
+
+from autochat import APIProvider, Autochat
 
 
 def function_returning_none():
@@ -22,18 +23,22 @@ def test_anthropic_none_return():
     for message in agent.run_conversation(user_query):
         # Expected behavior: empty string content for function result message
         if message.role == "function":
-            assert message.content == "", "Function result should be an empty string when function returns None"
-        
+            assert message.content == "", (
+                "Function result should be an empty string when function returns None"
+            )
+
         print(message.to_markdown())  # For debugging
         messages.append(message)
-    
+
     # Anthropic models typically add a final message after function call
     # so we expect at least 3 messages (user, assistant with function call, function result)
     # and potentially a 4th message (assistant final response)
     assert len(messages) >= 3, f"Expected at least 3 messages, got {len(messages)}"
-    
+
     # Verify the function was actually called
-    assert any(m.role == "function" for m in messages), "Function message not found in conversation"
+    assert any(m.role == "function" for m in messages), (
+        "Function message not found in conversation"
+    )
 
 
 @pytest.mark.vcr
@@ -51,13 +56,17 @@ def test_openai_none_return():
     for message in agent.run_conversation(user_query):
         # Expected behavior: empty string content for function result message
         if message.role == "function":
-            assert message.content == "", "Function result should be an empty string when function returns None"
-        
+            assert message.content == "", (
+                "Function result should be an empty string when function returns None"
+            )
+
         print(message.to_markdown())  # For debugging
         messages.append(message)
-    
+
     # Verify we get exactly 3 messages (user, assistant with function call, function result)
     assert len(messages) >= 3, f"Expected at least 3 messages, got {len(messages)}"
-    
+
     # Verify the function was actually called
-    assert any(m.role == "function" for m in messages), "Function message not found in conversation"
+    assert any(m.role == "function" for m in messages), (
+        "Function message not found in conversation"
+    )
