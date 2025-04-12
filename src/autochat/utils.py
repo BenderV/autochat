@@ -259,7 +259,7 @@ def inspect_schema(f):
         if n in param_descriptions:
             kw[n] = (
                 annotation,
-                Field(default=default, description=param_descriptions[n], exclude=True),
+                Field(default=default, description=param_descriptions[n]),
             )
         else:
             kw[n] = (annotation, default)
