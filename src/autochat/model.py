@@ -76,7 +76,7 @@ class MessagePart:
 
 
 class Message:
-    role: Literal["user", "assistant", "function"]
+    role: Literal["user", "assistant", "function", "system"]
     parts: list[MessagePart]
     name: typing.Optional[str] = None
     id: typing.Optional[int] = None

@@ -3,10 +3,11 @@ Temporary provider so we can use function calls with OpenAI models
 that don't support them yet in the API (ie. o1).
 """
 
-from autochat.providers.openai import OpenAIProvider, parts_to_openai_dict
-from autochat.model import Message
 import json
 import typing
+
+from autochat.model import Message
+from autochat.providers.openai import OpenAIProvider, parts_to_openai_dict
 
 
 def parse_function_call_from_text(text: str):
@@ -71,14 +72,15 @@ def message_to_openai_dict(message: Message) -> dict:
     return res
 
 
-class OpenAIProviderHack(OpenAIProvider):
+class OpenAIProviderFunctionShim(OpenAIProvider):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def fetch(self):
+    async def fetch_async(self):
         """
         Calls the OpenAI ChatCompletion endpoint using ONLY text-based instructions for function usage.
         """
+
         messages = self.prepare_messages(transform_function=message_to_openai_dict)
         # Add instruction as the first message
         if self.chat.instruction:
