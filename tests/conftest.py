@@ -1,8 +1,8 @@
-import pytest
 import json
 import re
 from difflib import unified_diff
 
+import pytest
 
 DIFFS = []
 
@@ -11,7 +11,7 @@ def replace_file_paths_with_XXX(content: str) -> str:
     """Replace file paths with XXX for consistent diffs across environments"""
     if "Traceback" in content:
         # Replace any file path in quotes with XXX/filename.py
-        content = re.sub(r"File \\\".*?([^/]+\.py)\\\"", r"File \"XXX/\1\"", content)
+        content = re.sub(r"File \\\".*?([^\/]+\.py)\\\"", r"File \"XXX/\1\"", content)
         # Replace line number with xxx
         content = re.sub(r"line \d+", r"line xxx", content)
         # Remove syntax markers (useful for test in different Python versions)
@@ -75,6 +75,8 @@ def before_record_response(response):
         "anthropic-ratelimit-tokens-limit",
         "anthropic-ratelimit-tokens-remaining",
         "anthropic-ratelimit-tokens-reset",
+        "anthropic-organization-id",
+        "request-id",
         "openai-organization",
         "openai-processing-ms",
         "openai-version",

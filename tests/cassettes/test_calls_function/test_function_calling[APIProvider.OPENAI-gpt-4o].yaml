@@ -1,0 +1,157 @@
+interactions:
+- request:
+    body: '{"messages":[{"role":"system","content":[{"type":"text","text":"You are
+      a helpful assistant that can read books."}]},{"role":"user","content":[{"type":"text","text":"Hello,
+      read book ''the great gatsby''"}]}],"model":"gpt-4o","functions":[{"name":"list_books","description":null,"parameters":{"properties":{},"title":"Input
+      for `list_books`","type":"object"}},{"name":"read_book","description":null,"parameters":{"properties":{"book_name":{"title":"Book
+      Name","type":"string"}},"required":["book_name"],"title":"Input for `read_book`","type":"object"}}]}'
+    headers:
+      content-type:
+      - application/json
+      host:
+      - api.openai.com
+      x-stainless-read-timeout:
+      - '600'
+    method: POST
+    uri: https://api.openai.com/v1/chat/completions
+  response:
+    body:
+      string: "{\n  \"id\": \"chatcmpl-BMKRx6ktsnf0jp3ZvaTlYvgnW4ub2\",\n  \"object\":
+        \"chat.completion\",\n  \"created\": 1744661525,\n  \"model\": \"gpt-4o-2024-08-06\",\n
+        \ \"choices\": [\n    {\n      \"index\": 0,\n      \"message\": {\n        \"role\":
+        \"assistant\",\n        \"content\": null,\n        \"function_call\": {\n
+        \         \"name\": \"list_books\",\n          \"arguments\": \"{}\"\n        },\n
+        \       \"refusal\": null,\n        \"annotations\": []\n      },\n      \"logprobs\":
+        null,\n      \"finish_reason\": \"function_call\"\n    }\n  ],\n  \"usage\":
+        {\n    \"prompt_tokens\": 77,\n    \"completion_tokens\": 11,\n    \"total_tokens\":
+        88,\n    \"prompt_tokens_details\": {\n      \"cached_tokens\": 0,\n      \"audio_tokens\":
+        0\n    },\n    \"completion_tokens_details\": {\n      \"reasoning_tokens\":
+        0,\n      \"audio_tokens\": 0,\n      \"accepted_prediction_tokens\": 0,\n
+        \     \"rejected_prediction_tokens\": 0\n    }\n  },\n  \"service_tier\":
+        \"default\",\n  \"system_fingerprint\": \"fp_17316073ab\"\n}\n"
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - ''
+      Content-Type:
+      - application/json
+      X-Content-Type-Options:
+      - nosniff
+      access-control-expose-headers:
+      - X-Request-ID
+      alt-svc:
+      - h3=":443"; ma=86400
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages":[{"role":"system","content":[{"type":"text","text":"You are
+      a helpful assistant that can read books."}]},{"role":"user","content":[{"type":"text","text":"Hello,
+      read book ''the great gatsby''"}]},{"role":"assistant","content":[],"function_call":{"name":"list_books","arguments":"{}"}},{"role":"function","content":[{"type":"text","text":"The
+      Great Gatsby\nTo Kill a Mockingbird\n1984"}],"name":"list_books"}],"model":"gpt-4o","functions":[{"name":"list_books","description":null,"parameters":{"properties":{},"title":"Input
+      for `list_books`","type":"object"}},{"name":"read_book","description":null,"parameters":{"properties":{"book_name":{"title":"Book
+      Name","type":"string"}},"required":["book_name"],"title":"Input for `read_book`","type":"object"}}]}'
+    headers:
+      content-type:
+      - application/json
+      host:
+      - api.openai.com
+      x-stainless-read-timeout:
+      - '600'
+    method: POST
+    uri: https://api.openai.com/v1/chat/completions
+  response:
+    body:
+      string: "{\n  \"id\": \"chatcmpl-BMKRydRswVOBuNZIIAjSflNiMKVpS\",\n  \"object\":
+        \"chat.completion\",\n  \"created\": 1744661526,\n  \"model\": \"gpt-4o-2024-08-06\",\n
+        \ \"choices\": [\n    {\n      \"index\": 0,\n      \"message\": {\n        \"role\":
+        \"assistant\",\n        \"content\": null,\n        \"function_call\": {\n
+        \         \"name\": \"read_book\",\n          \"arguments\": \"{\\\"book_name\\\":\\\"The
+        Great Gatsby\\\"}\"\n        },\n        \"refusal\": null,\n        \"annotations\":
+        []\n      },\n      \"logprobs\": null,\n      \"finish_reason\": \"function_call\"\n
+        \   }\n  ],\n  \"usage\": {\n    \"prompt_tokens\": 108,\n    \"completion_tokens\":
+        18,\n    \"total_tokens\": 126,\n    \"prompt_tokens_details\": {\n      \"cached_tokens\":
+        0,\n      \"audio_tokens\": 0\n    },\n    \"completion_tokens_details\":
+        {\n      \"reasoning_tokens\": 0,\n      \"audio_tokens\": 0,\n      \"accepted_prediction_tokens\":
+        0,\n      \"rejected_prediction_tokens\": 0\n    }\n  },\n  \"service_tier\":
+        \"default\",\n  \"system_fingerprint\": \"fp_17316073ab\"\n}\n"
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - ''
+      Content-Type:
+      - application/json
+      X-Content-Type-Options:
+      - nosniff
+      access-control-expose-headers:
+      - X-Request-ID
+      alt-svc:
+      - h3=":443"; ma=86400
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages":[{"role":"system","content":[{"type":"text","text":"You are
+      a helpful assistant that can read books."}]},{"role":"user","content":[{"type":"text","text":"Hello,
+      read book ''the great gatsby''"}]},{"role":"assistant","content":[],"function_call":{"name":"list_books","arguments":"{}"}},{"role":"function","content":[{"type":"text","text":"The
+      Great Gatsby\nTo Kill a Mockingbird\n1984"}],"name":"list_books"},{"role":"assistant","content":[],"function_call":{"name":"read_book","arguments":"{\"book_name\":
+      \"The Great Gatsby\"}"}},{"role":"function","content":[{"type":"text","text":"Lorem
+      ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt
+      ut labore et dolore magna aliqua."}],"name":"read_book"}],"model":"gpt-4o","functions":[{"name":"list_books","description":null,"parameters":{"properties":{},"title":"Input
+      for `list_books`","type":"object"}},{"name":"read_book","description":null,"parameters":{"properties":{"book_name":{"title":"Book
+      Name","type":"string"}},"required":["book_name"],"title":"Input for `read_book`","type":"object"}}]}'
+    headers:
+      content-type:
+      - application/json
+      host:
+      - api.openai.com
+      x-stainless-read-timeout:
+      - '600'
+    method: POST
+    uri: https://api.openai.com/v1/chat/completions
+  response:
+    body:
+      string: "{\n  \"id\": \"chatcmpl-BMKRzrul3qZFhDSjXfmpF7L4bpFpv\",\n  \"object\":
+        \"chat.completion\",\n  \"created\": 1744661527,\n  \"model\": \"gpt-4o-2024-08-06\",\n
+        \ \"choices\": [\n    {\n      \"index\": 0,\n      \"message\": {\n        \"role\":
+        \"assistant\",\n        \"content\": \"It seems that \\\"The Great Gatsby\\\"
+        is not available in full text here. However, I can provide a summary or discuss
+        its themes, characters, and more if you'd like!\",\n        \"refusal\": null,\n
+        \       \"annotations\": []\n      },\n      \"logprobs\": null,\n      \"finish_reason\":
+        \"stop\"\n    }\n  ],\n  \"usage\": {\n    \"prompt_tokens\": 155,\n    \"completion_tokens\":
+        38,\n    \"total_tokens\": 193,\n    \"prompt_tokens_details\": {\n      \"cached_tokens\":
+        0,\n      \"audio_tokens\": 0\n    },\n    \"completion_tokens_details\":
+        {\n      \"reasoning_tokens\": 0,\n      \"audio_tokens\": 0,\n      \"accepted_prediction_tokens\":
+        0,\n      \"rejected_prediction_tokens\": 0\n    }\n  },\n  \"service_tier\":
+        \"default\",\n  \"system_fingerprint\": \"fp_17316073ab\"\n}\n"
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - ''
+      Content-Type:
+      - application/json
+      X-Content-Type-Options:
+      - nosniff
+      access-control-expose-headers:
+      - X-Request-ID
+      alt-svc:
+      - h3=":443"; ma=86400
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+version: 1
