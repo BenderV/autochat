@@ -1,6 +1,44 @@
 # CHANGELOG
 
 
+## v0.14.0 (2025-04-15)
+
+### Build System
+
+- Don't release if pipeline fail
+  ([`9daeaef`](https://github.com/BenderV/autochat/commit/9daeaef0d44b9f7477476c06a900805d3efa13eb))
+
+### Chores
+
+- Add pre-commit
+  ([`7cf797e`](https://github.com/BenderV/autochat/commit/7cf797e933a4ad22db8579e762cec03632a590f4))
+
+- Add uv lock pre-commit
+  ([`1e1950f`](https://github.com/BenderV/autochat/commit/1e1950feed0f12dd00552bcd2359248966ca1dcf))
+
+- Remove extra field
+  ([`55f7f34`](https://github.com/BenderV/autochat/commit/55f7f34d8ae644f6e834ef9b1ec5c5686251026f))
+
+- Remove unused field
+  ([`4548f0e`](https://github.com/BenderV/autochat/commit/4548f0e42935d36d3386fd7ac3c29fd55dcce0f6))
+
+### Features
+
+- Switch openai from legacy functions to tools ([#25](https://github.com/BenderV/autochat/pull/25),
+  [`e8ab7da`](https://github.com/BenderV/autochat/commit/e8ab7daa5d05659beafee385eea0cd3ce2d59b02))
+
+### Testing
+
+- Added test cases for class ([#23](https://github.com/BenderV/autochat/pull/23),
+  [`6fbf8e1`](https://github.com/BenderV/autochat/commit/6fbf8e186a85bb346e7ce4e28af17711065c8364))
+
+- Rename openai-hack to openai-function-shim & fix test for it
+  ([`99bdf58`](https://github.com/BenderV/autochat/commit/99bdf5826c41807284dff9c1de233f23c4d16ce9))
+
+- Use pytest parametrize ([#24](https://github.com/BenderV/autochat/pull/24),
+  [`efbd63d`](https://github.com/BenderV/autochat/commit/efbd63d71d83b2770e56dc6041b0246cb386ba87))
+
+
 ## v0.13.1 (2025-04-08)
 
 ### Bug Fixes
