@@ -3,6 +3,7 @@ import anthropic
 from autochat.base import AutochatBase
 from autochat.model import Message, MessagePart
 from autochat.providers.base_provider import BaseProvider
+from autochat.providers.utils import add_empty_function_result
 
 
 def part_to_anthropic_dict(part: MessagePart) -> dict:
@@ -72,34 +73,6 @@ class AnthropicProvider(BaseProvider):
         self.chat = chat
 
     async def fetch_async(self, **kwargs):
-        def add_empty_function_result(messages):
-            """
-            Ajustement Anthropic pour fusionner ou insérer la « function_result » :
-
-            - Premier cas : message `role="function"` suivi d'un `role="user"`.
-            On transforme ce message 'function' en un part de type 'tool_result'
-            inséré au début du message utilisateur suivant.
-
-            - Second cas (inchangé) : message `role="assistant"` avec un `function_call`,
-            suivi d'un message non-`function`. On insère un message vide `role="function"`.
-            """
-            for i in range(len(messages) - 1, 0, -1):
-                if (
-                    messages[i - 1].role == "assistant"
-                    and messages[i - 1].function_call
-                    and not messages[i].role == "function"
-                ):
-                    # Insert an empty function result
-                    messages.insert(
-                        i,
-                        Message(
-                            role="function",
-                            name=messages[i - 1].function_call["name"],
-                            content="",
-                            function_call_id=messages[i - 1].function_call_id,
-                        ),
-                    )
-
         messages = self.prepare_messages(
             transform_function=lambda m: message_to_anthropic_dict(m),
             transform_list_function=add_empty_function_result,

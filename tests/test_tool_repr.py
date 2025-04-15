@@ -72,7 +72,7 @@ class TestToolRepr(unittest.TestCase):
             class MockResponseMessage:
                 role = "assistant"
                 content = "mock"
-                function_call = None
+                tool_calls = None
 
             class MockResponseChoice:
                 message = MockResponseMessage

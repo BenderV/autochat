@@ -1,11 +1,10 @@
 interactions:
 - request:
-    body: '{"messages": [{"role": "system", "content": [{"type": "text", "text": "You
-      are a helpful assistant that can call functions."}]}, {"role": "user", "content":
-      [{"type": "text", "text": "Call the function_returning_none function"}]}], "model":
-      "gpt-4o", "functions": [{"name": "function_returning_none", "description": "A
-      simple function that returns None.", "parameters": {"properties": {}, "title":
-      "Input for `function_returning_none`", "type": "object"}}]}'
+    body: '{"messages":[{"role":"system","content":[{"type":"text","text":"You are
+      a helpful assistant that can call functions."}]},{"role":"user","content":[{"type":"text","text":"Call
+      the function_returning_none function"}]}],"model":"gpt-4o","tools":[{"type":"function","function":{"name":"function_returning_none","description":"A
+      simple function that returns None.","parameters":{"properties":{},"title":"Input
+      for `function_returning_none`","type":"object"}}}]}'
     headers:
       content-type:
       - application/json
@@ -17,22 +16,30 @@ interactions:
     uri: https://api.openai.com/v1/chat/completions
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAA4xSsW7bMBDd9RXEzVYhO5KdeGuQdmmGogGyFAVBkUeZKUUS5KloYfjfC8qOJaUt
-        0IXDvXeP797dsWAMjII9A3kQJPtgy/vm4327fXqqnh+272vXuJvHx+cvm8+fPiA1sModvn1BSa9d
-        76Tvg0Uy3p1hGVEQZtX1rq6a27vduhmB3iu0ua0LVNa+3FSbuqxuy2p7aTx4IzHBnn0tGGPsOL7Z
-        olP4E/asWr1WekxJdAj7K4kxiN7mCoiUTCLhCFYTKL0jdNm1G6ydAXpwMpvnUli7EGQMnOhHySsp
-        Ig3RGddx5x3OPmAMROyGHh3lCeB4git2mn0XUQ9J2IuP4g0BrO9C9G164xO0cSYdeESRvFs4Gm2P
-        tFPB2LcxyWERDoTo+0Cc/Hd0WbnZnXVhWt0Erm8uIHkSdqrvLukv1bhCEsamWXAghTygmjqntYlB
-        GT8Ditnwf5r5m/Y5gJz/f8hPgJQYCBUPEZWRy4EnWsR82P+iXTMeDUPC+MNI5GQw5oUo1GKw55uD
-        9CsR9lwb12EM0YyHBzpwfadr3W5Vq6E4Fb8BAAD//wMAZK9ZHoEDAAA=
+      string: "{\n  \"id\": \"chatcmpl-BMUkLXzK7GIzbvHuhSZcIg6NUXSNx\",\n  \"object\":
+        \"chat.completion\",\n  \"created\": 1744701105,\n  \"model\": \"gpt-4o-2024-08-06\",\n
+        \ \"choices\": [\n    {\n      \"index\": 0,\n      \"message\": {\n        \"role\":
+        \"assistant\",\n        \"content\": null,\n        \"tool_calls\": [\n          {\n
+        \           \"id\": \"call_tTIPpDY2tlQlMLf9Si4qbEwF\",\n            \"type\":
+        \"function\",\n            \"function\": {\n              \"name\": \"function_returning_none\",\n
+        \             \"arguments\": \"{}\"\n            }\n          }\n        ],\n
+        \       \"refusal\": null,\n        \"annotations\": []\n      },\n      \"logprobs\":
+        null,\n      \"finish_reason\": \"tool_calls\"\n    }\n  ],\n  \"usage\":
+        {\n    \"prompt_tokens\": 57,\n    \"completion_tokens\": 13,\n    \"total_tokens\":
+        70,\n    \"prompt_tokens_details\": {\n      \"cached_tokens\": 0,\n      \"audio_tokens\":
+        0\n    },\n    \"completion_tokens_details\": {\n      \"reasoning_tokens\":
+        0,\n      \"audio_tokens\": 0,\n      \"accepted_prediction_tokens\": 0,\n
+        \     \"rejected_prediction_tokens\": 0\n    }\n  },\n  \"service_tier\":
+        \"default\",\n  \"system_fingerprint\": \"fp_a6dfaf2bcf\"\n}\n"
     headers:
       Connection:
       - keep-alive
       Content-Encoding:
-      - gzip
+      - ''
       Content-Type:
       - application/json
+      Transfer-Encoding:
+      - chunked
       X-Content-Type-Options:
       - nosniff
       access-control-expose-headers:
@@ -41,21 +48,15 @@ interactions:
       - h3=":443"; ma=86400
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
     status:
       code: 200
       message: OK
 - request:
-    body: '{"messages": [{"role": "system", "content": [{"type": "text", "text": "You
-      are a helpful assistant that can call functions."}]}, {"role": "user", "content":
-      [{"type": "text", "text": "Call the function_returning_none function"}]}, {"role":
-      "assistant", "content": [], "function_call": {"name": "function_returning_none",
-      "arguments": "{}"}}, {"role": "function", "content": [{"type": "text", "text":
-      ""}], "name": "function_returning_none"}], "model": "gpt-4o", "functions": [{"name":
-      "function_returning_none", "description": "A simple function that returns None.",
-      "parameters": {"properties": {}, "title": "Input for `function_returning_none`",
-      "type": "object"}}]}'
+    body: '{"messages":[{"role":"system","content":[{"type":"text","text":"You are
+      a helpful assistant that can call functions."}]},{"role":"user","content":[{"type":"text","text":"Call
+      the function_returning_none function"}]},{"role":"assistant","content":null,"tool_calls":[{"id":"call_tTIPpDY2tlQlMLf9Si4qbEwF","type":"function","function":{"name":"function_returning_none","arguments":"{}"}}]},{"role":"tool","tool_call_id":"call_tTIPpDY2tlQlMLf9Si4qbEwF","content":[{"type":"text","text":""}],"name":"function_returning_none"}],"model":"gpt-4o","tools":[{"type":"function","function":{"name":"function_returning_none","description":"A
+      simple function that returns None.","parameters":{"properties":{},"title":"Input
+      for `function_returning_none`","type":"object"}}}]}'
     headers:
       content-type:
       - application/json
@@ -67,22 +68,27 @@ interactions:
     uri: https://api.openai.com/v1/chat/completions
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAAwAAAP//jFJNa9wwFLz7Vzx0toM3eD9v2UKhLaUUcivFkaUnW11ZEtJz2hD2vxfZ
-        u+sNSSAXHWbeDDPv6TkDYFqyHTDRcRK9N8V++XkvfmJ12N8192Lx7f579fUHfRr+uuXhjuVJ4Zo/
-        KOisuhGu9wZJOzvRIiAnTK6LdVUuN9v1YjUSvZNokqz1VFSuuC1vq6LcFOXqJOycFhjZDn5lAADP
-        45siWon/2A7K/Iz0GCNvke0uQwAsOJMQxmPUkbglls+kcJbQjqm/gODGoATqEB7UYEUKXwekIVht
-        29o6iw85cCtBE0iHEawjmAaA2yd45GbAm2v/gGqIPNWzgzEn/HgJbFzrg2viib/gSlsduzogj86m
-        cJGcZyN7zAB+j4sZXnRlPrjeU03ugDYZrreTHZsvMZOLM0mOuJnx7SZ/w62WSFybeLVYJrjoUM7K
-        +Qp8kNpdEdlV59dh3vKeeqedf8B+JoRATyhrH1Bq8bLwPBYw/dP3xi47HgOziOFRC6xJY0h3kKj4
-        YKYvxOJTJOxrpW2LwQc9/SPla7VVlWpWslEsO2b/AQAA//8DAAub2QZQAwAA
+      string: "{\n  \"id\": \"chatcmpl-BMUkMrQ5YTQd53hl7eouobmArfZjF\",\n  \"object\":
+        \"chat.completion\",\n  \"created\": 1744701106,\n  \"model\": \"gpt-4o-2024-08-06\",\n
+        \ \"choices\": [\n    {\n      \"index\": 0,\n      \"message\": {\n        \"role\":
+        \"assistant\",\n        \"content\": \"I have called the `function_returning_none`
+        function, which does not return any specific output.\",\n        \"refusal\":
+        null,\n        \"annotations\": []\n      },\n      \"logprobs\": null,\n
+        \     \"finish_reason\": \"stop\"\n    }\n  ],\n  \"usage\": {\n    \"prompt_tokens\":
+        79,\n    \"completion_tokens\": 22,\n    \"total_tokens\": 101,\n    \"prompt_tokens_details\":
+        {\n      \"cached_tokens\": 0,\n      \"audio_tokens\": 0\n    },\n    \"completion_tokens_details\":
+        {\n      \"reasoning_tokens\": 0,\n      \"audio_tokens\": 0,\n      \"accepted_prediction_tokens\":
+        0,\n      \"rejected_prediction_tokens\": 0\n    }\n  },\n  \"service_tier\":
+        \"default\",\n  \"system_fingerprint\": \"fp_a6dfaf2bcf\"\n}\n"
     headers:
       Connection:
       - keep-alive
       Content-Encoding:
-      - gzip
+      - ''
       Content-Type:
       - application/json
+      Transfer-Encoding:
+      - chunked
       X-Content-Type-Options:
       - nosniff
       access-control-expose-headers:
@@ -91,8 +97,6 @@ interactions:
       - h3=":443"; ma=86400
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
     status:
       code: 200
       message: OK

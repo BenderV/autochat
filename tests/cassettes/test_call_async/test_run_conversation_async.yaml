@@ -1,9 +1,8 @@
 interactions:
 - request:
-    body: '{"messages": [{"role": "user", "content": [{"type": "text", "text": "Calculate
-      1 + 2"}]}], "model": "gpt-4o", "functions": [{"name": "async_calculator", "description":
-      null, "parameters": {"properties": {"kwargs": {"title": "Kwargs"}}, "required":
-      ["kwargs"], "title": "Input for `async_calculator`", "type": "object"}}]}'
+    body: '{"messages":[{"role":"user","content":[{"type":"text","text":"Calculate
+      1 + 2"}]}],"model":"gpt-4o","tools":[{"type":"function","function":{"name":"async_calculator","description":null,"parameters":{"properties":{"kwargs":{"title":"Kwargs"}},"required":["kwargs"],"title":"Input
+      for `async_calculator`","type":"object"}}}]}'
     headers:
       content-type:
       - application/json
@@ -15,19 +14,21 @@ interactions:
     uri: https://api.openai.com/v1/chat/completions
   response:
     body:
-      string: "{\n  \"id\": \"chatcmpl-BHv9EsIYblNrJ7F12I1yidW8EwYNi\",\n  \"object\":
-        \"chat.completion\",\n  \"created\": 1743610952,\n  \"model\": \"gpt-4o-2024-08-06\",\n
+      string: "{\n  \"id\": \"chatcmpl-BMUl8vEDdwo7Hlccd9AW6Z8zTNpbI\",\n  \"object\":
+        \"chat.completion\",\n  \"created\": 1744701154,\n  \"model\": \"gpt-4o-2024-08-06\",\n
         \ \"choices\": [\n    {\n      \"index\": 0,\n      \"message\": {\n        \"role\":
-        \"assistant\",\n        \"content\": null,\n        \"function_call\": {\n
-        \         \"name\": \"async_calculator\",\n          \"arguments\": \"{\\\"kwargs\\\":{\\\"expression\\\":\\\"1
-        + 2\\\"}}\"\n        },\n        \"refusal\": null,\n        \"annotations\":
-        []\n      },\n      \"logprobs\": null,\n      \"finish_reason\": \"function_call\"\n
+        \"assistant\",\n        \"content\": null,\n        \"tool_calls\": [\n          {\n
+        \           \"id\": \"call_U0UnuH91jZarWyZZcmMZeOX4\",\n            \"type\":
+        \"function\",\n            \"function\": {\n              \"name\": \"async_calculator\",\n
+        \             \"arguments\": \"{\\\"kwargs\\\":{\\\"operation\\\":\\\"add\\\",\\\"numbers\\\":[1,2]}}\"\n
+        \           }\n          }\n        ],\n        \"refusal\": null,\n        \"annotations\":
+        []\n      },\n      \"logprobs\": null,\n      \"finish_reason\": \"tool_calls\"\n
         \   }\n  ],\n  \"usage\": {\n    \"prompt_tokens\": 56,\n    \"completion_tokens\":
-        21,\n    \"total_tokens\": 77,\n    \"prompt_tokens_details\": {\n      \"cached_tokens\":
+        25,\n    \"total_tokens\": 81,\n    \"prompt_tokens_details\": {\n      \"cached_tokens\":
         0,\n      \"audio_tokens\": 0\n    },\n    \"completion_tokens_details\":
         {\n      \"reasoning_tokens\": 0,\n      \"audio_tokens\": 0,\n      \"accepted_prediction_tokens\":
         0,\n      \"rejected_prediction_tokens\": 0\n    }\n  },\n  \"service_tier\":
-        \"default\",\n  \"system_fingerprint\": \"fp_898ac29719\"\n}\n"
+        \"default\",\n  \"system_fingerprint\": \"fp_22890b9c0a\"\n}\n"
     headers:
       Connection:
       - keep-alive
@@ -49,13 +50,10 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"messages": [{"role": "user", "content": [{"type": "text", "text": "Calculate
-      1 + 2"}]}, {"role": "assistant", "content": [], "function_call": {"name": "async_calculator",
-      "arguments": "{\"kwargs\": {\"expression\": \"1 + 2\"}}"}}, {"role": "function",
-      "content": [{"type": "text", "text": "0"}], "name": "async_calculator"}], "model":
-      "gpt-4o", "functions": [{"name": "async_calculator", "description": null, "parameters":
-      {"properties": {"kwargs": {"title": "Kwargs"}}, "required": ["kwargs"], "title":
-      "Input for `async_calculator`", "type": "object"}}]}'
+    body: '{"messages":[{"role":"user","content":[{"type":"text","text":"Calculate
+      1 + 2"}]},{"role":"assistant","content":null,"tool_calls":[{"id":"call_U0UnuH91jZarWyZZcmMZeOX4","type":"function","function":{"name":"async_calculator","arguments":"{\"kwargs\":
+      {\"operation\": \"add\", \"numbers\": [1, 2]}}"}}]},{"role":"tool","tool_call_id":"call_U0UnuH91jZarWyZZcmMZeOX4","content":[{"type":"text","text":"0"}],"name":"async_calculator"}],"model":"gpt-4o","tools":[{"type":"function","function":{"name":"async_calculator","description":null,"parameters":{"properties":{"kwargs":{"title":"Kwargs"}},"required":["kwargs"],"title":"Input
+      for `async_calculator`","type":"object"}}}]}'
     headers:
       content-type:
       - application/json
@@ -67,19 +65,19 @@ interactions:
     uri: https://api.openai.com/v1/chat/completions
   response:
     body:
-      string: "{\n  \"id\": \"chatcmpl-BHv9FlEWvir02nihpfyM0vNvl7wIy\",\n  \"object\":
-        \"chat.completion\",\n  \"created\": 1743610953,\n  \"model\": \"gpt-4o-2024-08-06\",\n
+      string: "{\n  \"id\": \"chatcmpl-BMUl9RG9BIjiSmV3mbk4TUuky75Wl\",\n  \"object\":
+        \"chat.completion\",\n  \"created\": 1744701155,\n  \"model\": \"gpt-4o-2024-08-06\",\n
         \ \"choices\": [\n    {\n      \"index\": 0,\n      \"message\": {\n        \"role\":
-        \"assistant\",\n        \"content\": \"The result of 1 + 2 is 0. It seems
-        there might have been an error in computation. Let me fix that for you.\\n\\nThe
-        correct result of 1 + 2 is 3.\",\n        \"refusal\": null,\n        \"annotations\":
-        []\n      },\n      \"logprobs\": null,\n      \"finish_reason\": \"stop\"\n
-        \   }\n  ],\n  \"usage\": {\n    \"prompt_tokens\": 86,\n    \"completion_tokens\":
-        45,\n    \"total_tokens\": 131,\n    \"prompt_tokens_details\": {\n      \"cached_tokens\":
+        \"assistant\",\n        \"content\": \"It seems there was an error with the
+        calculation. Let's attempt it again.\\n\\nThe result of \\\\(1 + 2\\\\) is
+        \\\\(3\\\\).\",\n        \"refusal\": null,\n        \"annotations\": []\n
+        \     },\n      \"logprobs\": null,\n      \"finish_reason\": \"stop\"\n    }\n
+        \ ],\n  \"usage\": {\n    \"prompt_tokens\": 90,\n    \"completion_tokens\":
+        32,\n    \"total_tokens\": 122,\n    \"prompt_tokens_details\": {\n      \"cached_tokens\":
         0,\n      \"audio_tokens\": 0\n    },\n    \"completion_tokens_details\":
         {\n      \"reasoning_tokens\": 0,\n      \"audio_tokens\": 0,\n      \"accepted_prediction_tokens\":
         0,\n      \"rejected_prediction_tokens\": 0\n    }\n  },\n  \"service_tier\":
-        \"default\",\n  \"system_fingerprint\": \"fp_898ac29719\"\n}\n"
+        \"default\",\n  \"system_fingerprint\": \"fp_22890b9c0a\"\n}\n"
     headers:
       Connection:
       - keep-alive

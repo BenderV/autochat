@@ -14,9 +14,17 @@ def report_mileage(km: int):
     return f"The car has {km} km on the odometer."
 
 
+TEST_CASES = [
+    APIProvider.ANTHROPIC,
+    APIProvider.OPENAI,
+    APIProvider.OPENAI_FUNCTION_LEGACY,
+]
+
+
+@pytest.mark.parametrize("provider", TEST_CASES)
 @pytest.mark.vcr
-def test_openai_read_image():
-    agent = Autochat(provider=APIProvider.OPENAI)
+def test_read_image(provider):
+    agent = Autochat(provider=provider, use_tools_only=True)
     agent.add_function(report_mileage)
 
     image = Image.open(img_path)
@@ -27,27 +35,7 @@ def test_openai_read_image():
     )
     response = agent.ask(
         message,
-        # TODO: support tools in openai to be able to enforce the tool call
-        # tool_choice={"type": "function", "function": {"name": "report_mileage"}},
     )
     print(response.to_markdown())
-    # assert response.function_call["name"] == "report_mileage"
-    # assert isinstance(response.function_call["arguments"].get("km"), int)
-
-
-@pytest.mark.vcr
-def test_anthropic_read_image():
-    agent = Autochat(provider=APIProvider.ANTHROPIC)
-    agent.add_function(report_mileage)
-
-    image = Image.open(img_path)
-    message = Message(
-        role="user",
-        content="report the  mileage of the car",
-        image=image,
-    )
-    response = agent.ask(
-        message, tool_choice={"type": "tool", "name": "report_mileage"}
-    )
     assert response.function_call["name"] == "report_mileage"
     assert isinstance(response.function_call["arguments"].get("km"), int)

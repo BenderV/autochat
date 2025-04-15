@@ -8,6 +8,7 @@ from autochat.utils import get_event_loop_or_create
 
 class APIProvider(Enum):
     OPENAI = "openai"
+    OPENAI_FUNCTION_LEGACY = "openai_function_legacy"
     OPENAI_FUNCTION_SHIM = "openai_function_shim"
     ANTHROPIC = "anthropic"
 
@@ -34,7 +35,7 @@ class BaseProvider(ABC):
                 ]
 
         messages = self.chat.examples + [first_message] + self.chat.messages[1:]
-        transform_list_function(messages)
+        messages = transform_list_function(messages)
         return [transform_function(m) for m in messages]
 
     @abstractmethod

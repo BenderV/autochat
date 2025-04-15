@@ -1,9 +1,8 @@
 interactions:
 - request:
-    body: '{"messages": [{"role": "user", "content": [{"type": "text", "text": "What
-      is 1 + 2?"}]}], "model": "gpt-4o", "functions": [{"name": "async_calculator",
-      "description": null, "parameters": {"properties": {"kwargs": {"title": "Kwargs"}},
-      "required": ["kwargs"], "title": "Input for `async_calculator`", "type": "object"}}]}'
+    body: '{"messages":[{"role":"user","content":[{"type":"text","text":"What is 1
+      + 2?"}]}],"model":"gpt-4o","tools":[{"type":"function","function":{"name":"async_calculator","description":null,"parameters":{"properties":{"kwargs":{"title":"Kwargs"}},"required":["kwargs"],"title":"Input
+      for `async_calculator`","type":"object"}}}]}'
     headers:
       content-type:
       - application/json
@@ -15,17 +14,21 @@ interactions:
     uri: https://api.openai.com/v1/chat/completions
   response:
     body:
-      string: "{\n  \"id\": \"chatcmpl-BHv9DXGcmBmgg2KpJUErZ7pDXXJqr\",\n  \"object\":
-        \"chat.completion\",\n  \"created\": 1743610951,\n  \"model\": \"gpt-4o-2024-08-06\",\n
+      string: "{\n  \"id\": \"chatcmpl-BMM0h83GGiZZZIIKIWvgsHkdn6OAJ\",\n  \"object\":
+        \"chat.completion\",\n  \"created\": 1744667523,\n  \"model\": \"gpt-4o-2024-08-06\",\n
         \ \"choices\": [\n    {\n      \"index\": 0,\n      \"message\": {\n        \"role\":
-        \"assistant\",\n        \"content\": \"1 + 2 equals 3.\",\n        \"refusal\":
-        null,\n        \"annotations\": []\n      },\n      \"logprobs\": null,\n
-        \     \"finish_reason\": \"stop\"\n    }\n  ],\n  \"usage\": {\n    \"prompt_tokens\":
-        58,\n    \"completion_tokens\": 10,\n    \"total_tokens\": 68,\n    \"prompt_tokens_details\":
+        \"assistant\",\n        \"content\": null,\n        \"tool_calls\": [\n          {\n
+        \           \"id\": \"call_9Ukdq95CLoZFOezEhJ31vMCF\",\n            \"type\":
+        \"function\",\n            \"function\": {\n              \"name\": \"async_calculator\",\n
+        \             \"arguments\": \"{\\\"kwargs\\\":{\\\"expression\\\":\\\"1 +
+        2\\\"}}\"\n            }\n          }\n        ],\n        \"refusal\": null,\n
+        \       \"annotations\": []\n      },\n      \"logprobs\": null,\n      \"finish_reason\":
+        \"tool_calls\"\n    }\n  ],\n  \"usage\": {\n    \"prompt_tokens\": 58,\n
+        \   \"completion_tokens\": 21,\n    \"total_tokens\": 79,\n    \"prompt_tokens_details\":
         {\n      \"cached_tokens\": 0,\n      \"audio_tokens\": 0\n    },\n    \"completion_tokens_details\":
         {\n      \"reasoning_tokens\": 0,\n      \"audio_tokens\": 0,\n      \"accepted_prediction_tokens\":
         0,\n      \"rejected_prediction_tokens\": 0\n    }\n  },\n  \"service_tier\":
-        \"default\",\n  \"system_fingerprint\": \"fp_898ac29719\"\n}\n"
+        \"default\",\n  \"system_fingerprint\": \"fp_17316073ab\"\n}\n"
     headers:
       Connection:
       - keep-alive
