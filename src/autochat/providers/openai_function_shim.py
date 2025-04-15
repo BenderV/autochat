@@ -37,7 +37,7 @@ def parse_function_call_from_text(text: str):
     return None, None
 
 
-def from_openai_dict(
+def from_openai_object(
     role: str,
     content: str,
     id: typing.Optional[str] = None,
@@ -127,7 +127,7 @@ class OpenAIProviderFunctionShim(OpenAIProvider):
         # OpenAI returns a structure. We'll parse out the text content
         message = res.choices[0].message
         # Note that now there is no function_call field because we didn't pass `functions=`.
-        return from_openai_dict(
+        return from_openai_object(
             role=message.role,
             content=message.content,
             # no function_call here

@@ -5,7 +5,6 @@ import typing
 from autochat.base import AutochatBase
 from autochat.model import Message, MessagePart
 from autochat.providers.base_provider import BaseProvider
-from autochat.providers.utils import add_empty_function_result
 
 AUTOCHAT_HOST = os.getenv("AUTOCHAT_HOST")
 
@@ -22,23 +21,12 @@ class FunctionCallParsingError(Exception):
 def from_openai_object(
     role: str,
     content: str,
-    tool_calls: typing.Optional[list] = None,
+    function_call: typing.Optional[dict] = None,
     id: typing.Optional[str] = None,
 ):
     # We need to unquote the arguments
-
     function_call_dict = None
-    function_call_id = None
-    if tool_calls:
-        first_tool_call_function = next(
-            (t for t in tool_calls if t.type == "function"), None
-        )
-        if first_tool_call_function is None:
-            raise ValueError(
-                "We don't support tool calls with type other than function"
-            )
-        function_call = first_tool_call_function.function
-        function_call_id = first_tool_call_function.id
+    if function_call:
         try:
             function_call_dict = {
                 "name": function_call.name,
@@ -47,13 +35,7 @@ def from_openai_object(
         except json.decoder.JSONDecodeError:
             raise FunctionCallParsingError(id, function_call)
 
-    return Message(
-        role=role,
-        content=content,
-        function_call=function_call_dict,
-        id=id,
-        function_call_id=function_call_id,
-    )
+    return Message(role=role, content=content, function_call=function_call_dict, id=id)
 
 
 def parts_to_openai_dict(part: MessagePart) -> dict:
@@ -91,52 +73,38 @@ def parts_to_openai_dict(part: MessagePart) -> dict:
 
 
 def message_to_openai_dict(message: Message) -> dict:
-    if message.role == "function":
-        res = {
-            "role": "tool",
-            "tool_call_id": message.function_call_id,
-            "content": [parts_to_openai_dict(part) for part in message.parts],
-            "name": message.name,
-        }
-    else:
-        res = {"role": message.role, "content": []}
-        for part in message.parts:
-            if part.type == "function_call" and message.role == "assistant":
-                res["tool_calls"] = [
-                    {
-                        "id": part.function_call_id,
-                        "type": "function",
-                        "function": parts_to_openai_dict(part),
-                    }
-                ]
-            elif part.type == "function_call" and message.role == "user":
-                # Workaround: If the user is triggering a function, we add it's name and arguments to the content
-                res["content"] = (
-                    part.function_call["name"]
-                    + ":"
-                    + json.dumps(part.function_call["arguments"])
-                )
-            else:
-                res["content"].append(parts_to_openai_dict(part))
+    res = {
+        "role": message.role,
+        "content": [],
+    }
 
-        if "content" in res and len(res["content"]) == 0:
-            res["content"] = None
+    for part in message.parts:
+        if part.type == "function_call" and message.role == "assistant":
+            res["function_call"] = parts_to_openai_dict(part)
+        elif part.type == "function_call" and message.role == "user":
+            # Workaround: If the user is triggering a function, we add it's name and arguments to the content
+            res["content"] = (
+                part.function_call["name"]
+                + ":"
+                + json.dumps(part.function_call["arguments"])
+            )
+        else:
+            res["content"].append(parts_to_openai_dict(part))
 
+    if message.name:
+        res["name"] = message.name
+
+    # Workaround
+    # Image URLs are only allowed for messages with role 'user'
+    # If the message contains an image, we change it's role to 'user'
+    if message.role == "function" and any(
+        part.type == "function_result_image" for part in message.parts
+    ):
+        res["role"] = "user"
     return res
 
 
-def return_image_as_user_message(messages: list[Message]) -> list[Message]:
-    """
-    Adaptation because OpenAI doesn't support image in function call.
-    We return the image as a user message.
-    """
-    for i in range(len(messages)):
-        if messages[i].role == "function" and messages[i].image is not None:
-            messages[i].role = "user"
-    return messages
-
-
-class OpenAIProvider(BaseProvider):
+class OpenAIProviderFunctionLegacy(BaseProvider):
     def __init__(self, chat: AutochatBase, model: str, base_url: str = None):
         from openai import OpenAI
 
@@ -144,16 +112,14 @@ class OpenAIProvider(BaseProvider):
         self.model = model
         # Possibly set up openai.api_key, base_url, etc.
         self.client = OpenAI(
-            base_url=(AUTOCHAT_HOST if AUTOCHAT_HOST else "https://api.openai.com/v1"),
+            base_url=(
+                f"{AUTOCHAT_HOST}/v1" if AUTOCHAT_HOST else "https://api.openai.com/v1"
+            ),
         )
 
     async def fetch_async(self, **kwargs) -> Message:
-        messages = self.prepare_messages(
-            transform_function=message_to_openai_dict,
-            transform_list_function=lambda x: add_empty_function_result(
-                return_image_as_user_message(x)
-            ),
-        )
+        messages = self.prepare_messages(transform_function=message_to_openai_dict)
+        # Add instruction as the first message
 
         system_messages = []
         if self.chat.instruction:
@@ -172,21 +138,11 @@ class OpenAIProvider(BaseProvider):
             )
         messages = [message_to_openai_dict(sm) for sm in system_messages] + messages
 
-        if self.chat.use_tools_only and "tool_choice" not in kwargs:
-            kwargs["tool_choice"] = "required"
-
         if self.chat.functions_schema:
-            tools = [
-                {
-                    "type": "function",
-                    "function": tool,
-                }
-                for tool in self.chat.functions_schema
-            ]
             res = self.client.chat.completions.create(
                 model=self.model,
                 messages=messages,
-                tools=tools,
+                functions=self.chat.functions_schema,
                 **kwargs,
             )
         else:
@@ -198,6 +154,6 @@ class OpenAIProvider(BaseProvider):
         return from_openai_object(
             role=message.role,
             content=message.content,
-            tool_calls=message.tool_calls,
+            function_call=message.function_call,
             id=res.id,  # We use the response id as the message id
         )

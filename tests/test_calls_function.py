@@ -23,6 +23,7 @@ TEST_CASES = [
         "claude-3-7-sonnet-latest",
     ),
     (APIProvider.OPENAI, "gpt-4o"),
+    (APIProvider.OPENAI, "o1-2024-12-17"),
 ]
 
 

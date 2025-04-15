@@ -14,23 +14,17 @@ def read_image():
     return Image.open(img_path)
 
 
+@pytest.mark.parametrize(
+    "provider",
+    [
+        APIProvider.OPENAI_FUNCTION_LEGACY,
+        APIProvider.ANTHROPIC,
+    ],
+)
 @pytest.mark.vcr
-def test_anthropic_callback_image():
+def test_anthropic_callback_image(provider):
     agent = Autochat(
-        provider=APIProvider.ANTHROPIC,
-    )
-    agent.add_function(read_image)
-
-    user_query = "Hello, read the image and explain it"
-    messages = []
-    for message in agent.run_conversation(user_query):
-        messages.append(message)
-
-
-@pytest.mark.vcr
-def test_openai_callback_image():
-    agent = Autochat(
-        provider=APIProvider.OPENAI,
+        provider=provider,
     )
     agent.add_function(read_image)
 

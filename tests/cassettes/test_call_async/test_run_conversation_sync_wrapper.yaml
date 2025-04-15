@@ -1,9 +1,8 @@
 interactions:
 - request:
-    body: '{"messages": [{"role": "user", "content": [{"type": "text", "text": "Calculate
-      1 + 2"}]}], "model": "gpt-4o", "functions": [{"name": "async_calculator", "description":
-      null, "parameters": {"properties": {"kwargs": {"title": "Kwargs"}}, "required":
-      ["kwargs"], "title": "Input for `async_calculator`", "type": "object"}}]}'
+    body: '{"messages":[{"role":"user","content":[{"type":"text","text":"Calculate
+      1 + 2"}]}],"model":"gpt-4o","tools":[{"type":"function","function":{"name":"async_calculator","description":null,"parameters":{"properties":{"kwargs":{"title":"Kwargs"}},"required":["kwargs"],"title":"Input
+      for `async_calculator`","type":"object"}}}]}'
     headers:
       content-type:
       - application/json
@@ -15,19 +14,21 @@ interactions:
     uri: https://api.openai.com/v1/chat/completions
   response:
     body:
-      string: "{\n  \"id\": \"chatcmpl-BHv9JNU7VY4n7q1Li6OBty98OujYe\",\n  \"object\":
-        \"chat.completion\",\n  \"created\": 1743610957,\n  \"model\": \"gpt-4o-2024-08-06\",\n
+      string: "{\n  \"id\": \"chatcmpl-BMUkbYicdou9qqPX000YOvKlwePKl\",\n  \"object\":
+        \"chat.completion\",\n  \"created\": 1744701121,\n  \"model\": \"gpt-4o-2024-08-06\",\n
         \ \"choices\": [\n    {\n      \"index\": 0,\n      \"message\": {\n        \"role\":
-        \"assistant\",\n        \"content\": null,\n        \"function_call\": {\n
-        \         \"name\": \"async_calculator\",\n          \"arguments\": \"{\\\"kwargs\\\":{\\\"expression\\\":\\\"1
-        + 2\\\"}}\"\n        },\n        \"refusal\": null,\n        \"annotations\":
-        []\n      },\n      \"logprobs\": null,\n      \"finish_reason\": \"function_call\"\n
-        \   }\n  ],\n  \"usage\": {\n    \"prompt_tokens\": 56,\n    \"completion_tokens\":
-        21,\n    \"total_tokens\": 77,\n    \"prompt_tokens_details\": {\n      \"cached_tokens\":
-        0,\n      \"audio_tokens\": 0\n    },\n    \"completion_tokens_details\":
+        \"assistant\",\n        \"content\": null,\n        \"tool_calls\": [\n          {\n
+        \           \"id\": \"call_NLM9NsgH8HYaHOsxLLVVtBEz\",\n            \"type\":
+        \"function\",\n            \"function\": {\n              \"name\": \"async_calculator\",\n
+        \             \"arguments\": \"{\\\"kwargs\\\":{\\\"expression\\\":\\\"1 +
+        2\\\"}}\"\n            }\n          }\n        ],\n        \"refusal\": null,\n
+        \       \"annotations\": []\n      },\n      \"logprobs\": null,\n      \"finish_reason\":
+        \"tool_calls\"\n    }\n  ],\n  \"usage\": {\n    \"prompt_tokens\": 56,\n
+        \   \"completion_tokens\": 21,\n    \"total_tokens\": 77,\n    \"prompt_tokens_details\":
+        {\n      \"cached_tokens\": 0,\n      \"audio_tokens\": 0\n    },\n    \"completion_tokens_details\":
         {\n      \"reasoning_tokens\": 0,\n      \"audio_tokens\": 0,\n      \"accepted_prediction_tokens\":
         0,\n      \"rejected_prediction_tokens\": 0\n    }\n  },\n  \"service_tier\":
-        \"default\",\n  \"system_fingerprint\": \"fp_898ac29719\"\n}\n"
+        \"default\",\n  \"system_fingerprint\": \"fp_22890b9c0a\"\n}\n"
     headers:
       Connection:
       - keep-alive
@@ -49,13 +50,10 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"messages": [{"role": "user", "content": [{"type": "text", "text": "Calculate
-      1 + 2"}]}, {"role": "assistant", "content": [], "function_call": {"name": "async_calculator",
-      "arguments": "{\"kwargs\": {\"expression\": \"1 + 2\"}}"}}, {"role": "function",
-      "content": [{"type": "text", "text": "0"}], "name": "async_calculator"}], "model":
-      "gpt-4o", "functions": [{"name": "async_calculator", "description": null, "parameters":
-      {"properties": {"kwargs": {"title": "Kwargs"}}, "required": ["kwargs"], "title":
-      "Input for `async_calculator`", "type": "object"}}]}'
+    body: '{"messages":[{"role":"user","content":[{"type":"text","text":"Calculate
+      1 + 2"}]},{"role":"assistant","content":null,"tool_calls":[{"id":"call_NLM9NsgH8HYaHOsxLLVVtBEz","type":"function","function":{"name":"async_calculator","arguments":"{\"kwargs\":
+      {\"expression\": \"1 + 2\"}}"}}]},{"role":"tool","tool_call_id":"call_NLM9NsgH8HYaHOsxLLVVtBEz","content":[{"type":"text","text":"0"}],"name":"async_calculator"}],"model":"gpt-4o","tools":[{"type":"function","function":{"name":"async_calculator","description":null,"parameters":{"properties":{"kwargs":{"title":"Kwargs"}},"required":["kwargs"],"title":"Input
+      for `async_calculator`","type":"object"}}}]}'
     headers:
       content-type:
       - application/json
@@ -67,17 +65,73 @@ interactions:
     uri: https://api.openai.com/v1/chat/completions
   response:
     body:
-      string: "{\n  \"id\": \"chatcmpl-BHv9KGzYq17z3fmpvezRm9eZnNt91\",\n  \"object\":
-        \"chat.completion\",\n  \"created\": 1743610958,\n  \"model\": \"gpt-4o-2024-08-06\",\n
+      string: "{\n  \"id\": \"chatcmpl-BMUkcMCsIuPqB8tzyGGqDYOPKxSGR\",\n  \"object\":
+        \"chat.completion\",\n  \"created\": 1744701122,\n  \"model\": \"gpt-4o-2024-08-06\",\n
         \ \"choices\": [\n    {\n      \"index\": 0,\n      \"message\": {\n        \"role\":
-        \"assistant\",\n        \"content\": \"The result of 1 + 2 is 3.\",\n        \"refusal\":
-        null,\n        \"annotations\": []\n      },\n      \"logprobs\": null,\n
-        \     \"finish_reason\": \"stop\"\n    }\n  ],\n  \"usage\": {\n    \"prompt_tokens\":
-        86,\n    \"completion_tokens\": 14,\n    \"total_tokens\": 100,\n    \"prompt_tokens_details\":
+        \"assistant\",\n        \"content\": \"The result of \\\\(1 + 2\\\\) is incorrect.
+        Let me try again.\",\n        \"tool_calls\": [\n          {\n            \"id\":
+        \"call_qMx8w5jGQrrdU6a9Mg1IcFVt\",\n            \"type\": \"function\",\n
+        \           \"function\": {\n              \"name\": \"async_calculator\",\n
+        \             \"arguments\": \"{\\\"kwargs\\\":{\\\"expression\\\":\\\"1 +
+        2\\\"}}\"\n            }\n          }\n        ],\n        \"refusal\": null,\n
+        \       \"annotations\": []\n      },\n      \"logprobs\": null,\n      \"finish_reason\":
+        \"tool_calls\"\n    }\n  ],\n  \"usage\": {\n    \"prompt_tokens\": 86,\n
+        \   \"completion_tokens\": 41,\n    \"total_tokens\": 127,\n    \"prompt_tokens_details\":
         {\n      \"cached_tokens\": 0,\n      \"audio_tokens\": 0\n    },\n    \"completion_tokens_details\":
         {\n      \"reasoning_tokens\": 0,\n      \"audio_tokens\": 0,\n      \"accepted_prediction_tokens\":
         0,\n      \"rejected_prediction_tokens\": 0\n    }\n  },\n  \"service_tier\":
-        \"default\",\n  \"system_fingerprint\": \"fp_898ac29719\"\n}\n"
+        \"default\",\n  \"system_fingerprint\": \"fp_22890b9c0a\"\n}\n"
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - ''
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      access-control-expose-headers:
+      - X-Request-ID
+      alt-svc:
+      - h3=":443"; ma=86400
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages":[{"role":"user","content":[{"type":"text","text":"Calculate
+      1 + 2"}]},{"role":"assistant","content":null,"tool_calls":[{"id":"call_NLM9NsgH8HYaHOsxLLVVtBEz","type":"function","function":{"name":"async_calculator","arguments":"{\"kwargs\":
+      {\"expression\": \"1 + 2\"}}"}}]},{"role":"tool","tool_call_id":"call_NLM9NsgH8HYaHOsxLLVVtBEz","content":[{"type":"text","text":"0"}],"name":"async_calculator"},{"role":"assistant","content":[{"type":"text","text":"The
+      result of \\(1 + 2\\) is incorrect. Let me try again."}],"tool_calls":[{"id":"call_qMx8w5jGQrrdU6a9Mg1IcFVt","type":"function","function":{"name":"async_calculator","arguments":"{\"kwargs\":
+      {\"expression\": \"1 + 2\"}}"}}]},{"role":"tool","tool_call_id":"call_qMx8w5jGQrrdU6a9Mg1IcFVt","content":[{"type":"text","text":"0"}],"name":"async_calculator"}],"model":"gpt-4o","tools":[{"type":"function","function":{"name":"async_calculator","description":null,"parameters":{"properties":{"kwargs":{"title":"Kwargs"}},"required":["kwargs"],"title":"Input
+      for `async_calculator`","type":"object"}}}]}'
+    headers:
+      content-type:
+      - application/json
+      host:
+      - api.openai.com
+      x-stainless-read-timeout:
+      - '600'
+    method: POST
+    uri: https://api.openai.com/v1/chat/completions
+  response:
+    body:
+      string: "{\n  \"id\": \"chatcmpl-BMUkdJY7ax0d7tHsPJogLwSs8Y58h\",\n  \"object\":
+        \"chat.completion\",\n  \"created\": 1744701123,\n  \"model\": \"gpt-4o-2024-08-06\",\n
+        \ \"choices\": [\n    {\n      \"index\": 0,\n      \"message\": {\n        \"role\":
+        \"assistant\",\n        \"content\": \"It seems there is an issue with obtaining
+        the correct calculation result. The expected result of \\\\(1 + 2\\\\) should
+        be 3.\",\n        \"refusal\": null,\n        \"annotations\": []\n      },\n
+        \     \"logprobs\": null,\n      \"finish_reason\": \"stop\"\n    }\n  ],\n
+        \ \"usage\": {\n    \"prompt_tokens\": 138,\n    \"completion_tokens\": 31,\n
+        \   \"total_tokens\": 169,\n    \"prompt_tokens_details\": {\n      \"cached_tokens\":
+        0,\n      \"audio_tokens\": 0\n    },\n    \"completion_tokens_details\":
+        {\n      \"reasoning_tokens\": 0,\n      \"audio_tokens\": 0,\n      \"accepted_prediction_tokens\":
+        0,\n      \"rejected_prediction_tokens\": 0\n    }\n  },\n  \"service_tier\":
+        \"default\",\n  \"system_fingerprint\": \"fp_22890b9c0a\"\n}\n"
     headers:
       Connection:
       - keep-alive
