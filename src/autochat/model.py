@@ -9,15 +9,6 @@ from typing import Literal
 from PIL import Image as PILImage
 
 
-class FunctionCallParsingError(Exception):
-    def __init__(self, id, function_call):
-        self.id = id
-        self.function_call = function_call
-
-    def __str__(self):
-        return f"Invalid function_call: {self.obj.function_call}"
-
-
 class Image:
     def __init__(self, image: PILImage.Image):
         if not isinstance(image, PILImage.Image):

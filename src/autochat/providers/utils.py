@@ -4,6 +4,15 @@ from autochat.model import Message
 from autochat.providers.base_provider import APIProvider, BaseProvider
 
 
+class FunctionCallParsingError(Exception):
+    def __init__(self, id, function_call):
+        self.id = id
+        self.function_call = function_call
+
+    def __str__(self):
+        return f"Invalid function_call: {self.obj.function_call}"
+
+
 # TODO: should probably exploit default model from provider
 def get_provider_and_model(  # TODO: get_provider_and_model ?
     # chat: Autochat, # TODO: make AutochatBase ?
@@ -15,6 +24,7 @@ def get_provider_and_model(  # TODO: get_provider_and_model ?
     Returns the correct LLM provider based on a string or env vars.
     """
     from autochat.providers.anthropic import AnthropicProvider
+    from autochat.providers.default import DefaultProvider
     from autochat.providers.openai import OpenAIProvider
     from autochat.providers.openai_function_legacy import OpenAIProviderFunctionLegacy
     from autochat.providers.openai_function_shim import OpenAIProviderFunctionShim
@@ -48,6 +58,10 @@ def get_provider_and_model(  # TODO: get_provider_and_model ?
         if not model:
             model = os.getenv("AUTOCHAT_MODEL", "gpt-4o")
         return OpenAIProviderFunctionLegacy(chat, model=model), model
+    elif provider_key == APIProvider.DEFAULT:
+        if not model:
+            raise ValueError("Default provider requires a model")
+        return DefaultProvider(chat, model=model), model
     else:
         raise ValueError(f"Provider {provider_key} is not supported")
 
