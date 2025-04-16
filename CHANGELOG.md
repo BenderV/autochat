@@ -1,6 +1,16 @@
 # CHANGELOG
 
 
+## v0.15.0 (2025-04-16)
+
+### Features
+
+- Add default model ([#26](https://github.com/BenderV/autochat/pull/26),
+  [`cc0fca2`](https://github.com/BenderV/autochat/commit/cc0fca2bf88db7f6fb68f4ef93ca068a4c318474))
+
+OpenAI inspired interface that works for Open Source model
+
+
 ## v0.14.0 (2025-04-15)
 
 ### Build System
