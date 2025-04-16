@@ -5,18 +5,9 @@ import typing
 from autochat.base import AutochatBase
 from autochat.model import Message, MessagePart
 from autochat.providers.base_provider import BaseProvider
-from autochat.providers.utils import add_empty_function_result
+from autochat.providers.utils import FunctionCallParsingError, add_empty_function_result
 
 AUTOCHAT_HOST = os.getenv("AUTOCHAT_HOST")
-
-
-class FunctionCallParsingError(Exception):
-    def __init__(self, id, function_call):
-        self.id = id
-        self.function_call = function_call
-
-    def __str__(self):
-        return f"Invalid function_call: {self.obj.function_call}"
 
 
 def from_openai_object(
