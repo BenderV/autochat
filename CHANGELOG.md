@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.17.0 (2025-04-22)
+
+### Features
+
+- Add classmethod support
+  ([`5ef6e88`](https://github.com/BenderV/autochat/commit/5ef6e88c4da856a888fcce218c42b39b8487523c))
+
+
 ## v0.16.0 (2025-04-22)
 
 ### Features
