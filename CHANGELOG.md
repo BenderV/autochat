@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.16.0 (2025-04-22)
+
+### Features
+
+- Switch to using __llm__ for tool context if available
+  ([`1ed9989`](https://github.com/BenderV/autochat/commit/1ed998912e2b507b5c13c57ef9af04e57d535ce8))
+
+
 ## v0.15.0 (2025-04-16)
 
 ### Features
