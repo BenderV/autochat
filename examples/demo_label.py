@@ -6,7 +6,7 @@ def label_item(category: str):
     raise NotImplementedError()
 
 
-classifierGPT = Autochat("you classify title")
+classifierGPT = Autochat(instruction="you classify title")
 classifierGPT.add_function(label_item)
 
 text = "The new iPhone is out"

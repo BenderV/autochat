@@ -13,7 +13,7 @@ def function_returning_none():
 def test_anthropic_none_return():
     """Test that a function returning None doesn't cause a crash with Anthropic."""
     agent = Autochat(
-        "You are a helpful assistant that can call functions.",
+        instruction="You are a helpful assistant that can call functions.",
         provider=APIProvider.ANTHROPIC,
     )
     agent.add_function(function_returning_none)
@@ -45,7 +45,7 @@ def test_anthropic_none_return():
 def test_openai_none_return():
     """Test that a function returning None doesn't cause a crash with OpenAI."""
     agent = Autochat(
-        "You are a helpful assistant that can call functions.",
+        instruction="You are a helpful assistant that can call functions.",
         model="gpt-4o",
         provider=APIProvider.OPENAI,
     )

@@ -50,7 +50,7 @@ wheels = [
 
 [[package]]
 name = "autochat"
-version = "0.13.1"
+version = "0.17.0"
 source = { editable = "." }
 dependencies = [
     { name = "pillow" },

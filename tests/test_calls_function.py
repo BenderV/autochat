@@ -31,7 +31,7 @@ TEST_CASES = [
 @pytest.mark.vcr
 def test_function_calling(provider: APIProvider, model: str):
     agent = Autochat(
-        "You are a helpful assistant that can read books.",
+        instruction="You are a helpful assistant that can read books.",
         provider=provider,
         model=model,
     )

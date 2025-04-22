@@ -4,8 +4,6 @@ from difflib import unified_diff
 
 import pytest
 
-DIFFS = []
-
 
 def replace_file_paths_with_XXX(content: str) -> str:
     """Replace file paths with XXX for consistent diffs across environments"""
@@ -37,17 +35,14 @@ def request_body_diff_matcher(r1, r2):
     # If bodies are different, show the diff
     if body1_dump != body2_dump:
         diff = unified_diff(
-            body1_dump.splitlines(keepends=True),
             body2_dump.splitlines(keepends=True),
+            body1_dump.splitlines(keepends=True),
             n=3,
         )
-        # We store the diff in the DIFFS list to show it in the terminal summary
-        DIFFS.append(
+        diff_as_string = (
             "\nRequest bodies differ! (- cassette, + current):\n" + "".join(diff)
         )
-        # Even though the bodies are different, we still want to continue the test
-        return True
-
+        pytest.fail(diff_as_string, pytrace=False)
     return True
 
 
@@ -116,7 +111,7 @@ def vcr_config():
             ("cookie", None),
         ],
         "before_record_response": before_record_response,
-        "record_mode": "once",
+        "record_mode": "none",
         "match_on": [
             "method",
             "scheme",
@@ -131,13 +126,3 @@ def vcr_config():
 
 def pytest_recording_configure(config, vcr):
     vcr.register_matcher("custom_body_diff", request_body_diff_matcher)
-
-
-@pytest.fixture(scope="session", autouse=True)
-def check_diffs_at_end(request):
-    yield
-    if DIFFS:
-        print("\nDifferences found in the following tests:")
-        for diff in DIFFS:
-            print(diff)
-        pytest.fail("Request body differences found in tests", pytrace=False)
