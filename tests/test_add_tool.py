@@ -11,6 +11,10 @@ class DummyTool:
     def _private_method(self):
         pass
 
+    @classmethod
+    def class_method(cls):
+        pass
+
 
 def test_add_tool():
     agent = Autochat()
@@ -30,6 +34,8 @@ def test_add_tool():
     assert f"DummyTool-{tool_id}__method1" in agent.functions
     assert f"DummyTool-{tool_id}__method2" in agent.functions
     assert f"DummyTool-{tool_id}___private_method" not in agent.functions
+
+    assert f"DummyTool-{tool_id}__class_method" in agent.functions
 
 
 def test_add_tool_with_custom_id():

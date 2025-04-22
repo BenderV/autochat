@@ -180,12 +180,16 @@ class Autochat(AutochatBase):
 
         class_name = tool.__class__.__name__
         tool_name = f"{class_name}-{tool_id}"
-        for method_name, method in inspect.getmembers(tool, inspect.ismethod):
-            if method_name.startswith("_"):  # Skip private methods
+        # Get all methods and functions from the tool
+        functions = inspect.getmembers(tool, inspect.ismethod) + inspect.getmembers(
+            tool, inspect.isfunction
+        )
+        for function_name, function in functions:
+            if function_name.startswith("_"):  # Skip private methods
                 continue
-            function_schema = inspect_schema(method)
-            function_schema["name"] = f"{tool_name}__{method_name}"
-            self.add_function(method, function_schema)
+            function_schema = inspect_schema(function)
+            function_schema["name"] = f"{tool_name}__{function_name}"
+            self.add_function(function, function_schema)
         return tool_id
 
     def remove_tool(self, tool_id: str):
