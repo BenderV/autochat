@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.18.0 (2025-04-22)
+
+### Features
+
+- Add agent name
+  ([`0305c04`](https://github.com/BenderV/autochat/commit/0305c04115528b7a1257a961fa3e30c46d3b552a))
+
+
 ## v0.17.0 (2025-04-22)
 
 ### Features
