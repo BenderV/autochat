@@ -43,8 +43,12 @@ def simple_response_default_callback(response: Message) -> Message:
 
 
 class Autochat(AutochatBase):
+    def __llm__(self):
+        return self.name  # If an agent is used as a tool, it must have a name
+
     def __init__(
         self,
+        name: str = None,
         instruction: str = None,
         examples: typing.Union[list[Message], None] = None,
         messages: typing.Union[list[Message], None] = None,
@@ -72,6 +76,7 @@ class Autochat(AutochatBase):
             )
         self.use_tools_only = use_tools_only
         self.client = None  # TODO:
+        self.name = name
         self.instruction = instruction
         if examples is None:
             self.examples = []
