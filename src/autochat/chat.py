@@ -125,9 +125,16 @@ class Autochat(AutochatBase):
         tool_reprs = []
         for tool_id, tool in self.tools.items():
             tool_name = f"{tool.__class__.__name__}-{tool_id}"
-            if hasattr(tool, "__repr__"):
+            if hasattr(tool, "__llm__"):
+                tool_reprs.append(f"### {tool_name}\n{tool.__llm__()}")
+            elif hasattr(tool, "__repr__"):
                 tool_reprs.append(f"### {tool_name}\n{repr(tool)}")
-
+            elif hasattr(tool, "__str__"):
+                tool_reprs.append(f"### {tool_name}\n{tool}")
+            else:
+                raise ValueError(
+                    f"Tool {tool_name} has no __llm__, __repr__ or __str__ method"
+                )
         tool_context = "\n".join(tool_reprs)
 
         """
