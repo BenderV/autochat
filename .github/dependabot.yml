@@ -4,8 +4,9 @@
 # https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 
 version: 2
+enable-beta-ecosystems: true
 updates:
-  - package-ecosystem: "pip" # Python packages via pip
+  - package-ecosystem: "uv" # Python packages via pip
     directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
