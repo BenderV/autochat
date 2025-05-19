@@ -66,6 +66,7 @@ class Autochat(AutochatBase):
                 If True, the chat will only use tools and not the LLM.
                 This is a beta feature and may change in the future.
         """
+        # TODO: Rework how model is handled
         self.provider, self.model = get_provider_and_model(
             self, provider, model
         )  # TODO: rename register ?
