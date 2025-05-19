@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.18.1 (2025-05-19)
+
+### Bug Fixes
+
+- Fix pydantic version to avoid error
+  ([`7f9c07c`](https://github.com/BenderV/autochat/commit/7f9c07c8df5748ed5302941fbbc80461223a95fa))
+
+
 ## v0.18.0 (2025-04-22)
 
 ### Features
