@@ -7,7 +7,7 @@ from inspect import Parameter
 from io import StringIO
 from typing import Any
 
-from pydantic import BaseConfig, Field, create_model
+from pydantic import ConfigDict, Field, create_model
 from pydantic.json_schema import GenerateJsonSchema
 from pydantic_core import PydanticOmit
 
@@ -210,8 +210,8 @@ def parse_chat_template(filename) -> list[Message]:
     return instruction, examples
 
 
-class AllowNonTypedParamsConfig(BaseConfig):
-    arbitrary_types_allowed = True
+# Replace the old class with a ConfigDict
+AllowNonTypedParamsConfig = ConfigDict(arbitrary_types_allowed=True)
 
 
 class OmitClassJsonSchema(GenerateJsonSchema):
