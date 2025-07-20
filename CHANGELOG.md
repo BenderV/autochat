@@ -1,6 +1,182 @@
 # CHANGELOG
 
 
+## v0.18.2 (2025-07-20)
+
+### Bug Fixes
+
+- **deps**: Expand pydantic compatibility to support libraries requiring >2.10.3
+  ([`6cacce7`](https://github.com/BenderV/autochat/commit/6cacce74170ee07850043cf447a0d48a9ebf019b))
+
+Bumps [pydantic](https://github.com/pydantic/pydantic) from 2.10.3 to 2.11.7. - [Release
+  notes](https://github.com/pydantic/pydantic/releases) -
+  [Changelog](https://github.com/pydantic/pydantic/blob/main/HISTORY.md) -
+  [Commits](https://github.com/pydantic/pydantic/compare/v2.10.3...v2.11.7)
+
+--- updated-dependencies: - dependency-name: pydantic dependency-version: 2.11.7
+
+dependency-type: direct:production
+
+update-type: version-update:semver-minor ...
+
+Signed-off-by: dependabot[bot] <support@github.com>
+
+### Build System
+
+- **deps**: Bump anthropic from 0.46.0 to 0.51.0
+  ([`4918b30`](https://github.com/BenderV/autochat/commit/4918b30d7356a32191d855197a37399f784e9c5e))
+
+Bumps [anthropic](https://github.com/anthropics/anthropic-sdk-python) from 0.46.0 to 0.51.0. -
+  [Release notes](https://github.com/anthropics/anthropic-sdk-python/releases) -
+  [Changelog](https://github.com/anthropics/anthropic-sdk-python/blob/main/CHANGELOG.md) -
+  [Commits](https://github.com/anthropics/anthropic-sdk-python/compare/v0.46.0...v0.51.0)
+
+--- updated-dependencies: - dependency-name: anthropic dependency-version: 0.51.0
+
+dependency-type: direct:production
+
+update-type: version-update:semver-minor ...
+
+Signed-off-by: dependabot[bot] <support@github.com>
+
+- **deps**: Bump anthropic from 0.51.0 to 0.54.0
+  ([`3f0aee6`](https://github.com/BenderV/autochat/commit/3f0aee684191c6943982fa143c2bde281f25348b))
+
+Bumps [anthropic](https://github.com/anthropics/anthropic-sdk-python) from 0.51.0 to 0.54.0. -
+  [Release notes](https://github.com/anthropics/anthropic-sdk-python/releases) -
+  [Changelog](https://github.com/anthropics/anthropic-sdk-python/blob/main/CHANGELOG.md) -
+  [Commits](https://github.com/anthropics/anthropic-sdk-python/compare/v0.51.0...v0.54.0)
+
+--- updated-dependencies: - dependency-name: anthropic dependency-version: 0.54.0
+
+dependency-type: direct:production
+
+update-type: version-update:semver-minor ...
+
+Signed-off-by: dependabot[bot] <support@github.com>
+
+- **deps**: Bump anthropic from 0.54.0 to 0.57.1
+  ([`de8b0ed`](https://github.com/BenderV/autochat/commit/de8b0ed6db674024bf413c1b476fee9f2c72fc11))
+
+Bumps [anthropic](https://github.com/anthropics/anthropic-sdk-python) from 0.54.0 to 0.57.1. -
+  [Release notes](https://github.com/anthropics/anthropic-sdk-python/releases) -
+  [Changelog](https://github.com/anthropics/anthropic-sdk-python/blob/main/CHANGELOG.md) -
+  [Commits](https://github.com/anthropics/anthropic-sdk-python/compare/v0.54.0...v0.57.1)
+
+--- updated-dependencies: - dependency-name: anthropic dependency-version: 0.57.1
+
+dependency-type: direct:production
+
+update-type: version-update:semver-minor ...
+
+Signed-off-by: dependabot[bot] <support@github.com>
+
+- **deps**: Bump openai from 1.63.2 to 1.79.0
+  ([`9456b46`](https://github.com/BenderV/autochat/commit/9456b46880ded1f35c7ce36e2208a31d39e5f90b))
+
+Bumps [openai](https://github.com/openai/openai-python) from 1.63.2 to 1.79.0. - [Release
+  notes](https://github.com/openai/openai-python/releases) -
+  [Changelog](https://github.com/openai/openai-python/blob/main/CHANGELOG.md) -
+  [Commits](https://github.com/openai/openai-python/compare/v1.63.2...v1.79.0)
+
+--- updated-dependencies: - dependency-name: openai dependency-version: 1.79.0
+
+dependency-type: direct:production
+
+update-type: version-update:semver-minor ...
+
+Signed-off-by: dependabot[bot] <support@github.com>
+
+- **deps**: Bump openai from 1.79.0 to 1.86.0
+  ([`64236be`](https://github.com/BenderV/autochat/commit/64236be4aa5963aab15c266c4da149d5d6a46a56))
+
+Bumps [openai](https://github.com/openai/openai-python) from 1.79.0 to 1.86.0. - [Release
+  notes](https://github.com/openai/openai-python/releases) -
+  [Changelog](https://github.com/openai/openai-python/blob/main/CHANGELOG.md) -
+  [Commits](https://github.com/openai/openai-python/compare/v1.79.0...v1.86.0)
+
+--- updated-dependencies: - dependency-name: openai dependency-version: 1.86.0
+
+dependency-type: direct:production
+
+update-type: version-update:semver-minor ...
+
+Signed-off-by: dependabot[bot] <support@github.com>
+
+- **deps**: Bump openai from 1.86.0 to 1.93.0
+  ([`2d6acb7`](https://github.com/BenderV/autochat/commit/2d6acb798b03e97a557f0b82056b06cd8a3f62d9))
+
+Bumps [openai](https://github.com/openai/openai-python) from 1.86.0 to 1.93.0. - [Release
+  notes](https://github.com/openai/openai-python/releases) -
+  [Changelog](https://github.com/openai/openai-python/blob/main/CHANGELOG.md) -
+  [Commits](https://github.com/openai/openai-python/compare/v1.86.0...v1.93.0)
+
+--- updated-dependencies: - dependency-name: openai dependency-version: 1.93.0
+
+dependency-type: direct:production
+
+update-type: version-update:semver-minor ...
+
+Signed-off-by: dependabot[bot] <support@github.com>
+
+- **deps**: Bump openai from 1.93.0 to 1.95.1
+  ([`580299e`](https://github.com/BenderV/autochat/commit/580299ef924cd4510542c5418a8e322e0cc42453))
+
+Bumps [openai](https://github.com/openai/openai-python) from 1.93.0 to 1.95.1. - [Release
+  notes](https://github.com/openai/openai-python/releases) -
+  [Changelog](https://github.com/openai/openai-python/blob/main/CHANGELOG.md) -
+  [Commits](https://github.com/openai/openai-python/compare/v1.93.0...v1.95.1)
+
+--- updated-dependencies: - dependency-name: openai dependency-version: 1.95.1
+
+dependency-type: direct:production
+
+update-type: version-update:semver-minor ...
+
+Signed-off-by: dependabot[bot] <support@github.com>
+
+- **deps**: Bump pillow from 10.4.0 to 11.2.1
+  ([`c708ef7`](https://github.com/BenderV/autochat/commit/c708ef7cf6ddf009ec92abdf7536ea410aba392d))
+
+Bumps [pillow](https://github.com/python-pillow/Pillow) from 10.4.0 to 11.2.1. - [Release
+  notes](https://github.com/python-pillow/Pillow/releases) -
+  [Changelog](https://github.com/python-pillow/Pillow/blob/main/CHANGES.rst) -
+  [Commits](https://github.com/python-pillow/Pillow/compare/10.4.0...11.2.1)
+
+--- updated-dependencies: - dependency-name: pillow dependency-version: 11.2.1
+
+dependency-type: direct:production
+
+update-type: version-update:semver-major ...
+
+Signed-off-by: dependabot[bot] <support@github.com>
+
+- **deps**: Bump pillow from 11.2.1 to 11.3.0
+  ([`c4e4de9`](https://github.com/BenderV/autochat/commit/c4e4de9b15942edf0fa96098ecfba9c0a06553e2))
+
+Bumps [pillow](https://github.com/python-pillow/Pillow) from 11.2.1 to 11.3.0. - [Release
+  notes](https://github.com/python-pillow/Pillow/releases) -
+  [Changelog](https://github.com/python-pillow/Pillow/blob/main/CHANGES.rst) -
+  [Commits](https://github.com/python-pillow/Pillow/compare/11.2.1...11.3.0)
+
+--- updated-dependencies: - dependency-name: pillow dependency-version: 11.3.0
+
+dependency-type: direct:production
+
+update-type: version-update:semver-minor ...
+
+Signed-off-by: dependabot[bot] <support@github.com>
+
+### Chores
+
+- Add dependabot for uv -
+  https://github.com/dependabot/dependabot-core/issues/10478\#issuecomment-2691330949
+  ([`bd38bb1`](https://github.com/BenderV/autochat/commit/bd38bb10c56137bd676cf434bd7c1e006ce5ba29))
+
+- Add dependabot.yml
+  ([`fe77c98`](https://github.com/BenderV/autochat/commit/fe77c989bd334d6e694cefa493c4672499b58f92))
+
+
 ## v0.18.1 (2025-05-19)
 
 ### Bug Fixes
