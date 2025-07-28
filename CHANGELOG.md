@@ -1,6 +1,17 @@
 # CHANGELOG
 
 
+## v0.19.0 (2025-07-28)
+
+### Features
+
+- Add autochat_host support for anthropic
+  ([`030b0be`](https://github.com/BenderV/autochat/commit/030b0be6e4378329116065ac2201bbe70ac13ba1))
+
+- Support custom provider
+  ([`93fc564`](https://github.com/BenderV/autochat/commit/93fc56409e40cf532e5c559d0f311c297df65907))
+
+
 ## v0.18.2 (2025-07-20)
 
 ### Bug Fixes
