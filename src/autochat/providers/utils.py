@@ -33,7 +33,7 @@ def get_provider_and_model(  # TODO: get_provider_and_model ?
     if not provider_name:
         provider_name = os.getenv("AUTOCHAT_HOST", "openai")
 
-    if issubclass(provider_name, BaseProvider):
+    if isinstance(provider_name, type) and issubclass(provider_name, BaseProvider):
         # Supports custom provider
         Provider = provider_name
         return Provider(chat, model=model), model
