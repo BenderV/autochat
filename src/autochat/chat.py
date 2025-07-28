@@ -10,12 +10,13 @@ import os
 import traceback
 import typing
 import warnings
+from typing import Type
 
 from PIL import Image as PILImage
 
 from autochat.base import AutochatBase
 from autochat.model import Message
-from autochat.providers.base_provider import APIProvider
+from autochat.providers.base_provider import APIProvider, BaseProvider
 from autochat.providers.utils import get_provider_and_model
 from autochat.utils import (
     csv_dumps,
@@ -55,7 +56,7 @@ class Autochat(AutochatBase):
         context: str = None,
         max_interactions: int = 100,
         model=AUTOCHAT_MODEL,
-        provider: str = APIProvider.OPENAI,
+        provider: str | Type[BaseProvider] = APIProvider.OPENAI,
         use_tools_only: bool = False,
         mcp_servers: typing.Union[list[object], None] = [],
     ) -> None:

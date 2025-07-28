@@ -1,4 +1,5 @@
 import os
+from typing import Type
 
 from autochat.model import Message
 from autochat.providers.base_provider import APIProvider, BaseProvider
@@ -17,7 +18,7 @@ class FunctionCallParsingError(Exception):
 def get_provider_and_model(  # TODO: get_provider_and_model ?
     # chat: Autochat, # TODO: make AutochatBase ?
     chat,
-    provider_name: str = None,
+    provider_name: str | Type[BaseProvider] = None,
     model: str = None,
 ) -> list[str, BaseProvider]:  # TODO: rename
     """
@@ -32,7 +33,11 @@ def get_provider_and_model(  # TODO: get_provider_and_model ?
     if not provider_name:
         provider_name = os.getenv("AUTOCHAT_HOST", "openai")
 
-    if isinstance(provider_name, APIProvider):
+    if issubclass(provider_name, BaseProvider):
+        # Supports custom provider
+        Provider = provider_name
+        return Provider(chat, model=model), model
+    elif isinstance(provider_name, APIProvider):
         provider_key = provider_name
     elif isinstance(provider_name, str):
         try:
