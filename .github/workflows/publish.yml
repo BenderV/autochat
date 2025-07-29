@@ -22,10 +22,8 @@ jobs:
           cache-dependency-glob: "uv.lock"
       - name: Install the project
         run: uv sync --all-extras --dev
-      - name: Install the build dependencies
-        run: uv pip install --system build twine
       - name: Build package
-        run: python -m build
+        run: uv run -m build
       - name: Publish to PyPI
         env:
           TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
