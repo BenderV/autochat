@@ -6,22 +6,17 @@
 
 > ⚠️ **Warning**: Since agentic capabilities are evolving fast, expect the API to change.
 
-A powerful yet lightweight Python library for building AI agents with LLMs. Autochat provides a simple and elegant interface to create conversational AI agents that can use tools, call functions, and interact with various LLM providers.
+A lightweight Python library for building AI agents. Turn any Python function or class into AI tools. Supports OpenAI, Anthropic, async operations, and streaming conversations.
 
-![image](https://www-cdn.anthropic.com/images/4zrzovbb/website/58d9f10c985c4eb5d53798dea315f7bb5ab6249e-2401x1000.png)
+## Features
 
-## Key Features
-
-- 🤝 **Multi-Provider Support**: Works with OpenAI, Anthropic, and custom providers
-- 🛠️ **Tool Integration**: Transform Python functions and classes into AI-accessible tools
-- 🔁 **Streaming Conversations**: Run conversations as generators for real-time interaction
-- 🧠 **Smart Caching**: Built-in response caching (especially for Anthropic's Claude models)
-- 🖼️ **Image Support**: Process and analyze images with vision-capable models
-- 📝 **Template System**: Define agent behavior with simple markdown-like templates
-- 🔄 **Async Support**: Full async/await support for non-blocking operations
-- 🌐 **MCP Integration**: Connect to Model Context Protocol servers for extended capabilities
-- 📊 **Function Calling**: Seamless back-and-forth between AI and your functions
-- 🎯 **Agent Architecture**: Perfect for building sophisticated AI agents and assistants
+- Add functions: `agent.add_function(my_function)`
+- Add classes: `agent.add_tool(my_class_instance)`
+- Multiple providers: OpenAI, Anthropic, custom
+- Async/await support
+- Image processing
+- Conversation streaming
+- Template system
 
 ## Real-World Example: Code Development Agent
 
@@ -37,7 +32,7 @@ from autocode.git import Git
 agent = Autochat(
     instruction="""You are a developer agent equipped with tools to:
     1. Edit code files
-    2. Run terminal commands  
+    2. Run terminal commands
     3. Manage git operations
     4. Test and debug applications""",
     provider="anthropic",
@@ -60,7 +55,6 @@ for message in agent.run_conversation("Create a FastAPI hello world app with tes
     print(message.to_markdown())
 ```
 
-
 ## Installation
 
 Install autochat with all providers and features:
@@ -75,34 +69,47 @@ Or install with specific providers:
 # OpenAI only
 pip install 'autochat[openai]'
 
-# Anthropic only  
+# Anthropic only
 pip install 'autochat[anthropic]'
 
 # With MCP support (Python 3.10+)
 pip install 'autochat[mcp]'
 ```
 
-## Quick Start
+## Usage
+
+### Functions
 
 ```python
 from autochat import Autochat
 
-# Basic usage
-agent = Autochat(instruction="You are a helpful assistant")
-response = agent.ask("What is the capital of France?")
-print(response.content)
+def get_weather(city: str) -> str:
+    return f"Sunny in {city}"
 
-# With function calling
-def multiply(a: int, b: int) -> int:
-    """Multiply two numbers"""
-    return a * b
+agent = Autochat()
+agent.add_function(get_weather)
+agent.ask("What's the weather in Tokyo?")
+```
 
-agent.add_function(multiply)
-for message in agent.run_conversation("What is 25 * 47?"):
-    print(message.to_markdown())
+### Classes (the killer feature)
 
-# With Anthropic (recommended for agents)
-agent = Autochat(provider="anthropic", model="claude-3-5-sonnet-latest")
+```python
+class FileManager:
+    def read_file(self, path: str) -> str:
+        with open(path) as f:
+            return f.read()
+
+    def write_file(self, path: str, content: str):
+        with open(path, 'w') as f:
+            f.write(content)
+
+files = FileManager()
+agent = Autochat()
+agent.add_tool(files)
+
+# AI can now read/write files
+for msg in agent.run_conversation("Read config.json and update the port to 8080"):
+    print(msg.content)
 ```
 
 ## Advanced Features
@@ -143,7 +150,7 @@ export OPENAI_API_KEY="your-key"
 export ANTHROPIC_API_KEY="your-key"
 
 # Choose your model (optional)
-export AUTOCHAT_MODEL="claude-3-5-sonnet-latest"  # or gpt-4o
+export AUTOCHAT_MODEL="claude-3-7-sonnet-latest"  # or gpt-5-mini
 ```
 
 💡 **Recommendation**: Use Anthropic's Claude models for complex agentic behavior and tool use.

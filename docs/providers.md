@@ -12,7 +12,7 @@ OpenAI's GPT models are the default provider.
 
 ```bash
 export OPENAI_API_KEY="your-openai-key"
-export AUTOCHAT_MODEL="gpt5-mini"  # optional, this is the default
+export AUTOCHAT_MODEL="gpt-5-mini"  # optional, this is the default
 ```
 
 **Usage:**
@@ -27,7 +27,7 @@ agent = Autochat()
 agent = Autochat(provider="openai")
 
 # Specific model
-agent = Autochat(provider="openai", model="gpt-4o-mini")
+agent = Autochat(provider="openai", model="gpt-5-mini")
 ```
 
 ### Anthropic
@@ -88,7 +88,7 @@ from autochat import Autochat
 # OpenAI with custom settings
 openai_agent = Autochat(
     provider="openai",
-    model="gpt5-mini",
+    model="gpt-5-mini",
     instruction="You are a helpful assistant"
 )
 
@@ -110,7 +110,7 @@ class AgentManager:
         # Fast agent for simple tasks
         self.quick_agent = Autochat(
             provider="openai",
-            model="gpt5-mini",
+            model="gpt-5-mini",
             instruction="Provide quick, concise answers"
         )
 
@@ -245,7 +245,7 @@ class AdvancedCustomProvider(BaseProvider):
 # OpenAI-specific model configurations
 openai_agent = Autochat(
     provider="openai",
-    model="gpt5-mini",
+    model="gpt-5-mini",
     # OpenAI-specific parameters can be passed through kwargs
 )
 
@@ -285,7 +285,7 @@ from anthropic import AuthenticationError
 def robust_agent_call(query: str):
     agents = [
         Autochat(provider="anthropic"),
-        Autochat(provider="openai", model="gpt-4o-mini"),  # Fallback
+        Autochat(provider="openai", model="gpt-5-mini"),  # Fallback
     ]
 
     for agent in agents:
