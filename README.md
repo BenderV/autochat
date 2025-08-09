@@ -20,7 +20,7 @@ A lightweight Python library for building AI agents. Turn any Python function or
 
 ## Real-World Example: Code Development Agent
 
-Autochat excels at building development agents. Here's how [autocode](../autocode/) uses autochat to create an AI developer:
+Autochat excels at building development agents. Here's how [autocode](https://github.com/myriade-ai/autocode) uses autochat to create an AI developer:
 
 ```python
 from autochat import Autochat
