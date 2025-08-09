@@ -6,223 +6,164 @@
 
 > ⚠️ **Warning**: Since agentic capabilities are evolving fast, expect the API to change.
 
-A lightweight Python library to build AI agents with LLMs.
+A powerful yet lightweight Python library for building AI agents with LLMs. Autochat provides a simple and elegant interface to create conversational AI agents that can use tools, call functions, and interact with various LLM providers.
 
 ![image](https://www-cdn.anthropic.com/images/4zrzovbb/website/58d9f10c985c4eb5d53798dea315f7bb5ab6249e-2401x1000.png)
 
 ## Key Features
 
-- 🤝 Support for multiple LLM providers (OpenAI and Anthropic)
-- 🐍 Transform python function or class into a tool
-- 🔁 Run conversation as a generator.
-- 🙈 Handle caching by default (anthropic model claude-3-7-sonnet-latest)
-- ✨ And more features including:
-  - Simple template system
-  - Easy function and tool integration
-  - Flexible instruction and example management
-  - Support for images
-  - Support for MCP servers
+- 🤝 **Multi-Provider Support**: Works with OpenAI, Anthropic, and custom providers
+- 🛠️ **Tool Integration**: Transform Python functions and classes into AI-accessible tools
+- 🔁 **Streaming Conversations**: Run conversations as generators for real-time interaction
+- 🧠 **Smart Caching**: Built-in response caching (especially for Anthropic's Claude models)
+- 🖼️ **Image Support**: Process and analyze images with vision-capable models
+- 📝 **Template System**: Define agent behavior with simple markdown-like templates
+- 🔄 **Async Support**: Full async/await support for non-blocking operations
+- 🌐 **MCP Integration**: Connect to Model Context Protocol servers for extended capabilities
+- 📊 **Function Calling**: Seamless back-and-forth between AI and your functions
+- 🎯 **Agent Architecture**: Perfect for building sophisticated AI agents and assistants
 
-## Example (search capability)
+## Real-World Example: Code Development Agent
 
-The library supports function call, handling the back-and-forth between the system and the assistant.
-
-```python
-from autochat import Autochat
-
-def search_wikipedia(title: str):
-    """Search wikipedia for information"""
-    import requests
-    from bs4 import BeautifulSoup
-
-    response = requests.get(f"https://en.wikipedia.org/w/index.php?search={title}&title=Special%3ASearch")
-    soup = BeautifulSoup(response.text, 'html.parser')
-    body_content = soup.find('div', {'id': 'bodyContent'})
-    return body_content.text.strip()
-
-classifier_agent = Autochat()
-classifier_agent.add_function(search_wikipedia)
-
-text = "Since when is the lastest iphone available?"
-for message in classifier_agent.run_conversation(text):
-    print(message.to_markdown())
-
-# > ## user
-# > Since when is the lastest iphone available?
-# > ## assistant
-# > search_wikipedia(title=iPhone)
-# > ## function
-# > Result: (html content)
-# > ## assistant
-# > The latest flagship iPhone models, the iPhone 16 and 16 Plus, along with the higher-end iPhone 16 Pro and 16 Pro Max, were available as of January 1, 2024.
-```
-
-## Quick Start
-
-### Initialize with OpenAI (default)
-
-```python
-agent = Autochat(instruction="You are a helpful assistant")
-```
-
-### Simple conversation
-
-```python
-response = agent.ask("What is the capital of France?")
-print(response.content)
-```
-
-### Using Anthropic's Claude
-
-```python
-agent = Autochat(provider="anthropic")
-response = agent.ask("Explain quantum computing in simple terms")
-print(response.content)
-```
-
-### Run conversation as a generator
-
-```python
-for message in agent.run_conversation("Explain quantum computing in simple terms"):
-    print(message.to_markdown())
-```
-
-### Async Interface
-
-Autochat provides async versions of its core methods for use in async applications:
-
-```python
-# Async version of ask
-response = await agent.ask_async("What is the capital of France?")
-print(response.content)
-
-# Async version of run_conversation
-async for message in agent.run_conversation_async("Explain quantum computing"):
-    print(message.to_markdown())
-
-# Async function calls are also supported
-async def async_calculator(a: int, b: int) -> int:
-    await asyncio.sleep(0.1)  # Some async work
-    return a + b
-
-agent.add_function(async_calculator)
-async for message in agent.run_conversation_async("What is 5 + 3?"):
-    print(message.to_markdown())
-```
-
-### Add a function call as python function
-
-```python
-def multiply(a: int, b: int) -> int:
-    return a * b
-
-agent = Autochat()
-agent.add_function(multiply)
-text = "What is 343354 * 13243343214"
-for message in agent.run_conversation(text):
-    print(message.to_markdown())
-```
-
-### Add a Class as a tool
+Autochat excels at building development agents. Here's how [autocode](../autocode/) uses autochat to create an AI developer:
 
 ```python
 from autochat import Autochat
+from autocode.code_editor import CodeEditor
+from autocode.terminal import Terminal
+from autocode.git import Git
 
-class Calculator:
-    def add(self, a: int, b: int) -> int:
-        """Add two numbers"""
-        return a + b
+# Create a developer agent
+agent = Autochat(
+    instruction="""You are a developer agent equipped with tools to:
+    1. Edit code files
+    2. Run terminal commands  
+    3. Manage git operations
+    4. Test and debug applications""",
+    provider="anthropic",
+    model="claude-3-5-sonnet-latest",
+    name="Developer"
+)
 
-    def multiply(self, a: int, b: int) -> int:
-        """Multiply two numbers"""
-        return a * b
+# Add development tools
+code_editor = CodeEditor()
+agent.add_tool(code_editor)
 
-calculator = Calculator()
+terminal = Terminal()
+agent.add_tool(terminal)
 
-agent = Autochat()
-agent.add_tool(calculator)
-for message in agent.run_conversation(
-    "What make 343354 * 13243343214"
-):
-    print(message)
+git = Git()
+agent.add_tool(git)
+
+# The agent can now autonomously develop, test, and deploy code
+for message in agent.run_conversation("Create a FastAPI hello world app with tests"):
+    print(message.to_markdown())
 ```
 
-### Add a MCP server
-
-Experimental feature.
-Check out the [tests/mcp_clients](tests/mcp_clients) for more information.
 
 ## Installation
 
-To install the package, you can use pip:
+Install autochat with all providers and features:
 
 ```bash
 pip install 'autochat[all]'
 ```
 
-## Image support
+Or install with specific providers:
+
+```bash
+# OpenAI only
+pip install 'autochat[openai]'
+
+# Anthropic only  
+pip install 'autochat[anthropic]'
+
+# With MCP support (Python 3.10+)
+pip install 'autochat[mcp]'
+```
+
+## Quick Start
+
+```python
+from autochat import Autochat
+
+# Basic usage
+agent = Autochat(instruction="You are a helpful assistant")
+response = agent.ask("What is the capital of France?")
+print(response.content)
+
+# With function calling
+def multiply(a: int, b: int) -> int:
+    """Multiply two numbers"""
+    return a * b
+
+agent.add_function(multiply)
+for message in agent.run_conversation("What is 25 * 47?"):
+    print(message.to_markdown())
+
+# With Anthropic (recommended for agents)
+agent = Autochat(provider="anthropic", model="claude-3-5-sonnet-latest")
+```
+
+## Advanced Features
+
+### Image Support
 
 ```python
 from autochat import Autochat, Message
-
 from PIL import Image
 
 agent = Autochat()
-
 image = Image.open("examples/image.jpg")
-message = Message(role="user", content="describe the image", image=image)
+message = Message(role="user", content="Describe this image", image=image)
 response = agent.ask(message)
-print(response.to_markdown())
 ```
 
-## Template System
-
-We provide a simple template system for defining the behavior of the chatbot, using markdown-like syntax.
-
-```
-## system
-You are a parrot
-
-## user
-Hi my name is Bob
-
-## assistant
-Hi my name is Bob, hi my name is Bob!
-
-## user
-Can you tell me my name?
-
-## assistant
-Your name is Bob, your name is Bob!
-```
-
-You can then load the template file using the `from_template` method:
+### Template System
 
 ```python
-parrotGPT = Autochat.from_template("./parrot_template.txt")
+# Load agent from markdown template
+agent = Autochat.from_template("./agent_template.md")
 ```
 
-The template system also supports function calls. Check out the [examples/demo_label.py](examples/demo_label.py) for a complete example.
+### Async Support
 
-## Environment Variables
+```python
+# Async operations
+response = await agent.ask_async("Hello")
+async for message in agent.run_conversation_async("Help me code"):
+    print(message.content)
+```
 
-The `AUTOCHAT_MODEL` environment variable specifies the model to use. If not set, it defaults to "gpt-4o" for openai and "claude-3-7-sonnet-latest" for anthropic.
-
-**We recommend to use Anthropic / claude-3-7-sonnet-latest for agentic behavior.**
+## Configuration
 
 ```bash
-export AUTOCHAT_MODEL="gpt-4o"
-export OPENAI_API_KEY=<your-key>
+# Set up your API keys
+export OPENAI_API_KEY="your-key"
+export ANTHROPIC_API_KEY="your-key"
+
+# Choose your model (optional)
+export AUTOCHAT_MODEL="claude-3-5-sonnet-latest"  # or gpt-4o
 ```
 
-or with anthropic
+💡 **Recommendation**: Use Anthropic's Claude models for complex agentic behavior and tool use.
 
-```bash
-export AUTOCHAT_MODEL="claude-3-7-sonnet-latest"
-export ANTHROPIC_API_KEY=<your-key>
-```
+## Use Cases
 
-Use `AUTOCHAT_HOST` to use alternative provider (openai, anthropic, openpipe, llama_cpp, ...)
+- **🤖 AI Assistants**: Build conversational assistants with tool access
+- **🛠️ Development Agents**: Create agents that can code, test, and deploy (like autocode)
+- **📊 Data Analysis**: Agents that can query databases, generate reports, visualize data
+- **🌐 Web Automation**: Agents that interact with web APIs and services
+- **📋 Task Automation**: Automate complex workflows with AI decision-making
+- **🎯 Custom Tools**: Integrate your existing Python tools with AI
+
+## Documentation
+
+- [API Reference](docs/api-reference.md) - Complete API documentation
+- [Examples](examples/) - More example implementations
+- [Provider Guide](docs/providers.md) - Working with different LLM providers
+- [Tool Development](docs/tool-development.md) - Creating custom tools
+- [Best Practices](docs/best-practices.md) - Tips for building robust agents
 
 ## Support
 
