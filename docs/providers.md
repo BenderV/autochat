@@ -38,7 +38,7 @@ Anthropic's Claude models, recommended for agentic behavior.
 
 ```bash
 export ANTHROPIC_API_KEY="your-anthropic-key"
-export AUTOCHAT_MODEL="claude-3-7-sonnet-latest"
+export AUTOCHAT_MODEL="claude-sonnet-4-20250514"
 ```
 
 **Usage:**
@@ -48,7 +48,7 @@ export AUTOCHAT_MODEL="claude-3-7-sonnet-latest"
 agent = Autochat(provider="anthropic")
 
 # Specific Claude model
-agent = Autochat(provider="anthropic", model="claude-3-7-sonnet-latest")
+agent = Autochat(provider="anthropic", model="claude-sonnet-4-20250514")
 ```
 
 ### Custom Provider Host
@@ -69,7 +69,7 @@ The simplest approach using environment variables:
 # .env file
 OPENAI_API_KEY=your-openai-key
 ANTHROPIC_API_KEY=your-anthropic-key
-AUTOCHAT_MODEL=claude-3-7-sonnet-latest
+AUTOCHAT_MODEL=claude-sonnet-4-20250514
 
 # Python code
 from autochat import Autochat
@@ -95,7 +95,7 @@ openai_agent = Autochat(
 # Anthropic with custom settings
 claude_agent = Autochat(
     provider="anthropic",
-    model="claude-3-7-sonnet-latest",
+    model="claude-sonnet-4-20250514",
     instruction="You are a thoughtful assistant"
 )
 ```
@@ -117,7 +117,7 @@ class AgentManager:
         # Powerful agent for complex tasks
         self.smart_agent = Autochat(
             provider="anthropic",
-            model="claude-3-7-sonnet-latest",
+            model="claude-sonnet-4-20250514",
             instruction="Think deeply and provide comprehensive solutions"
         )
 
@@ -262,7 +262,7 @@ o1_agent = Autochat(
 # Anthropic excels at tool use and following instructions
 anthropic_agent = Autochat(
     provider="anthropic",
-    model="claude-3-7-sonnet-latest",
+    model="claude-sonnet-4-20250514",
     instruction="""You are a meticulous developer agent that:
     1. Always follows best practices
     2. Writes comprehensive tests

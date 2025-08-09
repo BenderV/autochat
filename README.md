@@ -150,7 +150,7 @@ export OPENAI_API_KEY="your-key"
 export ANTHROPIC_API_KEY="your-key"
 
 # Choose your model (optional)
-export AUTOCHAT_MODEL="claude-3-7-sonnet-latest"  # or gpt-5-mini
+export AUTOCHAT_MODEL="claude-sonnet-4-20250514"  # or gpt-5-mini
 ```
 
 💡 **Recommendation**: Use Anthropic's Claude models for complex agentic behavior and tool use.
