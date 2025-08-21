@@ -193,8 +193,13 @@ class Autochat(AutochatBase):
         for function_name, function in functions:
             if function_name.startswith("_"):  # Skip private methods
                 continue
-            function_schema = inspect_schema(function)
-            function_schema["name"] = f"{tool_name}__{function_name}"
+
+            try:
+                function_schema = inspect_schema(function)
+                function_schema["name"] = f"{tool_name}__{function_name}"
+            except Exception as e:
+                print(f"Error inspecting schema for {function_name}():\n{e}")
+                continue
             self.add_function(function, function_schema)
         return tool_id
 

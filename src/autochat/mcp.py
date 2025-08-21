@@ -1,4 +1,5 @@
 from mcp import ClientSession
+from mcp.shared.exceptions import McpError
 
 
 async def fetch_mcp_server_tools(mcp_server: ClientSession):
@@ -35,8 +36,15 @@ async def fetch_mcp_server_resources(mcp_server: ClientSession):
     """
     schemas = []
     functions = {}
-    resources = (await mcp_server.list_resources()).resources
-    resources += (await mcp_server.list_resource_templates()).resourceTemplates
+    try:
+        resources = (await mcp_server.list_resources()).resources
+    except McpError:
+        resources = []
+
+    try:
+        resources += (await mcp_server.list_resource_templates()).resourceTemplates
+    except McpError:
+        pass
 
     def extract_parameters_from_uri(uri: str) -> dict:
         # example of uri: users://{user_id}/profile/{profile_id}
