@@ -1,6 +1,160 @@
 # CHANGELOG
 
 
+## v0.19.1 (2025-08-30)
+
+### Bug Fixes
+
+- Lazy import
+  ([`98242c6`](https://github.com/BenderV/autochat/commit/98242c615de819d1ee13abeebc2c1c2e053fe32a))
+
+Issue #68
+
+### Build System
+
+- Add build & twine in dev dep
+  ([`ef8d95b`](https://github.com/BenderV/autochat/commit/ef8d95bdf3269e6fdae1bf3e34d4d56a43e43b58))
+
+- **deps**: Bump anthropic from 0.57.1 to 0.64.0
+  ([`c802483`](https://github.com/BenderV/autochat/commit/c8024836bfdaaa831b08ad1d462fc78d9d61ed64))
+
+Bumps [anthropic](https://github.com/anthropics/anthropic-sdk-python) from 0.57.1 to 0.64.0. -
+  [Release notes](https://github.com/anthropics/anthropic-sdk-python/releases) -
+  [Changelog](https://github.com/anthropics/anthropic-sdk-python/blob/main/CHANGELOG.md) -
+  [Commits](https://github.com/anthropics/anthropic-sdk-python/compare/v0.57.1...v0.64.0)
+
+--- updated-dependencies: - dependency-name: anthropic dependency-version: 0.64.0
+
+dependency-type: direct:production
+
+update-type: version-update:semver-minor ...
+
+Signed-off-by: dependabot[bot] <support@github.com>
+
+- **deps**: Bump openai from 1.100.0 to 1.101.0
+  ([`c1b007f`](https://github.com/BenderV/autochat/commit/c1b007f778e1cb650133628e0219162caae6fe28))
+
+Bumps [openai](https://github.com/openai/openai-python) from 1.100.0 to 1.101.0. - [Release
+  notes](https://github.com/openai/openai-python/releases) -
+  [Changelog](https://github.com/openai/openai-python/blob/main/CHANGELOG.md) -
+  [Commits](https://github.com/openai/openai-python/compare/v1.100.0...v1.101.0)
+
+--- updated-dependencies: - dependency-name: openai dependency-version: 1.101.0
+
+dependency-type: direct:production
+
+update-type: version-update:semver-minor ...
+
+Signed-off-by: dependabot[bot] <support@github.com>
+
+- **deps**: Bump openai from 1.95.1 to 1.100.0
+  ([`04d3e02`](https://github.com/BenderV/autochat/commit/04d3e022e443800860b004df5682ace65f253a8e))
+
+Bumps [openai](https://github.com/openai/openai-python) from 1.95.1 to 1.100.0. - [Release
+  notes](https://github.com/openai/openai-python/releases) -
+  [Changelog](https://github.com/openai/openai-python/blob/main/CHANGELOG.md) -
+  [Commits](https://github.com/openai/openai-python/compare/v1.95.1...v1.100.0)
+
+--- updated-dependencies: - dependency-name: openai dependency-version: 1.100.0
+
+dependency-type: direct:production
+
+update-type: version-update:semver-minor ...
+
+Signed-off-by: dependabot[bot] <support@github.com>
+
+- **deps**: Bump pre-commit from 4.2.0 to 4.3.0
+  ([`7f09c93`](https://github.com/BenderV/autochat/commit/7f09c93d157db0cc3617a925e8087e24e8b1edf9))
+
+Bumps [pre-commit](https://github.com/pre-commit/pre-commit) from 4.2.0 to 4.3.0. - [Release
+  notes](https://github.com/pre-commit/pre-commit/releases) -
+  [Changelog](https://github.com/pre-commit/pre-commit/blob/main/CHANGELOG.md) -
+  [Commits](https://github.com/pre-commit/pre-commit/compare/v4.2.0...v4.3.0)
+
+--- updated-dependencies: - dependency-name: pre-commit dependency-version: 4.3.0
+
+dependency-type: direct:production
+
+update-type: version-update:semver-minor ...
+
+Signed-off-by: dependabot[bot] <support@github.com>
+
+- **deps**: Bump pytest from 8.3.4 to 8.4.1
+  ([`5ea5983`](https://github.com/BenderV/autochat/commit/5ea5983a2b7e61244bf5dd7dd74ceb42a8c10583))
+
+Bumps [pytest](https://github.com/pytest-dev/pytest) from 8.3.4 to 8.4.1. - [Release
+  notes](https://github.com/pytest-dev/pytest/releases) -
+  [Changelog](https://github.com/pytest-dev/pytest/blob/main/CHANGELOG.rst) -
+  [Commits](https://github.com/pytest-dev/pytest/compare/8.3.4...8.4.1)
+
+--- updated-dependencies: - dependency-name: pytest dependency-version: 8.4.1
+
+dependency-type: direct:production
+
+update-type: version-update:semver-minor ...
+
+Signed-off-by: dependabot[bot] <support@github.com>
+
+- **deps**: Bump pytest-recording from 0.13.2 to 0.13.4
+  ([`ae9d5c4`](https://github.com/BenderV/autochat/commit/ae9d5c4ce23ca6f08163a4a317916b6db0026344))
+
+Bumps [pytest-recording](https://github.com/kiwicom/pytest-recording) from 0.13.2 to 0.13.4. -
+  [Release notes](https://github.com/kiwicom/pytest-recording/releases) -
+  [Changelog](https://github.com/kiwicom/pytest-recording/blob/master/docs/changelog.rst) -
+  [Commits](https://github.com/kiwicom/pytest-recording/compare/v0.13.2...v0.13.4)
+
+--- updated-dependencies: - dependency-name: pytest-recording dependency-version: 0.13.4
+
+dependency-type: direct:production
+
+update-type: version-update:semver-patch ...
+
+Signed-off-by: dependabot[bot] <support@github.com>
+
+- **deps**: Bump ruff from 0.12.9 to 0.12.10
+  ([`77221e7`](https://github.com/BenderV/autochat/commit/77221e78d54c4e5b7a772ef3617ffb43bfe854b8))
+
+Bumps [ruff](https://github.com/astral-sh/ruff) from 0.12.9 to 0.12.10. - [Release
+  notes](https://github.com/astral-sh/ruff/releases) -
+  [Changelog](https://github.com/astral-sh/ruff/blob/main/CHANGELOG.md) -
+  [Commits](https://github.com/astral-sh/ruff/compare/0.12.9...0.12.10)
+
+--- updated-dependencies: - dependency-name: ruff dependency-version: 0.12.10
+
+dependency-type: direct:production
+
+update-type: version-update:semver-patch ...
+
+Signed-off-by: dependabot[bot] <support@github.com>
+
+- **deps**: Bump ruff from 0.8.3 to 0.12.9
+  ([`21d65a6`](https://github.com/BenderV/autochat/commit/21d65a644021d5fbf583bcd7bb01e74ee06938b3))
+
+Bumps [ruff](https://github.com/astral-sh/ruff) from 0.8.3 to 0.12.9. - [Release
+  notes](https://github.com/astral-sh/ruff/releases) -
+  [Changelog](https://github.com/astral-sh/ruff/blob/main/CHANGELOG.md) -
+  [Commits](https://github.com/astral-sh/ruff/compare/0.8.3...0.12.9)
+
+--- updated-dependencies: - dependency-name: ruff dependency-version: 0.12.9
+
+dependency-type: direct:production
+
+update-type: version-update:semver-minor ...
+
+Signed-off-by: dependabot[bot] <support@github.com>
+
+### Documentation
+
+- Update README
+  ([`00ca7a8`](https://github.com/BenderV/autochat/commit/00ca7a8830f89aa8d6f300d7d0f340f18d079c19))
+
+- Update README
+  ([`395c5d8`](https://github.com/BenderV/autochat/commit/395c5d8360774685885a3c31bb419ef2c22b777b))
+
+- Update ref to claude model
+  ([`accbc40`](https://github.com/BenderV/autochat/commit/accbc406e224b1a86f049e53d5e9f8eb55311be8))
+
+
 ## v0.19.0 (2025-07-28)
 
 ### Features
