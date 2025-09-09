@@ -1,5 +1,5 @@
 import os
-from typing import Type
+from typing import Type, Union
 
 from autochat.model import Message
 from autochat.providers.base_provider import APIProvider, BaseProvider
@@ -11,16 +11,16 @@ class FunctionCallParsingError(Exception):
         self.function_call = function_call
 
     def __str__(self):
-        return f"Invalid function_call: {self.obj.function_call}"
+        return f"Invalid function_call (id={self.id}): {self.function_call}"
 
 
 # TODO: should probably exploit default model from provider
 def get_provider_and_model(  # TODO: get_provider_and_model ?
     # chat: Autochat, # TODO: make AutochatBase ?
     chat,
-    provider_name: str | Type[BaseProvider] = None,
-    model: str = None,
-) -> list[str, BaseProvider]:  # TODO: rename
+    provider_name: Union[str, Type[BaseProvider], APIProvider, None] = None,
+    model: Union[str, None] = None,
+) -> tuple[BaseProvider, str]:  # TODO: rename
     """
     Returns the correct LLM provider based on a string or env vars.
     """
@@ -33,10 +33,13 @@ def get_provider_and_model(  # TODO: get_provider_and_model ?
     if not provider_name:
         provider_name = os.getenv("AUTOCHAT_HOST", "openai")
 
+    if not model:
+        model = os.getenv("AUTOCHAT_MODEL", "gpt-4o")
+
     if isinstance(provider_name, type) and issubclass(provider_name, BaseProvider):
         # Supports custom provider
         Provider = provider_name
-        return Provider(chat, model=model), model
+        return Provider(chat=chat, model=model), model
     elif isinstance(provider_name, APIProvider):
         provider_key = provider_name
     elif isinstance(provider_name, str):
@@ -93,7 +96,9 @@ def add_empty_function_result(messages: list[Message]) -> list[Message]:
                 i,
                 Message(
                     role="function",
-                    name=messages[i - 1].function_call["name"],
+                    name=messages[i - 1].function_call.__getattribute__("name")
+                    if messages[i - 1].function_call
+                    else "",
                     content="",
                     function_call_id=messages[i - 1].function_call_id,
                 ),

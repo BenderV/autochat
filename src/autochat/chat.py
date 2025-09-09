@@ -8,14 +8,15 @@ import json
 import logging
 import os
 import traceback
-import typing
+from typing import Callable, Optional, Union, AsyncGenerator, Coroutine, Any
 import warnings
 from typing import Type
+
 
 from PIL import Image as PILImage
 
 from autochat.base import AutochatBase
-from autochat.model import Message
+from autochat.model import Message, MessagePart
 from autochat.providers.base_provider import APIProvider, BaseProvider
 from autochat.providers.utils import get_provider_and_model
 from autochat.utils import (
@@ -44,21 +45,30 @@ def simple_response_default_callback(response: Message) -> Message:
 
 
 class Autochat(AutochatBase):
-    def __llm__(self):
+    def __llm__(
+        self,
+    ) -> Union[
+        str,
+        Message,
+        MessagePart,
+        list[MessagePart],
+        None,
+        Coroutine[Any, Any, Union[str, Message, MessagePart, list[MessagePart], None]],
+    ]:
         return self.name  # If an agent is used as a tool, it must have a name
 
     def __init__(
         self,
-        name: str = None,
-        instruction: str = None,
-        examples: typing.Union[list[Message], None] = None,
-        messages: typing.Union[list[Message], None] = None,
-        context: str = None,
+        name: Optional[str] = None,
+        instruction: Optional[str] = None,
+        examples: Union[list[Message], None] = None,
+        messages: Union[list[Message], None] = None,
+        context: Optional[str] = None,
         max_interactions: int = 100,
         model=AUTOCHAT_MODEL,
-        provider: str | Type[BaseProvider] = APIProvider.OPENAI,
+        provider: Union[str, Type[BaseProvider], APIProvider] = APIProvider.OPENAI,
         use_tools_only: bool = False,
-        mcp_servers: typing.Union[list[object], None] = [],
+        mcp_servers: Union[list[object], None] = None,
     ) -> None:
         """
         Initialize the Autochat instance.
@@ -94,6 +104,8 @@ class Autochat(AutochatBase):
         self.functions_schema = []
         self.functions = {}
         self.tools = {}
+        if mcp_servers is None:
+            mcp_servers = []
         for m in mcp_servers:
             self.add_mcp_server(m)
 
@@ -122,8 +134,7 @@ class Autochat(AutochatBase):
             return None
         return self.messages[-1].content
 
-    @property
-    def last_tools_states(self) -> typing.Optional[str]:
+    async def last_tools_states(self) -> Optional[list[MessagePart]]:
         """We add the repr() of each tool to the system context"""
         # If there are no tools, return None
         if not self.tools:
@@ -132,18 +143,54 @@ class Autochat(AutochatBase):
         for tool_id, tool in self.tools.items():
             tool_name = f"{tool.__class__.__name__}-{tool_id}"
             if hasattr(tool, "__llm__"):
-                tool_reprs.append(f"### {tool_name}\n{tool.__llm__()}")
+                llm_result = tool.__llm__()
+                # Check if the result is a coroutine (async method)
+                if inspect.iscoroutine(llm_result):
+                    llm_result = await llm_result
+
+                if isinstance(llm_result, MessagePart):
+                    self.messages.append(Message(role="user", parts=[llm_result]))
+                    # tool_reprs.append(llm_result)
+                elif isinstance(llm_result, list) and all(
+                    isinstance(p, MessagePart) for p in llm_result
+                ):
+                    self.messages.append(Message(role="user", parts=llm_result))
+                # tool_reprs.extend(llm_result)
+                elif isinstance(llm_result, str):
+                    print(
+                        f"Tool {tool_name} returned string from __llm__: {llm_result}"
+                    )
+                    # todo: check this
+                    self.messages.append(
+                        Message(
+                            role="user",
+                            parts=[
+                                MessagePart(
+                                    type="text",
+                                    content=f"### {tool_name}\n{llm_result}",
+                                )
+                            ],
+                        )
+                    )
+                else:
+                    raise ValueError(
+                        f"Tool {tool_name} has __llm__ method but it does not return a Message, MessagePart, list of MessagePart, or str (got {type(llm_result)})"
+                    )
+
             elif hasattr(tool, "__repr__"):
-                tool_reprs.append(f"### {tool_name}\n{repr(tool)}")
+                tool_reprs.append(
+                    MessagePart(type="text", content=f"### {tool_name}\n{repr(tool)}")
+                )
             elif hasattr(tool, "__str__"):
-                tool_reprs.append(f"### {tool_name}\n{tool}")
+                tool_reprs.append(
+                    MessagePart(type="text", content=f"### {tool_name}\n{tool}")
+                )
             else:
                 raise ValueError(
                     f"Tool {tool_name} has no __llm__, __repr__ or __str__ method"
                 )
-        tool_context = "\n".join(tool_reprs)
 
-        """
+        """We return a markdown string with the tool states:
         ## Last Tools States
         ### Tool 1
         {state}
@@ -151,7 +198,10 @@ class Autochat(AutochatBase):
         {state}
         --- End of Last Tools States ---
         """
-        return f"## Last Tools States\n{tool_context}\n--- End of Last Tools States ---"
+        start_ = MessagePart(type="text", content="## Last Tools States")
+        end_ = MessagePart(type="text", content="--- End of Last Tools States ---")
+        last_tools_states = [start_] + tool_reprs + [end_]
+        return last_tools_states
 
     def load_messages(self, messages: list[Message]):
         # Check order of messages (based on createdAt)
@@ -161,8 +211,8 @@ class Autochat(AutochatBase):
 
     def add_function(
         self,
-        function: typing.Callable,
-        function_schema: typing.Optional[dict] = None,
+        function: Callable,
+        function_schema: Optional[dict] = None,
     ):
         if function_schema is None:
             # We try to infer the function schema from the function
@@ -171,9 +221,7 @@ class Autochat(AutochatBase):
         self.functions_schema.append(function_schema)
         self.functions[function_schema["name"]] = function
 
-    def add_tool(
-        self, tool: typing.Union[type, object], tool_id: typing.Optional[str] = None
-    ) -> str:
+    def add_tool(self, tool: Union[type, object], tool_id: Optional[str] = None) -> str:
         """Add a tool class or instance to the chat instance and return the tool id"""
         if isinstance(tool, type):
             # If a class is provided, instantiate it
@@ -229,7 +277,7 @@ class Autochat(AutochatBase):
 
     async def ask_async(
         self,
-        message: typing.Union[Message, str, None] = None,
+        message: Union[Message, str, None] = None,
         **kwargs,
     ) -> Message:
         """Async version of ask method that uses the async fetch_async provider method"""
@@ -244,12 +292,13 @@ class Autochat(AutochatBase):
 
         # Call the async strategy
         response = await self.provider.fetch_async(**kwargs)
+        print(f"Response from provider: {response}")
         self.messages.append(response)
         return response
 
     def ask(
         self,
-        message: typing.Union[Message, str, None] = None,
+        message: Union[Message, str, None] = None,
         **kwargs,
     ) -> Message:
         # For backward compatibility, use run_until_complete to execute the async method
@@ -404,8 +453,8 @@ class Autochat(AutochatBase):
 
     async def run_conversation_async(
         self,
-        question: typing.Union[str, Message, None] = None,
-    ) -> typing.AsyncGenerator[Message, None]:
+        question: Union[str, Message, None] = None,
+    ) -> AsyncGenerator[Message, None]:
         """Async version of run_conversation"""
         # If there's an initial question, emit it:
         if isinstance(question, str):
@@ -421,9 +470,33 @@ class Autochat(AutochatBase):
             # Ask the LLM with the current message (if any)
             response = await self.ask_async(message)
 
+            # Build safe representations by calling to_dict() on each part when available
+            def _parts_to_dicts(parts):
+                try:
+                    return [
+                        p.to_dict() if hasattr(p, "to_dict") else repr(p) for p in parts
+                    ]
+                except Exception:
+                    return repr(parts)
+
+            if message:
+                msg_parts_repr = _parts_to_dicts(message.parts)
+            else:
+                msg_parts_repr = None
+            resp_parts_repr = _parts_to_dicts(response.parts)
+
+            print(f"Global response: {response}")
+
+            print(f"Response received: {resp_parts_repr} for message: {msg_parts_repr}")
+
             # Locate a function_call part in the assistant's response
             function_call_part = next(
-                (p for p in response.parts if p.type == "function_call"), None
+                (
+                    p
+                    for p in response.parts
+                    if getattr(p, "type", None) == "function_call"
+                ),
+                None,
             )
             if not function_call_part:
                 yield response
@@ -432,6 +505,8 @@ class Autochat(AutochatBase):
                 except StopLoopException:
                     return
             else:
+                # Type guard: function_call_part is not None and has function_call
+                assert function_call_part.function_call is not None
                 name = function_call_part.function_call["name"]
                 args = function_call_part.function_call["arguments"]
 
@@ -439,13 +514,14 @@ class Autochat(AutochatBase):
                     message = await self._call_function_and_build_message(
                         name, args, response
                     )
+                    print(f"Function {name} called with args {args}")
                 except StopLoopException:
                     return
                 finally:
                     yield response
                 yield message
 
-    def run_conversation(self, question: typing.Union[str, Message, None] = None):
+    def run_conversation(self, question: Union[str, Message, None] = None):
         # For backward compatibility, use run_until_complete to execute the async method
         loop = get_event_loop_or_create()
         async_gen = self.run_conversation_async(question)

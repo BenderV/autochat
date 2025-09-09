@@ -202,7 +202,7 @@ def parse_chat_template(filename) -> list[Message]:
         message = Message(
             **example,
             name="example_" + example["role"],
-            id="example_" + str(ind),
+            id=int("example_" + str(ind)),
             function_call_id=function_call_id,
         )
         examples.append(message)

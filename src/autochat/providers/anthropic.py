@@ -6,6 +6,8 @@ from autochat.base import AutochatBase
 from autochat.model import Message, MessagePart
 from autochat.providers.base_provider import BaseProvider
 from autochat.providers.utils import add_empty_function_result
+import json
+from datetime import datetime
 
 AUTOCHAT_HOST = os.getenv("AUTOCHAT_HOST")
 
@@ -17,6 +19,8 @@ def part_to_anthropic_dict(part: MessagePart) -> dict:
             "text": part.content,
         }
     elif part.type == "image":
+        if not part.image:
+            raise ValueError("Cannot convert image part without image data")
         return {
             "type": "image",
             "source": {
@@ -26,6 +30,10 @@ def part_to_anthropic_dict(part: MessagePart) -> dict:
             },
         }
     elif part.type == "function_call":
+        if not part.function_call or not part.function_call_id:
+            raise ValueError(
+                "Cannot convert function_call part without function_call data"
+            )
         return {
             "type": "tool_use",
             "id": part.function_call_id,
@@ -33,6 +41,10 @@ def part_to_anthropic_dict(part: MessagePart) -> dict:
             "input": part.function_call["arguments"],
         }
     elif part.type == "function_result_image":
+        if not part.image or not part.function_call_id:
+            raise ValueError(
+                "Cannot convert function_result_image part without image data or function_call_id"
+            )
         return {
             "type": "tool_result",
             "content": [
@@ -41,7 +53,7 @@ def part_to_anthropic_dict(part: MessagePart) -> dict:
                     "source": {
                         "type": "base64",
                         "media_type": part.image.format,
-                        "data": part.image.to_base64(),
+                        "data": part.image,
                     },
                 }
             ],
@@ -82,6 +94,20 @@ class AnthropicProvider(BaseProvider):
             transform_function=lambda m: message_to_anthropic_dict(m),
             transform_list_function=add_empty_function_result,
         )
+
+        try:
+            debug_path = os.getenv(
+                "AUTOCHAT_DEBUG_FILE", "autochat_anthropic_debug.log"
+            )
+            with open(debug_path, "a", encoding="utf-8") as f:
+                f.write(
+                    f"{datetime.utcnow().isoformat()} Prepared messages for Anthropic:\n"
+                )
+                f.write(json.dumps(messages, default=str, ensure_ascii=False, indent=2))
+                f.write("\n\n")
+        except Exception as e:
+            # Fallback to printing if file write fails
+            print(f"Failed to write debug file: {e}")
 
         if self.chat.instruction:
             system = self.chat.instruction
@@ -127,6 +153,22 @@ class AnthropicProvider(BaseProvider):
             return merged_messages
 
         messages = merge_messages(messages)
+
+        print(f"Final messages sent to Anthropic: {messages}")
+
+        try:
+            debug_path = os.getenv(
+                "AUTOCHAT_DEBUG_FILE", "autochat_anthropic__merged_debug.log"
+            )
+            with open(debug_path, "a", encoding="utf-8") as f:
+                f.write(
+                    f"{datetime.utcnow().isoformat()} Prepared messages for Anthropic:\n"
+                )
+                f.write(json.dumps(messages, default=str, ensure_ascii=False, indent=2))
+                f.write("\n\n")
+        except Exception as e:
+            # Fallback to printing if file write fails
+            print(f"Failed to write debug file: {e}")
 
         # Need to map field "parameters" to "input_schema"
         tools = [
@@ -183,14 +225,13 @@ class AnthropicProvider(BaseProvider):
                 }
             )
 
-        if self.chat.last_tools_states:
-            # add to system message
-            system_messages.append(
-                {
-                    "type": "text",
-                    "text": self.chat.last_tools_states,
-                }
-            )
+        last_tools_states = await self.chat.last_tools_states()
+        if last_tools_states:
+            # Convert MessageParts to Anthropic system message format
+            # Only include text parts in system messages (Anthropic doesn't support images in system)
+            for part in last_tools_states:
+                if part.type == "text":
+                    system_messages.append(part_to_anthropic_dict(part))
 
         # === End of cache_control ===
 
@@ -208,6 +249,10 @@ class AnthropicProvider(BaseProvider):
             **kwargs,
         )
         res_dict = res.to_dict()
+
+        # Print the full response for debugging
+        print(f"Full response from Anthropic: {res_dict}")
+
         return Message.from_anthropic_dict(
             role=res_dict["role"],
             content=res_dict["content"],

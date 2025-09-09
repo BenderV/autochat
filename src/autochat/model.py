@@ -1,7 +1,7 @@
 import base64
 import os
 import tempfile
-import typing
+from typing import Optional, Any
 import uuid
 from io import BytesIO
 from typing import Literal
@@ -44,7 +44,9 @@ class Image:
 
     @property
     def format(self):
-        return "image/" + self.image.format.lower()
+        # PIL Image.format can be None (e.g. for images created in memory), so default to PNG
+        fmt = self.image.format or "PNG"
+        return "image/" + fmt.lower()
 
 
 class MessagePart:
@@ -54,10 +56,10 @@ class MessagePart:
         type: Literal[
             "text", "image", "function_call", "function_result", "function_result_image"
         ],
-        content: typing.Optional[str] = None,  # TODO: should be named "text" !
-        image: typing.Optional[PILImage.Image] = None,
-        function_call: typing.Optional[dict] = None,
-        function_call_id: typing.Optional[str] = None,
+        content: Optional[str] = None,  # TODO: should be named "text" !
+        image: Optional[PILImage.Image] = None,
+        function_call: Optional[dict] = None,
+        function_call_id: Optional[str] = None,
     ) -> None:
         self.type = type
         self.content = content
@@ -65,23 +67,41 @@ class MessagePart:
         self.function_call = function_call
         self.function_call_id = function_call_id
 
+    def __repr__(self) -> str:
+        return f"MessagePart(type={self.type})"
+
+    def to_dict(self) -> dict:
+        res: dict[str, str | dict] = {"type": self.type}
+        if self.content:
+            res["content"] = self.content
+        if self.image:
+            res["image"] = {
+                "format": self.image.format,
+                "size": self.image.image.size,
+            }
+        if self.function_call:
+            res["function_call"] = self.function_call
+        if self.function_call_id:
+            res["function_call_id"] = self.function_call_id
+        return res
+
 
 class Message:
     role: Literal["user", "assistant", "function", "system"]
     parts: list[MessagePart]
-    name: typing.Optional[str] = None
-    id: typing.Optional[int] = None
+    name: Optional[str] = None
+    id: Optional[int] = None
 
     def __init__(
         self,
-        role: Literal["user", "assistant", "function"],
-        content: typing.Optional[str] = None,
-        name: typing.Optional[str] = None,
-        function_call: typing.Optional[dict] = None,
-        id: typing.Optional[int] = None,
-        function_call_id: typing.Optional[str] = None,
-        image: typing.Optional[PILImage.Image] = None,
-        parts: typing.Optional[list[MessagePart]] = [],
+        role: Literal["user", "assistant", "function", "system"],
+        content: Optional[str] = None,
+        name: Optional[str] = None,
+        function_call: Optional[dict] = None,
+        id: Optional[int] = None,
+        function_call_id: Optional[str] = None,
+        image: Optional[PILImage.Image] = None,
+        parts: Optional[list[MessagePart]] = None,
     ) -> None:
         self.role = role
         self.name = name
@@ -96,7 +116,7 @@ class Message:
         else:
             self.parts = []
             if role != "function":
-                if content:
+                if content is not None:
                     self.parts.append(MessagePart(type="text", content=content))
                 if image:
                     self.parts.append(MessagePart(type="image", image=image))
@@ -107,6 +127,13 @@ class Message:
                             function_call=function_call,
                             function_call_id=function_call_id,
                         )
+                    )
+                # Enforce invariant: non-function messages must have at least one part
+                if not self.parts:
+                    raise ValueError(
+                        f"Message with role '{role}' must have content, image, or function_call. "
+                        f"Got: content={content!r}, image={image!r}, function_call={function_call!r}. "
+                        f"This indicates either invalid input or a bug in message creation."
                     )
             else:
                 # Will be able to add this condition when switching to OpenAI "tools"
@@ -139,7 +166,7 @@ class Message:
                     )
 
     @property
-    def content(self) -> str:
+    def content(self) -> str | None:
         """
         If one part text, then provide the sugar syntax
         # If multiple parts text, then throw an error
@@ -182,7 +209,7 @@ class Message:
         self.parts[0].content = value
 
     @property
-    def function_call(self) -> typing.Optional[dict]:
+    def function_call(self) -> Optional[dict]:
         """
         If one part, then provide the sugar syntax
         """
@@ -199,7 +226,7 @@ class Message:
         return function_call_parts[0]
 
     @property
-    def function_call_id(self) -> typing.Optional[str]:
+    def function_call_id(self) -> Optional[str]:
         """
         If one part, then provide the sugar syntax
         """
@@ -219,15 +246,16 @@ class Message:
         return function_call_parts[0]
 
     @property
-    def image(self) -> typing.Optional[PILImage.Image]:
+    def image(self) -> Optional[PILImage.Image]:
         """
         If one part, then provide the sugar syntax
         """
-        # 1. get all image parts
+        # 1. get all image parts (extract underlying PIL Image from wrapper)
         image_parts = [
-            part.image
+            part.image.image
             for part in self.parts
-            if part.type == "image" or part.type == "function_result_image"
+            if (part.type == "image" or part.type == "function_result_image")
+            and part.image is not None
         ]
         # 2. verify that there is only one image part
         if not image_parts:
@@ -289,9 +317,9 @@ class Message:
     def to_markdown(self) -> str:
         text = f"## {self.role}\n"
         for part in self.parts:
-            if part.type == "text":
+            if part.type == "text" and part.content:
                 text += part.content + "\n"
-            elif part.type == "function_call":
+            elif part.type == "function_call" and part.function_call:
                 text += f"> {part.function_call['name']}({', '.join([f'{k}={v}' for k, v in part.function_call['arguments'].items()])})\n"
             elif part.type == "function_result":
                 text += f"> Result: {part.content}\n"
@@ -312,10 +340,13 @@ class Message:
         terminal_program = os.environ.get("TERM_PROGRAM")
 
         text = f"## {self.role}\n"
+        print(self)
+        print(f"Role: {self.role}")
+        print(f"Message parts: {[part.type for part in self.parts]}")
         for part in self.parts:
-            if part.type == "text":
+            if part.type == "text" and part.content:
                 text += part.content + "\n"
-            elif part.type == "function_call":
+            elif part.type == "function_call" and part.function_call:
                 text += f"> {part.function_call['name']}({', '.join([f'{k}={v}' for k, v in part.function_call['arguments'].items()])})\n"
             elif part.type == "function_result":
                 text += f"> Result: {part.content}\n"
@@ -355,5 +386,10 @@ class Message:
                     text += f"Image {file_url}\n"
 
         if not self.parts:
-            raise ValueError("Message should have at least one part")
+            # Provide more detailed error information for debugging
+            raise ValueError(
+                f"Message should have at least one part. "
+                f"Message details: role={self.role}, name={self.name}, id={self.id}. "
+                f"This indicates a bug in Message creation."
+            )
         return text
