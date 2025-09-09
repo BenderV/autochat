@@ -154,11 +154,12 @@ class OpenAIProvider(BaseProvider):
                     content=self.chat.instruction,
                 )
             )
-        if self.chat.last_tools_states:
+        last_tools_states = await self.chat.last_tools_states()
+        if last_tools_states:
             system_messages.append(
                 Message(
                     role="system",
-                    content=self.chat.last_tools_states,
+                    parts=last_tools_states,
                 )
             )
         messages = [message_to_openai_dict(sm) for sm in system_messages] + messages

@@ -15,6 +15,10 @@ class APIProvider(Enum):
 
 
 class BaseProvider(ABC):
+    def __init__(self, chat, model: str):
+        self.chat = chat
+        self.model = model
+
     def prepare_messages(
         self,
         transform_function: typing.Callable,
